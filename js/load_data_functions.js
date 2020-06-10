@@ -1,4 +1,4 @@
-import { general_config, scene, camera } from './initialisation.js';
+import { general_config, scene, scene_building,camera } from './initialisation.js';
 import { create_data_texture, recreate_scene, create_temp_histogram,create_buildings,set_light_position } from './creative_functions.js'
 import { numberInArray } from './color_function.js';
 
@@ -251,7 +251,8 @@ export function loadChosenDataSet() {
 	fetch("geojson/buildings_" + dataset + ".geojson").then(r => r.json()).then(function( data ) {
 		general_config.data_build = data;
 		setTimeout(function(d){
-			create_buildings(general_config.data_build,scene,$("#type_bati").val());
+			//create_buildings(general_config.data_build,scene,$("#type_bati").val());
+			create_buildings(general_config.data_build,scene_building,$("#type_bati").val());
 		}, 1000);
 	});
 
@@ -263,7 +264,8 @@ export function loadChosenDataSet() {
 		general_config.data_nj = 6;
 	}
 	$( "#type_bati" ).on( "change", function() {
-		create_buildings(general_config.data_build,scene,$("#type_bati").val());
+		//create_buildings(general_config.data_build,scene,$("#type_bati").val());
+		create_buildings(general_config.data_build,scene_building,$("#type_bati").val());
 	});
 
 
