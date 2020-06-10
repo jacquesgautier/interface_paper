@@ -1,4 +1,4 @@
-import {general_config, renderer, scene, camera, controls, mesh} from './initialisation.js'
+import {general_config, renderer, scene, scene_building, scene_points, scene_horizontal_planes, scene_vertical_planes, rtTexture_building,rtTexture_points,rtTexture_horizontal_planes,rtTexture_vertical_planes, camera, controls, mesh,camera_screen} from './initialisation.js'
 import * as THREE from './three.module.js';
 
 
@@ -135,7 +135,8 @@ export function recreate_scene() {
     let datackbx = document.querySelectorAll('.type_de_points')
     if(general_config.grid_plane == null){
     } else {
-        scene.remove(general_config.grid_plane);
+		scene_horizontal_planes.remove(general_config.grid_plane);
+        //scene.remove(general_config.grid_plane);
     }
     general_config.grid_plane = new THREE.Object3D();
     create_2D_plane_series(general_config.data_points_O_2,general_config.data_points_U_2,general_config.data_points_V_2,general_config.grid_plane,general_config.id_sbl_array_real_plane,general_config.id_meso_array_real_plane,general_config.temp_array,general_config.THAT,general_config.THAT_W,general_config.HCanopy,general_config.HCanopy_w);
@@ -1374,10 +1375,10 @@ export function create_2D_plane_series(MesoNH_O_array,MesoNH_U_array,MesoNH_V_ar
 						side: THREE.DoubleSide,
 						transparent:true,
 						uniforms: {
-							light_position_1: { value: scene.children[0].position },
-							light_color_1: { value: scene.children[0].color },
-							light_position_2: { value: scene.children[1].position },
-							light_color_2: { value: scene.children[1].color },
+							//light_position_1: { value: scene.children[0].position },
+							//light_color_1: { value: scene.children[0].color },
+							//light_position_2: { value: scene.children[1].position },
+							//light_color_2: { value: scene.children[1].color },
 							//light_position_3: { value: scene.children[2].position },
 							//light_color_3: { value: scene.children[2].color },
 							//light_position_4: { value: scene.children[3].position },
@@ -1423,7 +1424,7 @@ export function create_2D_plane_series(MesoNH_O_array,MesoNH_U_array,MesoNH_V_ar
     //create_temp_histogram();	 <==== je déplace ds showPointsPlanes
             
     grid.add(mesh);
-    scene.add(grid);
+    scene_horizontal_planes.add(grid);
  
 }
 
@@ -2329,7 +2330,32 @@ export function render(){
     }
     controls.update();
     
-    renderer.render( scene, camera );
+    //scene, scene_building, scene_points, scene_horizontal_planes, scene_vertical_planes
+	//rtTexture_building,rtTexture_points,rtTexture_horizontal_planes,rtTexture_vertical_planes,material_building_rendered_plane
+	
+	
+	renderer.setRenderTarget( rtTexture_building );
+	renderer.clear();
+	renderer.render( scene_building, camera );
+
+	renderer.setRenderTarget( rtTexture_points );
+	renderer.clear();
+	renderer.render( scene_points, camera );
+	
+	renderer.setRenderTarget( rtTexture_horizontal_planes );
+	renderer.clear();
+	renderer.render( scene_horizontal_planes, camera );
+	
+	renderer.setRenderTarget( rtTexture_vertical_planes );
+	renderer.clear();
+	renderer.render( scene_vertical_planes, camera );
+
+
+	renderer.setRenderTarget( null );
+	renderer.clear();
+	renderer.render( scene, camera_screen );
+	
+	//renderer.render( scene, camera );
 }
 
 
@@ -3349,10 +3375,18 @@ export function set_light_position(){
 	var y_light_max = general_config.data_volume_3D.y_max + 1000;
 	var z_light = 600;
 		 	
-	scene.children[0].position.set(x_light_min * general_config.cst_X,z_light * general_config.cst_Z,-y_light_min * general_config.cst_Y);
-	scene.children[1].position.set(x_light_min * general_config.cst_X,z_light * general_config.cst_Z,-y_light_max * general_config.cst_Y);
-	scene.children[2].position.set(x_light_max * general_config.cst_X,z_light * general_config.cst_Z,-y_light_min * general_config.cst_Y);
-	scene.children[3].position.set(x_light_max * general_config.cst_X,z_light * general_config.cst_Z,-y_light_max * general_config.cst_Y);
+			
+			console.log(scene_building)
+	scene_building.children[0].position.set(x_light_min * general_config.cst_X,z_light * general_config.cst_Z,-y_light_min * general_config.cst_Y);
+	scene_building.children[1].position.set(x_light_min * general_config.cst_X,z_light * general_config.cst_Z,-y_light_max * general_config.cst_Y);
+	scene_building.children[2].position.set(x_light_max * general_config.cst_X,z_light * general_config.cst_Z,-y_light_min * general_config.cst_Y);
+	scene_building.children[3].position.set(x_light_max * general_config.cst_X,z_light * general_config.cst_Z,-y_light_max * general_config.cst_Y);
+	
+	scene_vertical_planes.children[0].position.set(x_light_min * general_config.cst_X,z_light * general_config.cst_Z,-y_light_min * general_config.cst_Y);
+	scene_vertical_planes.children[1].position.set(x_light_min * general_config.cst_X,z_light * general_config.cst_Z,-y_light_max * general_config.cst_Y);
+	scene_vertical_planes.children[2].position.set(x_light_max * general_config.cst_X,z_light * general_config.cst_Z,-y_light_min * general_config.cst_Y);
+	scene_vertical_planes.children[3].position.set(x_light_max * general_config.cst_X,z_light * general_config.cst_Z,-y_light_max * general_config.cst_Y);
+	
 	
 }
 
