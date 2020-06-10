@@ -7,7 +7,7 @@ import {chosenColor, numberInArray} from './color_function.js'
 
 
 
-export var renderer, scene, camera, controls, mesh;
+export var renderer, scene, camera, controls, mesh, scene_building, scene_points, scene_horizontal_planes, scene_vertical_planes, rtTexture_building,rtTexture_points,rtTexture_horizontal_planes,rtTexture_vertical_planes,material_building_rendered_plane,material_points_rendered_plane,material_horizontal_plane_rendered_plane,material_vertical_plane_rendered_plane,quad_building,quad_points,quad_horizontal_plane,quad_vertical_plane,camera_screen;
 
 export var general_config = {
     "data_points_O_2":null,
@@ -249,32 +249,56 @@ export function init(){
     document.getElementById('container').appendChild(renderer.domElement);
     
     scene = new THREE.Scene();
-    
 	scene.background = new THREE.Color('black');
+	
+	scene_building = new THREE.Scene(); 
+	scene_points = new THREE.Scene(); 
+	scene_horizontal_planes = new THREE.Scene();
+	scene_vertical_planes = new THREE.Scene();
+	
+	scene_building.background = new THREE.Color('black');
+	scene_points.background = new THREE.Color('black');
+	scene_horizontal_planes.background = new THREE.Color('black');
+	scene_vertical_planes.background = new THREE.Color('black');
+	
+	rtTexture_building = new THREE.WebGLRenderTarget( window.innerWidth, window.innerHeight, { minFilter: THREE.LinearFilter, magFilter: THREE.NearestFilter, format: THREE.RGBFormat } );
+	rtTexture_points = new THREE.WebGLRenderTarget( window.innerWidth, window.innerHeight, { minFilter: THREE.LinearFilter, magFilter: THREE.NearestFilter, format: THREE.RGBFormat } );
+	rtTexture_horizontal_planes = new THREE.WebGLRenderTarget( window.innerWidth, window.innerHeight, { minFilter: THREE.LinearFilter, magFilter: THREE.NearestFilter, format: THREE.RGBFormat } );
+	rtTexture_vertical_planes = new THREE.WebGLRenderTarget( window.innerWidth, window.innerHeight, { minFilter: THREE.LinearFilter, magFilter: THREE.NearestFilter, format: THREE.RGBFormat } );
+	
 	
     camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 10000 );
     controls = new OrbitControls( camera, renderer.domElement );
     camera.position.set( general_config.camera_x, general_config.camera_y, general_config.camera_z );
     controls.update();
+	
+	camera_screen = new THREE.OrthographicCamera( window.innerWidth / - 2, window.innerWidth / 2, window.innerHeight / 2, window.innerHeight / - 2, - 10000, 10000 );
+	camera_screen.position.z = 100;
 
-    var light = new THREE.PointLight( 0xffffff, 1, 0 );
-    var light2 = new THREE.PointLight( 0xffffff, 1, 0 );
-	var light3 = new THREE.PointLight( 0xffffff, 1, 0 );
-    var light4 = new THREE.PointLight( 0xffffff, 1, 0 );
-	scene.add( light );
-	scene.add( light2 );
-	scene.add( light3 );
-	scene.add( light4 );
+    var light_buildings_1 = new THREE.PointLight( 0xffffff, 1, 0 );
+    var light_buildings_2 = new THREE.PointLight( 0xffffff, 1, 0 );
+	var light_buildings_3 = new THREE.PointLight( 0xffffff, 1, 0 );
+    var light_buildings_4 = new THREE.PointLight( 0xffffff, 1, 0 );
+	
+	var light_vertical_planes_1 = new THREE.PointLight( 0xffffff, 1, 0 );
+    var light_vertical_planes_2 = new THREE.PointLight( 0xffffff, 1, 0 );
+	var light_vertical_planes_3 = new THREE.PointLight( 0xffffff, 1, 0 );
+    var light_vertical_planes_4 = new THREE.PointLight( 0xffffff, 1, 0 );
 	
 	
+	scene_building.add( light_buildings_1 );
+	scene_building.add( light_buildings_2 );
+	scene_building.add( light_buildings_3 );
+	scene_building.add( light_buildings_4 );
 	
+	scene_vertical_planes.add( light_vertical_planes_1 );
+	scene_vertical_planes.add( light_vertical_planes_2 );
+	scene_vertical_planes.add( light_vertical_planes_3 );
+	scene_vertical_planes.add( light_vertical_planes_4 );
 	
-	//var light5 = new THREE.PointLight( 0xffffff, 1, 0 );
-    //light5.position.set(-1000,1000,0);
-    //scene.add( light5 );
     
     var axesHelper = new THREE.AxesHelper( 100 );
-    scene.add( axesHelper );
+    scene_building.add( axesHelper );
     
     general_config.h_factor = 1;
     general_config.temp_array = [293.15,303.15];
@@ -373,8 +397,65 @@ export function init(){
     });
     
 
+	//create rendered planes
+	
+	material_building_rendered_plane = new THREE.ShaderMaterial( {
 
+					uniforms: { tDiffuse: { value: rtTexture_building.texture } },
+					vertexShader: document.getElementById( 'vertexShader_screen' ).textContent,
+					fragmentShader: document.getElementById( 'fragment_shader_screen' ).textContent,
+
+					depthWrite: false
+
+				} );
+				
+	material_points_rendered_plane = new THREE.ShaderMaterial( {
+
+					uniforms: { tDiffuse: { value: rtTexture_points.texture } },
+					vertexShader: document.getElementById( 'vertexShader_screen' ).textContent,
+					fragmentShader: document.getElementById( 'fragment_shader_screen' ).textContent,
+
+					depthWrite: false
+
+				} );
+				
+	material_horizontal_plane_rendered_plane = new THREE.ShaderMaterial( {
+
+					uniforms: { tDiffuse: { value: rtTexture_horizontal_planes.texture } },
+					vertexShader: document.getElementById( 'vertexShader_screen' ).textContent,
+					fragmentShader: document.getElementById( 'fragment_shader_screen' ).textContent,
+
+					depthWrite: false
+
+				} );
+				
+	material_vertical_plane_rendered_plane = new THREE.ShaderMaterial( {
+
+					uniforms: { tDiffuse: { value: rtTexture_vertical_planes.texture } },
+					vertexShader: document.getElementById( 'vertexShader_screen' ).textContent,
+					fragmentShader: document.getElementById( 'fragment_shader_screen' ).textContent,
+
+					depthWrite: false
+
+				} );
+				
+	var plane = new THREE.PlaneBufferGeometry( window.innerWidth, window.innerHeight );
+					
+	quad_building = new THREE.Mesh( plane, material_building_rendered_plane );
+	quad_building.position.z = - 100;
+	scene.add( quad_building );
+	//quad_points = new THREE.Mesh( plane, material_points_rendered_plane );
+	//quad_points.position.z = - 40;
+	//scene.add( quad_points );
+	//quad_horizontal_plane = new THREE.Mesh( plane, material_horizontal_plane_rendered_plane );
+	//quad_horizontal_plane.position.z = - 60;
+	//scene.add( quad_horizontal_plane );
+	//quad_vertical_plane = new THREE.Mesh( plane, material_vertical_plane_rendered_plane );
+	//quad_vertical_plane.position.z = - 60;
+	//scene.add( quad_vertical_plane );
     
     
 }
+
+
 
