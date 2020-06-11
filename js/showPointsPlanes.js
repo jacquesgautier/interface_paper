@@ -1,5 +1,5 @@
 import * as THREE from './three.module.js';
-import {general_config, scene } from './initialisation.js'
+import {general_config, scene_screen, scene_points } from './initialisation.js'
 import {create_temp_histogram, create_random_points_cloud, create_2D_plane_series, create_2D_points_cloud, create_regular_points_cloud, create_2D_vertical_plane_series } from './creative_functions.js'
 //fonctions appelées par les checkboxes
 
@@ -20,7 +20,7 @@ export function handleCreationPlane (id) {
     }
     if(general_config.grid_plane == null){
     } else {
-        scene.remove(general_config.grid_plane);
+        scene_screen.remove(general_config.grid_plane);
     }
     general_config.grid_plane = new THREE.Object3D();
     create_2D_plane_series(general_config.data_points_O_2,general_config.data_points_U_2,general_config.data_points_V_2,general_config.grid_plane,general_config.id_sbl_array_real_plane,general_config.id_meso_array_real_plane,general_config.temp_array,general_config.THAT,general_config.THAT_W,general_config.HCanopy,general_config.HCanopy_w);
@@ -61,7 +61,7 @@ function handleCreationRandomPoints(id) {
     }
     if(general_config.grid == null){
     } else {
-        scene.remove(general_config.grid);
+        scene_points.remove(general_config.grid);
     }
     general_config.grid = new THREE.Object3D();
     create_random_points_cloud(general_config.data_points_O_2,general_config.data_points_U_2,general_config.data_points_V_2,general_config.grid,general_config.id_sbl_array,general_config.id_meso_array,general_config.temp_array,general_config.THAT,general_config.THAT_W,general_config.HCanopy,general_config.HCanopy_w);
@@ -87,7 +87,7 @@ function handleCreation2DPoints(id) {
 
     if(general_config.grid == null){
     } else {
-        scene.remove(general_config.grid);
+        scene_points.remove(general_config.grid);
     }
     general_config.grid = new THREE.Object3D();
     create_2D_points_cloud(general_config.data_points_O_2,general_config.data_points_U_2,general_config.data_points_V_2,general_config.grid,general_config.id_sbl_array,general_config.id_meso_array,general_config.temp_array,general_config.THAT,general_config.THAT_W,general_config.HCanopy,general_config.HCanopy_w,general_config.number_of_points_real_plane);
@@ -135,7 +135,7 @@ export function handleCreationVerticalPlane(id) {
     }
     if(general_config.grid_vertical2D == null){
     } else {
-        scene.remove(general_config.grid_vertical2D);
+        scene_points.remove(general_config.grid_vertical2D);
     }
     general_config.grid_vertical2D = new THREE.Object3D();
 		

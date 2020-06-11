@@ -1,11 +1,11 @@
-import { general_config, scene, scene_building,camera } from './initialisation.js';
+import { general_config, scene_screen, scene_points, scene_horizontal_planes, scene_building,camera } from './initialisation.js';
 import { create_data_texture, recreate_scene, create_temp_histogram,create_buildings,set_light_position } from './creative_functions.js'
 import { numberInArray } from './color_function.js';
 
 
 export function chargerParams(event) {
-	scene.remove(general_config.grid);
-	scene.remove(general_config.grid_plane);
+	scene_points.remove(general_config.grid);
+	scene_horizontal_planes.remove(general_config.grid_plane);
 	let file = event.target.files[0]
 
 	let reader = new FileReader();
@@ -241,9 +241,9 @@ export function loadChosenDataSet() {
 		general_config.data_volume_3D = create_data_texture(general_config.data_points_O_2,general_config.data_points_U_2,general_config.data_points_V_2, general_config.data_ni, general_config.data_nj, 31 + 6,general_config.temp_min,general_config.temp_max);
 		set_light_position();
 	}, 1000);
-	
-	
-	
+
+
+
 	dataset = dataset.split("_simu")[0];
 	fetch("geojson/roads_" + dataset + ".geojson").then(r => r.json()).then(function( data ) {
 		general_config.data_road = data;
@@ -321,7 +321,7 @@ export function loadChosenData() {
 		});
 		$.getJSON( "./geojson/"+ data_build, function( data ) {
 			general_config.data_build = data;
-			create_buildings(general_config.data_build,scene,$("#type_bati").val());
+			create_buildings(general_config.data_build,scene_building,$("#type_bati").val());
 		});
 
 
@@ -334,7 +334,7 @@ export function loadChosenData() {
 		}
 
 		$( "#type_bati" ).on( "change", function() {
-			create_buildings(general_config.data_build,scene,$("#type_bati").val());
+			create_buildings(general_config.data_build,scene_building,$("#type_bati").val());
 		});
 
 
@@ -355,7 +355,7 @@ function closeChoiceContainer() {
 function load_Data(type_point, data_url, data_Meso_NH_to_load_list){
 
 	var data = d3.csv(data_url, function (d) {
-		
+
 		var temp_max = 0;
 		var temp_min = 0;
 		d.forEach(function (d,i) {
@@ -419,14 +419,14 @@ function load_Data(type_point, data_url, data_Meso_NH_to_load_list){
 				TEB_4_var = null,
 				TEB_5_var = null,
 				TEB_6_var = null;
-				
+
 				var TEBZ_1_var = null,
 				TEBZ_2_var = null,
 				TEBZ_3_var = null,
 				TEBZ_4_var = null,
 				TEBZ_5_var = null,
 				TEBZ_6_var = null;
-				
+
 				if(type_point == "O"){
 					tht_2_var = d.THT_2;
 					tht_3_var = d.THT_3;
@@ -471,7 +471,7 @@ function load_Data(type_point, data_url, data_Meso_NH_to_load_list){
 					TEBZ_4_var = d.TEBZ_4;
 					TEBZ_5_var = d.TEBZ_5;
 					TEBZ_6_var = d.TEBZ_6;
-					
+
 
 					temp_min = TEB_6_var;
 					temp_max = TEB_6_var;

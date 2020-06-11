@@ -7,7 +7,7 @@ import {chosenColor, numberInArray} from './color_function.js'
 
 
 
-export var renderer, scene, camera, controls, mesh, scene_building, scene_points, scene_horizontal_planes, scene_vertical_planes, rtTexture_building,rtTexture_points,rtTexture_horizontal_planes,rtTexture_vertical_planes,material_building_rendered_plane,material_points_rendered_plane,material_horizontal_plane_rendered_plane,material_vertical_plane_rendered_plane,quad_building,quad_points,quad_horizontal_plane,quad_vertical_plane,camera_screen;
+export var renderer, scene_screen, camera, controls, mesh, scene_building, scene_points, scene_horizontal_planes, scene_vertical_planes, rtTexture_building,rtTexture_points,rtTexture_horizontal_planes,rtTexture_vertical_planes,material_screen,material_points_rendered_plane,material_horizontal_plane_rendered_plane,material_vertical_plane_rendered_plane,quad_screen,camera_screen;
 
 export var general_config = {
     "data_points_O_2":null,
@@ -49,7 +49,7 @@ export var general_config = {
     "y_max":null,
     "is_animated":false,
     "animation_parameter":'temp',
-    "animation_speed_factor":0.01,	
+    "animation_speed_factor":0.01,
     "number_of_points_real_plane":10,
     "temp_min_factor":0,
     "temp_max_factor":1*2*Math.PI,
@@ -105,13 +105,13 @@ export var general_config = {
 	"buildings_transparency":1,
 	"points_transparency":1,
 	"active_color_control":"level"
-}	
+}
 
 export function init(){
-   
+
     sblValues();
     mesoValues();
-	//gestion des choix de couleurs  
+	//gestion des choix de couleurs
     var HCL_html = "<div id='active_HCL'></div>";
     let colorListAbsolute = "<div class='color_control_input_list'>"
     for(var i=0; i<general_config.HCL_color_scales.length; i++){
@@ -119,10 +119,10 @@ export function init(){
         for(let j = 0; j < general_config.HCL_color_scales[i].scale.length; ++j) {
             color_icons += `<div style="background-color:${general_config.HCL_color_scales[i].scale[j]}"></div>`;
         }
-        
+
         colorListAbsolute = `${colorListAbsolute}<div class='color infobulle' id='HCL_${i}' aria-label="${general_config.HCL_color_scales[i].name}">
          ${color_icons}</div>`;
-       
+
     }
     $("#color_control_input").html(`${HCL_html}`);
     $("#color_list_absolute").html(`${colorListAbsolute} </div>`)
@@ -136,13 +136,13 @@ export function init(){
     function colorList() {
         (color_list.style.display == "none") ? color_list.style.display="flex" : color_list.style.display ="none";
     }
-    
+
     let colors = document.querySelectorAll('.color');
     colors.forEach(color => {
         color.addEventListener('click', () => chosenColor(color))
     })
 
-    
+
 
     $("#active_HCL").on('click', colorList);
     $("#active_HCL").html(colors[0].innerHTML)
@@ -154,7 +154,7 @@ export function init(){
         recreate_scene();
     })
     // fin couleur
-	
+
 	$("#color_data_control_input").on('change', function() {
 		if($("#color_data_control_input").val() == "temp"){
 			 general_config.active_color_control = 1;
@@ -165,7 +165,7 @@ export function init(){
 		}
         recreate_scene();
     })
-    
+
     //faire apparaitre le tableau pour choisir son type de points dans 'graphic'
     function differentPoints() {
         let typeDePoints = [ "3D points", "Regular 2D points","Regular 3D points" ];
@@ -177,7 +177,7 @@ export function init(){
         value.style.fontWeight="normal"
 
         for (let i =0; i < 3; ++i){
-            
+
             let inputContainer = document.createElement('div');
             inputContainer.innerHTML = typeDePoints[i];
             inputContainer.className="input_container"
@@ -198,12 +198,12 @@ export function init(){
                 box.checked = false;
             })
             document.getElementById(box_id).checked = true;
-            
+
             if (box_id === "data_ckbx") {
                 general_config.type_points = 1;
                 if(general_config.grid == null){
                 } else {
-                    scene.remove(general_config.grid);
+                    scene_points.remove(general_config.grid);
                 }
                 general_config.grid = new THREE.Object3D();
                 create_random_points_cloud(general_config.data_points_O_2,general_config.data_points_U_2,general_config.data_points_V_2,general_config.grid,general_config.id_sbl_array,general_config.id_meso_array,general_config.temp_array,general_config.THAT,general_config.THAT_W,general_config.HCanopy,general_config.HCanopy_w);
@@ -211,7 +211,7 @@ export function init(){
                 general_config.type_points = 2;
                 if(general_config.grid == null){
                 } else {
-                    scene.remove(general_config.grid);
+                    scene_points.remove(general_config.grid);
                 }
                 general_config.grid = new THREE.Object3D();
                 create_2D_points_cloud(general_config.data_points_O_2,general_config.data_points_U_2,general_config.data_points_V_2,general_config.grid,general_config.id_sbl_array,general_config.id_meso_array,general_config.temp_array,general_config.THAT,general_config.THAT_W,general_config.HCanopy,general_config.HCanopy_w,general_config.number_of_points_real_plane);
@@ -220,15 +220,15 @@ export function init(){
                 general_config.type_points = 3;
                 if(general_config.grid == null){
                 } else {
-                    scene.remove(general_config.grid);
+                    scene_points.remove(general_config.grid);
                 }
                 general_config.grid = new THREE.Object3D();
                 create_regular_points_cloud(general_config.data_points_O_2,general_config.data_points_U_2,general_config.data_points_V_2,general_config.grid,general_config.id_sbl_array,general_config.id_meso_array,general_config.temp_array,general_config.THAT,general_config.THAT_W,general_config.HCanopy,general_config.HCanopy_w);
-            
+
             }
         }
     }
-    
+
     differentPoints();
     // mettre les valeurs de diff temps à 17 et 30
     $('#temp_min_input').val("20")
@@ -239,39 +239,34 @@ export function init(){
 
     // pour le choix du nombre de tableaux dans l'utilisation des couleurs (dans color_functions.js)
     numberInArray();
-    
+
 
     var canvas = document.createElement( 'canvas' );
     var context = canvas.getContext( 'webgl2', { alpha: false, antialias: false } );
         renderer = new THREE.WebGLRenderer( { canvas: canvas, context: context } );
-    
+
     renderer.setSize( window.innerWidth, window.innerHeight );
     document.getElementById('container').appendChild(renderer.domElement);
-    
-    scene = new THREE.Scene();
-	scene.background = new THREE.Color('black');
-	
-	scene_building = new THREE.Scene(); 
-	scene_points = new THREE.Scene(); 
+
+  scene_screen = new THREE.Scene();
+
+	scene_building = new THREE.Scene();
+	scene_points = new THREE.Scene();
 	scene_horizontal_planes = new THREE.Scene();
 	scene_vertical_planes = new THREE.Scene();
-	
-	scene_building.background = new THREE.Color('black');
-	scene_points.background = new THREE.Color('black');
-	scene_horizontal_planes.background = new THREE.Color('black');
-	scene_vertical_planes.background = new THREE.Color('black');
-	
-	rtTexture_building = new THREE.WebGLRenderTarget( window.innerWidth, window.innerHeight, { minFilter: THREE.LinearFilter, magFilter: THREE.NearestFilter, format: THREE.RGBFormat } );
-	rtTexture_points = new THREE.WebGLRenderTarget( window.innerWidth, window.innerHeight, { minFilter: THREE.LinearFilter, magFilter: THREE.NearestFilter, format: THREE.RGBFormat } );
-	rtTexture_horizontal_planes = new THREE.WebGLRenderTarget( window.innerWidth, window.innerHeight, { minFilter: THREE.LinearFilter, magFilter: THREE.NearestFilter, format: THREE.RGBFormat } );
-	rtTexture_vertical_planes = new THREE.WebGLRenderTarget( window.innerWidth, window.innerHeight, { minFilter: THREE.LinearFilter, magFilter: THREE.NearestFilter, format: THREE.RGBFormat } );
-	
-	
+
+
+	rtTexture_building = new THREE.WebGLRenderTarget( window.innerWidth, window.innerHeight, { minFilter: THREE.LinearFilter, magFilter: THREE.NearestFilter, format: THREE.RGBAFormat, type: THREE.FloatType } );
+	rtTexture_points = new THREE.WebGLRenderTarget( window.innerWidth, window.innerHeight, { minFilter: THREE.LinearFilter, magFilter: THREE.NearestFilter, format: THREE.RGBAFormat, type: THREE.FloatType } );
+	rtTexture_vertical_planes = new THREE.WebGLRenderTarget( window.innerWidth, window.innerHeight, { minFilter: THREE.LinearFilter, magFilter: THREE.NearestFilter, format: THREE.RGBAFormat, type: THREE.FloatType } );
+	rtTexture_horizontal_planes = new THREE.WebGLRenderTarget( window.innerWidth, window.innerHeight, { minFilter: THREE.LinearFilter, magFilter: THREE.NearestFilter, format: THREE.RGBAFormat, type: THREE.FloatType } );
+
+
     camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 10000 );
     controls = new OrbitControls( camera, renderer.domElement );
     camera.position.set( general_config.camera_x, general_config.camera_y, general_config.camera_z );
     controls.update();
-	
+
 	camera_screen = new THREE.OrthographicCamera( window.innerWidth / - 2, window.innerWidth / 2, window.innerHeight / 2, window.innerHeight / - 2, - 10000, 10000 );
 	camera_screen.position.z = 100;
 
@@ -279,27 +274,27 @@ export function init(){
     var light_buildings_2 = new THREE.PointLight( 0xffffff, 1, 0 );
 	var light_buildings_3 = new THREE.PointLight( 0xffffff, 1, 0 );
     var light_buildings_4 = new THREE.PointLight( 0xffffff, 1, 0 );
-	
+
 	var light_vertical_planes_1 = new THREE.PointLight( 0xffffff, 1, 0 );
     var light_vertical_planes_2 = new THREE.PointLight( 0xffffff, 1, 0 );
 	var light_vertical_planes_3 = new THREE.PointLight( 0xffffff, 1, 0 );
     var light_vertical_planes_4 = new THREE.PointLight( 0xffffff, 1, 0 );
-	
-	
+
+
 	scene_building.add( light_buildings_1 );
 	scene_building.add( light_buildings_2 );
 	scene_building.add( light_buildings_3 );
 	scene_building.add( light_buildings_4 );
-	
+
 	scene_vertical_planes.add( light_vertical_planes_1 );
 	scene_vertical_planes.add( light_vertical_planes_2 );
 	scene_vertical_planes.add( light_vertical_planes_3 );
 	scene_vertical_planes.add( light_vertical_planes_4 );
-	
-    
+
+
     var axesHelper = new THREE.AxesHelper( 100 );
     scene_building.add( axesHelper );
-    
+
     general_config.h_factor = 1;
     general_config.temp_array = [293.15,303.15];
 
@@ -335,7 +330,7 @@ export function init(){
             create_temp_histogram();
         }
     });
-    
+
     $("#size_text_input").on( "keyup", function(e) {
         if (e.keyCode == 13) {
             $( "#size_slider" ).slider('value', this.value*150);
@@ -343,7 +338,7 @@ export function init(){
             recreate_scene();
         }
     });
-        
+
     $("#density_text_input").on( "keyup", function(e) {
         if (e.keyCode == 13) {
             $( "#density_slider" ).slider('value',this.value*10000);
@@ -351,7 +346,7 @@ export function init(){
            recreate_scene()
         }
     });
-    
+
 
    $("#animation_ckbx").on( "click", function() {
     if($("#animation_ckbx")[0].checked == true){
@@ -393,69 +388,35 @@ export function init(){
         general_config.animation_parameter = 'Z';
         let material = activate_animation();
         activate_animation_second_part(material)
-            
+
     });
-    
+
 
 	//create rendered planes
-	
-	material_building_rendered_plane = new THREE.ShaderMaterial( {
 
-					uniforms: { tDiffuse: { value: rtTexture_building.texture } },
+	material_screen = new THREE.ShaderMaterial( {
+
+					uniforms: {
+						texture_points: { value: rtTexture_points.texture },
+						texture_buildings: { value: rtTexture_building.texture },
+						texture_horizontal_planes: { value: rtTexture_horizontal_planes.texture },
+						texture_vertical_planes: { value: rtTexture_vertical_planes.texture },
+						opacity_buildings: {type: "f", value: 1},//general_config.buildings_transparency },
+						opacity_horizontal_planes: {type: "f", value: 1 },
+						opacity_vertical_planes: {type: "f", value: 1 },
+						opacity_points: {type: "f", value: 1},//general_config.points_transparency }
+					},
 					vertexShader: document.getElementById( 'vertexShader_screen' ).textContent,
 					fragmentShader: document.getElementById( 'fragment_shader_screen' ).textContent,
 
 					depthWrite: false
 
 				} );
-				
-	material_points_rendered_plane = new THREE.ShaderMaterial( {
 
-					uniforms: { tDiffuse: { value: rtTexture_points.texture } },
-					vertexShader: document.getElementById( 'vertexShader_screen' ).textContent,
-					fragmentShader: document.getElementById( 'fragment_shader_screen' ).textContent,
-
-					depthWrite: false
-
-				} );
-				
-	material_horizontal_plane_rendered_plane = new THREE.ShaderMaterial( {
-
-					uniforms: { tDiffuse: { value: rtTexture_horizontal_planes.texture } },
-					vertexShader: document.getElementById( 'vertexShader_screen' ).textContent,
-					fragmentShader: document.getElementById( 'fragment_shader_screen' ).textContent,
-
-					depthWrite: false
-
-				} );
-				
-	material_vertical_plane_rendered_plane = new THREE.ShaderMaterial( {
-
-					uniforms: { tDiffuse: { value: rtTexture_vertical_planes.texture } },
-					vertexShader: document.getElementById( 'vertexShader_screen' ).textContent,
-					fragmentShader: document.getElementById( 'fragment_shader_screen' ).textContent,
-
-					depthWrite: false
-
-				} );
-				
 	var plane = new THREE.PlaneBufferGeometry( window.innerWidth, window.innerHeight );
-					
-	quad_building = new THREE.Mesh( plane, material_building_rendered_plane );
-	quad_building.position.z = - 100;
-	scene.add( quad_building );
-	//quad_points = new THREE.Mesh( plane, material_points_rendered_plane );
-	//quad_points.position.z = - 40;
-	//scene.add( quad_points );
-	//quad_horizontal_plane = new THREE.Mesh( plane, material_horizontal_plane_rendered_plane );
-	//quad_horizontal_plane.position.z = - 60;
-	//scene.add( quad_horizontal_plane );
-	//quad_vertical_plane = new THREE.Mesh( plane, material_vertical_plane_rendered_plane );
-	//quad_vertical_plane.position.z = - 60;
-	//scene.add( quad_vertical_plane );
-    
-    
+
+	quad_screen = new THREE.Mesh( plane, material_screen );
+	quad_screen.position.z = - 100;
+	scene_screen.background = new THREE.Color('black');
+	scene_screen.add( quad_screen );
 }
-
-
-

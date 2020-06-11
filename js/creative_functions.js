@@ -1,42 +1,42 @@
-import {general_config, renderer, scene, scene_building, scene_points, scene_horizontal_planes, scene_vertical_planes, rtTexture_building,rtTexture_points,rtTexture_horizontal_planes,rtTexture_vertical_planes, camera, controls, mesh,camera_screen} from './initialisation.js'
+import {general_config, renderer, scene_screen, material_screen, scene_building, scene_points, scene_horizontal_planes, scene_vertical_planes, rtTexture_building,rtTexture_points,rtTexture_horizontal_planes,rtTexture_vertical_planes, camera, controls, mesh,camera_screen} from './initialisation.js'
 import * as THREE from './three.module.js';
 
 
 export function activate_animation() {
     var material;
-		
+
 	var texture = new THREE.DataTexture3D( general_config.data_volume_3D.data_temp, general_config.data_volume_3D.x_length, general_config.data_volume_3D.y_length, general_config.data_volume_3D.z_length );
 	texture.format = THREE.RedFormat;
 	texture.type = THREE.FloatType;
 	texture.unpackAlignment = 1;
-	
+
 	var texture_limit_teb = new THREE.DataTexture3D( general_config.data_volume_3D.limit_teb, general_config.data_volume_3D.x_length, general_config.data_volume_3D.y_length, 7.0 );
 	texture_limit_teb.format = THREE.RedFormat;
 	texture_limit_teb.type = THREE.FloatType;
 	texture_limit_teb.unpackAlignment = 1;
-		
+
 	var texture_limit_meso = new THREE.DataTexture3D( general_config.data_volume_3D.limit_meso, general_config.data_volume_3D.x_length, general_config.data_volume_3D.y_length, 33.0 );
 	texture_limit_meso.format = THREE.RedFormat;
 	texture_limit_meso.type = THREE.FloatType;
 	texture_limit_meso.unpackAlignment = 1;
-	
+
 	var texture_zs = new THREE.DataTexture( general_config.data_volume_3D.data_zs, general_config.data_volume_3D.x_length, general_config.data_volume_3D.y_length);
 	texture_zs.format = THREE.RedFormat;
 	texture_zs.type = THREE.FloatType;
 	texture_zs.unpackAlignment = 1;
-	
+
 	// Colormap textures
 	var cmtextures = {
 		blue_red_2: new THREE.TextureLoader().load( 'color/blue_red_2.png', render ),
 			rainbow: new THREE.TextureLoader().load( 'color/rainbow.png', render ),
 			orange_red: new THREE.TextureLoader().load( 'color/orange_red.png', render )
 	};
-	
+
 	var pointTexture = new THREE.TextureLoader().load( './images/disc.png', render )
-	
-	var limit_meso_array = [1.0,2.0,4.0,6.0,9.0,13.0,47.0,60.0,132.0,218.4,322.1,446.5,595.8,775.0,989.9,1247.9,1557.5,1929.0,2374.8,2909.8,3551.8,4251.8,4951.8,5651.8,6351.8,7051.8,7751.8,8451.8,9151.8,9851.8,10551.8,11251.8,11951.8,12651.8,13351.8,14051.8,14751.8,15451.8];	
-	
-	
+
+	var limit_meso_array = [1.0,2.0,4.0,6.0,9.0,13.0,47.0,60.0,132.0,218.4,322.1,446.5,595.8,775.0,989.9,1247.9,1557.5,1929.0,2374.8,2909.8,3551.8,4251.8,4951.8,5651.8,6351.8,7051.8,7751.8,8451.8,9151.8,9851.8,10551.8,11251.8,11951.8,12651.8,13351.8,14051.8,14751.8,15451.8];
+
+
     let uniforms= {
 		u_data: { value: texture },
         zs_data: { value: texture_zs},
@@ -71,13 +71,13 @@ export function activate_animation() {
 		temp_factor_max: { type: "f", value: general_config.temp_max_factor },
 		active_color_control: {value: general_config.active_color_control}
     };
-	
+
     if(general_config.is_animated == false){
         material = new THREE.ShaderMaterial( {
             uniforms,
             vertexShader: document.getElementById( 'vertexshader_fix_3D_points' ).textContent,
             fragmentShader: document.getElementById( 'fragmentshader_3D_points' ).textContent,
-            transparent: true
+            //transparent: true
         } );
     } else if (general_config.is_animated == true){
         if(general_config.animation_parameter == 'temp'){
@@ -85,40 +85,40 @@ export function activate_animation() {
                 uniforms,
                 vertexShader: document.getElementById( 'vertexshader_fix_3D_anim_temp' ).textContent,
                 fragmentShader: document.getElementById( 'fragmentshader_3D_points' ).textContent,
-                transparent: true
+                //transparent: true
             } );
-            
+
         } else if(general_config.animation_parameter == 'Z'){
             material = new THREE.ShaderMaterial( {
                 uniforms,
                 vertexShader: document.getElementById( 'vertexshader_fix_3D_anim_z' ).textContent,
                 fragmentShader: document.getElementById( 'fragmentshader_3D_points' ).textContent,
-                transparent: true
+                //transparent: true
             } );
-            
+
         }
          else if(general_config.animation_parameter == 'X'){
             material = new THREE.ShaderMaterial( {
                 uniforms,
                 vertexShader: document.getElementById( 'vertexshader_fix_3D_anim_x' ).textContent,
                 fragmentShader: document.getElementById( 'fragmentshader_3D_points' ).textContent,
-                transparent: true
+                //transparent: true
             } );
-        
-            
+
+
         } else if(general_config.animation_parameter == 'Y'){
             material = new THREE.ShaderMaterial( {
                 uniforms,
                 vertexShader: document.getElementById( 'vertexshader_fix_3D_anim_y' ).textContent,
                 fragmentShader: document.getElementById( 'fragmentshader_3D_points' ).textContent,
-                transparent: true
+                //transparent: true
             } );
-        
+
         }
     }
-    
+
     return material;
-   
+
 }
 export function activate_animation_second_part(material) {
     if(general_config.grid != null){
@@ -128,7 +128,7 @@ export function activate_animation_second_part(material) {
         general_config.grid_plane.children[0].material = material;
     }
     recreate_scene();
-    
+
 }
 
 export function recreate_scene() {
@@ -140,30 +140,30 @@ export function recreate_scene() {
     }
     general_config.grid_plane = new THREE.Object3D();
     create_2D_plane_series(general_config.data_points_O_2,general_config.data_points_U_2,general_config.data_points_V_2,general_config.grid_plane,general_config.id_sbl_array_real_plane,general_config.id_meso_array_real_plane,general_config.temp_array,general_config.THAT,general_config.THAT_W,general_config.HCanopy,general_config.HCanopy_w);
-	
+
 	if(general_config.grid_vertical2D == null){
 	} else {
-		scene.remove(general_config.grid_vertical2D);
+		scene_vertical_planes.remove(general_config.grid_vertical2D);
 	}
 	general_config.grid_vertical2D = new THREE.Object3D();
-		
+
 	create_2D_vertical_plane_series(general_config.data_road, general_config.grid_vertical2D, general_config.id_sbl_array_vertical_plane,general_config.id_meso_array_vertical_plane,general_config.temp_array,general_config.THAT,general_config.THAT_W,general_config.HCanopy,general_config.HCanopy_w);
 	create_temp_histogram();
 
 	datackbx.forEach(box => {
-		
+
 		if(box.checked == true) {
 			if (box.id === "data_ckbx") {
 				if(general_config.grid == null){
 				} else {
-					scene.remove(general_config.grid);
+					scene_points.remove(general_config.grid);
 				}
 				general_config.grid = new THREE.Object3D();
 				create_random_points_cloud(general_config.data_points_O_2,general_config.data_points_U_2,general_config.data_points_V_2,general_config.grid,general_config.id_sbl_array,general_config.id_meso_array,general_config.temp_array,general_config.THAT,general_config.THAT_W,general_config.HCanopy,general_config.HCanopy_w);
 			} else if (box.id === "data_ckbx_real_plane_points") {
 				if(general_config.grid == null){
 				} else {
-					scene.remove(general_config.grid);
+					scene_points.remove(general_config.grid);
 				}
 				general_config.grid = new THREE.Object3D();
 				create_2D_points_cloud(general_config.data_points_O_2,general_config.data_points_U_2,general_config.data_points_V_2,general_config.grid,general_config.id_sbl_array,general_config.id_meso_array,general_config.temp_array,general_config.THAT,general_config.THAT_W,general_config.HCanopy,general_config.HCanopy_w,general_config.number_of_points_real_plane);
@@ -171,7 +171,7 @@ export function recreate_scene() {
 			} else {
 				if(general_config.grid == null){
 				} else {
-					scene.remove(general_config.grid);
+					scene_points.remove(general_config.grid);
 				}
 				general_config.grid = new THREE.Object3D();
 				create_regular_points_cloud(general_config.data_points_O_2,general_config.data_points_U_2,general_config.data_points_V_2,general_config.grid,general_config.id_sbl_array,general_config.id_meso_array,general_config.temp_array,general_config.THAT,general_config.THAT_W,general_config.HCanopy,general_config.HCanopy_w);
@@ -181,7 +181,7 @@ export function recreate_scene() {
 }
 
 export function create_2D_vertical_plane_series(road_summit_data, grid,id_sbl_array,id_meso_array,temp_array,THAT,THAT_W,HCanopy,HCanopy_w){
-	
+
 	var sbl_meso_level = [];
 
 	if(id_sbl_array.indexOf(1) != -1){sbl_meso_level.push(true);}else{sbl_meso_level.push(false);};
@@ -189,8 +189,8 @@ export function create_2D_vertical_plane_series(road_summit_data, grid,id_sbl_ar
 	if(id_sbl_array.indexOf(3) != -1){sbl_meso_level.push(true);}else{sbl_meso_level.push(false);};
 	if(id_sbl_array.indexOf(4) != -1){sbl_meso_level.push(true);}else{sbl_meso_level.push(false);};
 	if(id_sbl_array.indexOf(5) != -1){sbl_meso_level.push(true);}else{sbl_meso_level.push(false);};
-	if(id_sbl_array.indexOf(6) != -1){sbl_meso_level.push(true);}else{sbl_meso_level.push(false);};	
-	 
+	if(id_sbl_array.indexOf(6) != -1){sbl_meso_level.push(true);}else{sbl_meso_level.push(false);};
+
 	if(id_meso_array.indexOf(2) != -1){sbl_meso_level.push(true);}else{sbl_meso_level.push(false);};
 	if(id_meso_array.indexOf(3) != -1){sbl_meso_level.push(true);}else{sbl_meso_level.push(false);};
 	if(id_meso_array.indexOf(4) != -1){sbl_meso_level.push(true);}else{sbl_meso_level.push(false);};
@@ -224,48 +224,48 @@ export function create_2D_vertical_plane_series(road_summit_data, grid,id_sbl_ar
 	if(id_meso_array.indexOf(32) != -1){sbl_meso_level.push(true);}else{sbl_meso_level.push(false);};
 
 	if(id_sbl_array.length>0){
-		
+
 		var features_points_array = [];
 		var features_normal_array = [];
 
-		
+
 		var h_min = general_config.data_volume_3D.z_min_teb;
 		var h_max = general_config.data_volume_3D.z_max_teb;
-		
+
 		console.log(h_min,h_max);
-						
+
 		for(var a =0; a< road_summit_data.features.length - 1; a++){
 			var feature_1 = road_summit_data.features[a];
 			var feature_2 = road_summit_data.features[a+1];
-			
+
 			if(feature_2.properties.id_road != feature_1.properties.id_road){
 				continue;
-			} else {							
+			} else {
 				features_points_array.push((feature_1.geometry.coordinates[0]-general_config.Coord_X_paris)*general_config.cst_X);features_points_array.push((h_max)*general_config.cst_Z);features_points_array.push(-(feature_1.geometry.coordinates[1]-general_config.Coord_Y_paris)*general_config.cst_Y);
 				features_points_array.push((feature_1.geometry.coordinates[0]-general_config.Coord_X_paris)*general_config.cst_X);features_points_array.push((h_min)*general_config.cst_Z);features_points_array.push(-(feature_1.geometry.coordinates[1]-general_config.Coord_Y_paris)*general_config.cst_Y);
 				features_points_array.push((feature_2.geometry.coordinates[0]-general_config.Coord_X_paris)*general_config.cst_X);features_points_array.push((h_max)*general_config.cst_Z);features_points_array.push(-(feature_2.geometry.coordinates[1]-general_config.Coord_Y_paris)*general_config.cst_Y);
-				
+
 				features_points_array.push((feature_1.geometry.coordinates[0]-general_config.Coord_X_paris)*general_config.cst_X);features_points_array.push((h_min)*general_config.cst_Z);features_points_array.push(-(feature_1.geometry.coordinates[1]-general_config.Coord_Y_paris)*general_config.cst_Y);
 				features_points_array.push((feature_2.geometry.coordinates[0]-general_config.Coord_X_paris)*general_config.cst_X);features_points_array.push((h_min)*general_config.cst_Z);features_points_array.push(-(feature_2.geometry.coordinates[1]-general_config.Coord_Y_paris)*general_config.cst_Y);
 				features_points_array.push((feature_2.geometry.coordinates[0]-general_config.Coord_X_paris)*general_config.cst_X);features_points_array.push((h_max)*general_config.cst_Z);features_points_array.push(-(feature_2.geometry.coordinates[1]-general_config.Coord_Y_paris)*general_config.cst_Y);
-				
+
 				var N_X = - ((h_min)*general_config.cst_Z-(h_max)*general_config.cst_Z)*((feature_2.geometry.coordinates[1]-general_config.Coord_Y_paris)*general_config.cst_Y-(feature_1.geometry.coordinates[1]-general_config.Coord_Y_paris)*general_config.cst_Y);
 				var N_Y = ((h_min)*general_config.cst_Z-(h_max)*general_config.cst_Z)*((feature_2.geometry.coordinates[0]-general_config.Coord_X_paris)*general_config.cst_X-(feature_1.geometry.coordinates[0]-general_config.Coord_X_paris)*general_config.cst_X);
-				
+
 				var normal_vector = new THREE.Vector2( N_X, N_Y );
 				normal_vector.normalize();
-				
+
 				features_normal_array.push(normal_vector.x);features_normal_array.push(0);features_normal_array.push(normal_vector.y);
 				features_normal_array.push(normal_vector.x);features_normal_array.push(0);features_normal_array.push(normal_vector.y);
 				features_normal_array.push(normal_vector.x);features_normal_array.push(0);features_normal_array.push(normal_vector.y);
 				features_normal_array.push(normal_vector.x);features_normal_array.push(0);features_normal_array.push(normal_vector.y);
 				features_normal_array.push(normal_vector.x);features_normal_array.push(0);features_normal_array.push(normal_vector.y);
 				features_normal_array.push(normal_vector.x);features_normal_array.push(0);features_normal_array.push(normal_vector.y);
-				
-				
+
+
 			}
 		}
-				
+
 		var feature_coord_array_32 = new Float32Array(features_points_array);
 		var feature_normal_32 = new Float32Array(features_normal_array);
 
@@ -273,7 +273,7 @@ export function create_2D_vertical_plane_series(road_summit_data, grid,id_sbl_ar
 
 		feature_bufferGeometry.setAttribute( 'position', new THREE.BufferAttribute( feature_coord_array_32, 3 ) );
 		feature_bufferGeometry.setAttribute( 'customNormal', new THREE.BufferAttribute( feature_normal_32, 3 ) );
-								
+
 		var texture = new THREE.DataTexture3D( general_config.data_volume_3D.data_temp, general_config.data_volume_3D.x_length, general_config.data_volume_3D.y_length, general_config.data_volume_3D.z_length );
 		texture.format = THREE.RedFormat;
 		texture.type = THREE.FloatType;
@@ -283,12 +283,12 @@ export function create_2D_vertical_plane_series(road_summit_data, grid,id_sbl_ar
 		texture_zs.format = THREE.RedFormat;
 		texture_zs.type = THREE.FloatType;
 		texture_zs.unpackAlignment = 1;
-		
+
 		var texture_limit_teb = new THREE.DataTexture3D( general_config.data_volume_3D.limit_teb, general_config.data_volume_3D.x_length, general_config.data_volume_3D.y_length, 7.0 );
 		texture_limit_teb.format = THREE.RedFormat;
 		texture_limit_teb.type = THREE.FloatType;
 		texture_limit_teb.unpackAlignment = 1;
-			
+
 		var texture_limit_meso = new THREE.DataTexture3D( general_config.data_volume_3D.limit_meso, general_config.data_volume_3D.x_length, general_config.data_volume_3D.y_length, 33.0 );
 		texture_limit_meso.format = THREE.RedFormat;
 		texture_limit_meso.type = THREE.FloatType;
@@ -301,23 +301,23 @@ export function create_2D_vertical_plane_series(road_summit_data, grid,id_sbl_ar
 			orange_red: new THREE.TextureLoader().load( 'color/orange_red.png', render )
 		};
 
-		var limit_meso_array = [1.0,2.0,4.0,6.0,9.0,13.0,47.0,60.0,132.0,218.4,322.1,446.5,595.8,775.0,989.9,1247.9,1557.5,1929.0,2374.8,2909.8,3551.8,4251.8,4951.8,5651.8,6351.8,7051.8,7751.8,8451.8,9151.8,9851.8,10551.8,11251.8,11951.8,12651.8,13351.8,14051.8,14751.8,15451.8];	
-		
-		
-		
+		var limit_meso_array = [1.0,2.0,4.0,6.0,9.0,13.0,47.0,60.0,132.0,218.4,322.1,446.5,595.8,775.0,989.9,1247.9,1557.5,1929.0,2374.8,2909.8,3551.8,4251.8,4951.8,5651.8,6351.8,7051.8,7751.8,8451.8,9151.8,9851.8,10551.8,11251.8,11951.8,12651.8,13351.8,14051.8,14751.8,15451.8];
+
+
+
 		var road_material = new THREE.ShaderMaterial( {
 			side: THREE.DoubleSide,
 			uniforms: {
-				light_position_1: { value: scene.children[0].position },
-				light_color_1: { value: scene.children[0].color },
-				light_position_2: { value: scene.children[1].position },
-				light_color_2: { value: scene.children[1].color },
-				light_position_3: { value: scene.children[2].position },
-				light_color_3: { value: scene.children[2].color },
-				light_position_4: { value: scene.children[3].position },
-				light_color_4: { value: scene.children[3].color },
-				//light_position_5: { value: scene.children[4].position },
-				//light_color_5: { value: scene.children[4].color },
+				light_position_1: { value: scene_vertical_planes.children[0].position },
+				light_color_1: { value: scene_vertical_planes.children[0].color },
+				light_position_2: { value: scene_vertical_planes.children[1].position },
+				light_color_2: { value: scene_vertical_planes.children[1].color },
+				light_position_3: { value: scene_vertical_planes.children[2].position },
+				light_color_3: { value: scene_vertical_planes.children[2].color },
+				light_position_4: { value: scene_vertical_planes.children[3].position },
+				light_color_4: { value: scene_vertical_planes.children[3].color },
+				//light_position_5: { value: scene_vertical_planes.children[4].position },
+				//light_color_5: { value: scene_vertical_planes.children[4].color },
 				u_data: { value: texture },
 				zs_data: { value: texture_zs},
 				meso_limit: {value: texture_limit_meso},
@@ -336,58 +336,58 @@ export function create_2D_vertical_plane_series(road_summit_data, grid,id_sbl_ar
 				cst_Y: {value: general_config.cst_Y},
 				cst_Z: {value: general_config.cst_Z},
 				active_color_control: {value: general_config.active_color_control},
-				transparent: true
+				//transparent: true
 			},
 			vertexShader: document.getElementById( 'vertexshader_3D_plane' ).textContent,
 			fragmentShader: document.getElementById( 'fragmentshader_3D_plane' ).textContent
 			} );
-				
+
 		var feature_mesh = new THREE.Mesh( feature_bufferGeometry, road_material);
-				
+
 		grid.add(feature_mesh);
-		scene.add(grid);
+		scene_vertical_planes.add(grid);
 	}
 
 	if(id_meso_array.length>0){
-		
+
 		var features_points_array = [];
 		var features_normal_array = [];
-		
+
 		var h_min = general_config.data_volume_3D.z_min_meso;
 		var h_max = general_config.data_volume_3D.z_max_meso;
-			
+
 		for(var a =0; a< road_summit_data.features.length - 1; a++){
 			var feature_1 = road_summit_data.features[a];
 			var feature_2 = road_summit_data.features[a+1];
-			
+
 			if(feature_2.properties.id_road != feature_1.properties.id_road){
 				continue;
-			} else {							
+			} else {
 				features_points_array.push((feature_1.geometry.coordinates[0]-general_config.Coord_X_paris)*general_config.cst_X);features_points_array.push((h_max)*general_config.cst_Z);features_points_array.push(-(feature_1.geometry.coordinates[1]-general_config.Coord_Y_paris)*general_config.cst_Y);
 				features_points_array.push((feature_1.geometry.coordinates[0]-general_config.Coord_X_paris)*general_config.cst_X);features_points_array.push((h_min)*general_config.cst_Z);features_points_array.push(-(feature_1.geometry.coordinates[1]-general_config.Coord_Y_paris)*general_config.cst_Y);
 				features_points_array.push((feature_2.geometry.coordinates[0]-general_config.Coord_X_paris)*general_config.cst_X);features_points_array.push((h_max)*general_config.cst_Z);features_points_array.push(-(feature_2.geometry.coordinates[1]-general_config.Coord_Y_paris)*general_config.cst_Y);
-				
+
 				features_points_array.push((feature_1.geometry.coordinates[0]-general_config.Coord_X_paris)*general_config.cst_X);features_points_array.push((h_min)*general_config.cst_Z);features_points_array.push(-(feature_1.geometry.coordinates[1]-general_config.Coord_Y_paris)*general_config.cst_Y);
 				features_points_array.push((feature_2.geometry.coordinates[0]-general_config.Coord_X_paris)*general_config.cst_X);features_points_array.push((h_min)*general_config.cst_Z);features_points_array.push(-(feature_2.geometry.coordinates[1]-general_config.Coord_Y_paris)*general_config.cst_Y);
 				features_points_array.push((feature_2.geometry.coordinates[0]-general_config.Coord_X_paris)*general_config.cst_X);features_points_array.push((h_max)*general_config.cst_Z);features_points_array.push(-(feature_2.geometry.coordinates[1]-general_config.Coord_Y_paris)*general_config.cst_Y);
-				
+
 				var N_X = - ((h_min)*general_config.cst_Z-(h_max)*general_config.cst_Z)*((feature_2.geometry.coordinates[1]-general_config.Coord_Y_paris)*general_config.cst_Y-(feature_1.geometry.coordinates[1]-general_config.Coord_Y_paris)*general_config.cst_Y);
 				var N_Y = ((h_min)*general_config.cst_Z-(h_max)*general_config.cst_Z)*((feature_2.geometry.coordinates[0]-general_config.Coord_X_paris)*general_config.cst_X-(feature_1.geometry.coordinates[0]-general_config.Coord_X_paris)*general_config.cst_X);
-				
+
 				var normal_vector = new THREE.Vector2( N_X, N_Y );
 				normal_vector.normalize();
-				
+
 				features_normal_array.push(normal_vector.x);features_normal_array.push(0);features_normal_array.push(normal_vector.y);
 				features_normal_array.push(normal_vector.x);features_normal_array.push(0);features_normal_array.push(normal_vector.y);
 				features_normal_array.push(normal_vector.x);features_normal_array.push(0);features_normal_array.push(normal_vector.y);
 				features_normal_array.push(normal_vector.x);features_normal_array.push(0);features_normal_array.push(normal_vector.y);
 				features_normal_array.push(normal_vector.x);features_normal_array.push(0);features_normal_array.push(normal_vector.y);
 				features_normal_array.push(normal_vector.x);features_normal_array.push(0);features_normal_array.push(normal_vector.y);
-				
-				
+
+
 			}
 		}
-				
+
 		var feature_coord_array_32 = new Float32Array(features_points_array);
 		var feature_normal_32 = new Float32Array(features_normal_array);
 
@@ -395,23 +395,23 @@ export function create_2D_vertical_plane_series(road_summit_data, grid,id_sbl_ar
 
 		feature_bufferGeometry.setAttribute( 'position', new THREE.BufferAttribute( feature_coord_array_32, 3 ) );
 		feature_bufferGeometry.setAttribute( 'customNormal', new THREE.BufferAttribute( feature_normal_32, 3 ) );
-								
+
 		var texture = new THREE.DataTexture3D( general_config.data_volume_3D.data_temp, general_config.data_volume_3D.x_length, general_config.data_volume_3D.y_length, general_config.data_volume_3D.z_length );
 		texture.format = THREE.RedFormat;
 		texture.type = THREE.FloatType;
 		texture.unpackAlignment = 1;
-		
+
 
 		var texture_zs = new THREE.DataTexture( general_config.data_volume_3D.data_zs, general_config.data_volume_3D.x_length, general_config.data_volume_3D.y_length);
 		texture_zs.format = THREE.RedFormat;
 		texture_zs.type = THREE.FloatType;
 		texture_zs.unpackAlignment = 1;
-		
+
 		var texture_limit_teb = new THREE.DataTexture3D( general_config.data_volume_3D.limit_teb, general_config.data_volume_3D.x_length, general_config.data_volume_3D.y_length, 7.0 );
 		texture_limit_teb.format = THREE.RedFormat;
 		texture_limit_teb.type = THREE.FloatType;
 		texture_limit_teb.unpackAlignment = 1;
-			
+
 		var texture_limit_meso = new THREE.DataTexture3D( general_config.data_volume_3D.limit_meso, general_config.data_volume_3D.x_length, general_config.data_volume_3D.y_length, 33.0 );
 		texture_limit_meso.format = THREE.RedFormat;
 		texture_limit_meso.type = THREE.FloatType;
@@ -424,24 +424,24 @@ export function create_2D_vertical_plane_series(road_summit_data, grid,id_sbl_ar
 			orange_red: new THREE.TextureLoader().load( 'color/orange_red.png', render )
 		};
 
-		var limit_meso_array = [1.0,2.0,4.0,6.0,9.0,13.0,47.0,60.0,132.0,218.4,322.1,446.5,595.8,775.0,989.9,1247.9,1557.5,1929.0,2374.8,2909.8,3551.8,4251.8,4951.8,5651.8,6351.8,7051.8,7751.8,8451.8,9151.8,9851.8,10551.8,11251.8,11951.8,12651.8,13351.8,14051.8,14751.8,15451.8];	
+		var limit_meso_array = [1.0,2.0,4.0,6.0,9.0,13.0,47.0,60.0,132.0,218.4,322.1,446.5,595.8,775.0,989.9,1247.9,1557.5,1929.0,2374.8,2909.8,3551.8,4251.8,4951.8,5651.8,6351.8,7051.8,7751.8,8451.8,9151.8,9851.8,10551.8,11251.8,11951.8,12651.8,13351.8,14051.8,14751.8,15451.8];
 
 
 		var road_material = new THREE.ShaderMaterial( {
 			side: THREE.DoubleSide,
 			uniforms: {
-				light_position_1: { value: scene.children[0].position },
-				light_color_1: { value: scene.children[0].color },
-				light_position_2: { value: scene.children[1].position },
-				light_color_2: { value: scene.children[1].color },
-				light_position_3: { value: scene.children[2].position },
-				light_color_3: { value: scene.children[2].color },
-				light_position_4: { value: scene.children[3].position },
-				light_color_4: { value: scene.children[3].color },
+				light_position_1: { value: scene_vertical_planes.children[0].position },
+				light_color_1: { value: scene_vertical_planes.children[0].color },
+				light_position_2: { value: scene_vertical_planes.children[1].position },
+				light_color_2: { value: scene_vertical_planes.children[1].color },
+				light_position_3: { value: scene_vertical_planes.children[2].position },
+				light_color_3: { value: scene_vertical_planes.children[2].color },
+				light_position_4: { value: scene_vertical_planes.children[3].position },
+				light_color_4: { value: scene_vertical_planes.children[3].color },
 				meso_limit: {value: texture_limit_meso},
 				teb_limit: {value: texture_limit_teb},
-				//light_position_5: { value: scene.children[4].position },
-				//light_color_5: { value: scene.children[4].color },
+				//light_position_5: { value: scene_vertical_planes.children[4].position },
+				//light_color_5: { value: scene_vertical_planes.children[4].color },
 				u_data: { value: texture },
 				zs_data: { value: texture_zs},
 				u_cmdata: { value: cmtextures.blue_red_2 },
@@ -458,31 +458,31 @@ export function create_2D_vertical_plane_series(road_summit_data, grid,id_sbl_ar
 				cst_Y: {value: general_config.cst_Y},
 				cst_Z: {value: general_config.cst_Z},
 				active_color_control: {value: general_config.active_color_control},
-				transparent: true
+				//transparent: true
 			},
 			vertexShader: document.getElementById( 'vertexshader_3D_plane' ).textContent,
 			fragmentShader: document.getElementById( 'fragmentshader_3D_plane' ).textContent
 			} );
-				
+
 		var feature_mesh = new THREE.Mesh( feature_bufferGeometry, road_material);
-				
+
 		grid.add(feature_mesh);
-		scene.add(grid);
+		scene_vertical_planes.add(grid);
 	}
-	
-	
+
+
 }
 
 export function create_random_points_cloud(MesoNH_O_array,MesoNH_U_array,MesoNH_V_array,grid,id_sbl_array,id_meso_array,temperature_scale,THAT,THAT_W,HCanopy,HCanopy_w){
-    
-    
+
+
     let tab_temp = [];
     //let tab_temp2 = general_config.temp_values;
-    
+
     general_config.temp_values = [];
-    var ni = general_config.data_ni, 
+    var ni = general_config.data_ni,
     nj = general_config.data_nj;
-    
+
     var coord_array = [];
     var colors = [];
     var sizes = [];
@@ -491,21 +491,21 @@ export function create_random_points_cloud(MesoNH_O_array,MesoNH_U_array,MesoNH_
     var z_position_array = [];
     var x_position_array = [];
     var y_position_array = [];
-    
+
     var h_position_array = [];
-	
+
 	var voxel_level_array = [];
-    
+
     general_config.z_min = null;
     general_config.z_max = null;
     general_config.x_min = null;
     general_config.x_max = null;
     general_config.y_min = null;
     general_config.y_max = null;
-    
+
     general_config.h_min = null;
     general_config.h_max = null;
-    
+
     for(var m=0; m<id_sbl_array.length; m++){
         for(var j=0; j<nj; j++){
             for(var i=0; i<ni; i++){
@@ -513,24 +513,24 @@ export function create_random_points_cloud(MesoNH_O_array,MesoNH_U_array,MesoNH_
 
                 var id = id_sbl_array[m];
                 var temp = parseFloat(MesoNH_O_array[index_1]['teb_'+id]);
-				
-				
-				var index_sup_1 = j*ni + i + (id-1)*ni*nj;	
-				var index_sup_2 = j*ni + i + id*ni*nj;					
+
+
+				var index_sup_1 = j*ni + i + (id-1)*ni*nj;
+				var index_sup_2 = j*ni + i + id*ni*nj;
                 var h = general_config.data_volume_3D['limit_teb'][index_sup_1] - MesoNH_O_array[index_1].zs + (general_config.data_volume_3D['limit_teb'][index_sup_2] - general_config.data_volume_3D['limit_teb'][index_sup_1])/2;
                 var h_w = general_config.data_volume_3D['limit_teb'][index_sup_1]  - MesoNH_O_array[index_1].zs;
-				
+
                 // pour 'effectifs egaux', tableau temporaire
                 tab_temp.push(temp);
 
                 var x_o = MesoNH_O_array[index_1].x - general_config.Coord_X_paris;
-                var y_o = MesoNH_O_array[index_1].y - general_config.Coord_Y_paris;					
+                var y_o = MesoNH_O_array[index_1].y - general_config.Coord_Y_paris;
                 var z_o = MesoNH_O_array[index_1].zs + h;
-                                
+
                 var l_x = (MesoNH_O_array[index_1].x - MesoNH_U_array[index_1].x)*2;
                 var l_y = (MesoNH_O_array[index_1].y - MesoNH_V_array[index_1].y)*2;
                 var l_z = (h - h_w)*2;
-                
+
                 if(general_config.h_min != null && general_config.h_max != null){
                     if(h_w < general_config.h_min){
                         general_config.h_min = h_w;
@@ -542,7 +542,7 @@ export function create_random_points_cloud(MesoNH_O_array,MesoNH_U_array,MesoNH_
                     general_config.h_min = h_w;
                     general_config.h_max = (h_w + l_z);
                 }
-                
+
                 if(general_config.z_min != null && general_config.z_max != null){
                     if((z_o - l_z/2) < general_config.z_min){
                         general_config.z_min = z_o - l_z/2;
@@ -554,7 +554,7 @@ export function create_random_points_cloud(MesoNH_O_array,MesoNH_U_array,MesoNH_
                     general_config.z_min = z_o - l_z/2;
                     general_config.z_max = z_o + l_z/2;
                 }
-                
+
                 if(general_config.x_min != null && general_config.x_max != null){
                     if((x_o - l_x/2) < general_config.x_min){
                         general_config.x_min = x_o - l_x/2;
@@ -566,7 +566,7 @@ export function create_random_points_cloud(MesoNH_O_array,MesoNH_U_array,MesoNH_
                     general_config.x_min = x_o - l_x/2;
                     general_config.x_max = x_o + l_x/2;
                 }
-                
+
                 if(general_config.y_min != null && general_config.y_max != null){
                     if((y_o - l_y/2) < general_config.y_min){
                         general_config.y_min = y_o - l_y/2;
@@ -578,37 +578,37 @@ export function create_random_points_cloud(MesoNH_O_array,MesoNH_U_array,MesoNH_
                     general_config.y_min = y_o - l_y/2;
                     general_config.y_max = y_o + l_y/2;
                 }
-                
+
             }
         }
-    }	
+    }
 
     for(var m=0; m<id_meso_array.length; m++){
         for(var j=0; j<nj; j++){
             for(var i=0; i<ni; i++){
                 var index_1 = j*ni + i;
-                
+
                 var id = id_meso_array[m];
                 var temp = parseFloat(MesoNH_O_array[index_1]['tht_'+id]);
-				
-				
-				var index_sup_1 = j*ni + i + (id-1)*ni*nj;	
-				var index_sup_2 = j*ni + i + (id)*ni*nj;	
+
+
+				var index_sup_1 = j*ni + i + (id-1)*ni*nj;
+				var index_sup_2 = j*ni + i + (id)*ni*nj;
 				var h = general_config.data_volume_3D['limit_meso'][index_sup_1] + (general_config.data_volume_3D['limit_meso'][index_sup_2] - general_config.data_volume_3D['limit_meso'][index_sup_1])/2 - MesoNH_O_array[index_1].zs;
                 var h_w = general_config.data_volume_3D['limit_meso'][index_sup_1] - MesoNH_O_array[index_1].zs;
-				
+
                  // pour 'effectifs egaux', tableau temporaire
                  tab_temp.push(temp);
-                               
+
 
                 var x_o = MesoNH_O_array[index_1].x - general_config.Coord_X_paris;
-                var y_o = MesoNH_O_array[index_1].y - general_config.Coord_Y_paris;					
+                var y_o = MesoNH_O_array[index_1].y - general_config.Coord_Y_paris;
                 var z_o = MesoNH_O_array[index_1].zs + h;
-                
+
                 var l_x = (MesoNH_O_array[index_1].x - MesoNH_U_array[index_1].x)*2;
                 var l_y = (MesoNH_O_array[index_1].y - MesoNH_V_array[index_1].y)*2;
                 var l_z = (h-h_w)*2;
-                                
+
                 if(general_config.h_min != null && general_config.h_max != null){
                     if(h_w < general_config.h_min){
                         general_config.h_min = h_w;
@@ -620,7 +620,7 @@ export function create_random_points_cloud(MesoNH_O_array,MesoNH_U_array,MesoNH_
                     general_config.h_min = h_w;
                     general_config.h_max = (h_w + l_z);
                 }
-                    
+
                 if(general_config.z_min != null && general_config.z_max != null){
                     if((z_o - l_z/2) < general_config.z_min){
                         general_config.z_min = z_o - l_z/2;
@@ -632,7 +632,7 @@ export function create_random_points_cloud(MesoNH_O_array,MesoNH_U_array,MesoNH_
                     general_config.z_min = z_o - l_z/2;
                     general_config.z_max = z_o + l_z/2;
                 }
-                
+
                 if(general_config.x_min != null && general_config.x_max != null){
                     if((x_o - l_x/2) < general_config.x_min){
                         general_config.x_min = x_o - l_x/2;
@@ -644,7 +644,7 @@ export function create_random_points_cloud(MesoNH_O_array,MesoNH_U_array,MesoNH_
                     general_config.x_min = x_o - l_x/2;
                     general_config.x_max = x_o + l_x/2;
                 }
-                
+
                 if(general_config.y_min != null && general_config.y_max != null){
                     if((y_o - l_y/2) < general_config.y_min){
                         general_config.y_min = y_o - l_y/2;
@@ -656,8 +656,8 @@ export function create_random_points_cloud(MesoNH_O_array,MesoNH_U_array,MesoNH_
                     general_config.y_min = y_o - l_y/2;
                     general_config.y_max = y_o + l_y/2;
                 }
-            
-                
+
+
             }
         }
     }
@@ -667,28 +667,28 @@ export function create_random_points_cloud(MesoNH_O_array,MesoNH_U_array,MesoNH_
     });*/
     tab_temp.sort((a,b) => a-b)
 
-	
+
     for(var m=0; m<id_sbl_array.length; m++){
         for(var j=0; j<nj; j++){
             for(var i=0; i<ni; i++){
                 var index_1 = j*ni + i;
                 var id = id_sbl_array[m];
                 var temp = parseFloat(MesoNH_O_array[index_1]['teb_'+id]);
-				
-				var index_sup_1 = j*ni + i + (id-1)*ni*nj;	
-				var index_sup_2 = j*ni + i + id*ni*nj;					
+
+				var index_sup_1 = j*ni + i + (id-1)*ni*nj;
+				var index_sup_2 = j*ni + i + id*ni*nj;
                 var h = general_config.data_volume_3D['limit_teb'][index_sup_1] - MesoNH_O_array[index_1].zs + (general_config.data_volume_3D['limit_teb'][index_sup_2] - general_config.data_volume_3D['limit_teb'][index_sup_1])/2;
-                var h_w = general_config.data_volume_3D['limit_teb'][index_sup_1]  - MesoNH_O_array[index_1].zs; 
-                
+                var h_w = general_config.data_volume_3D['limit_teb'][index_sup_1]  - MesoNH_O_array[index_1].zs;
+
                 var x_o = MesoNH_O_array[index_1].x - general_config.Coord_X_paris;
-                var y_o = MesoNH_O_array[index_1].y - general_config.Coord_Y_paris;					
+                var y_o = MesoNH_O_array[index_1].y - general_config.Coord_Y_paris;
                 var z_o = MesoNH_O_array[index_1].zs + h;
-                                
+
                 var l_x = (MesoNH_O_array[index_1].x - MesoNH_U_array[index_1].x)*2;
                 var l_y = (MesoNH_O_array[index_1].y - MesoNH_V_array[index_1].y)*2;
                 var l_z = (h - h_w)*2;
-                
-                                                
+
+
                 var tmin = temperature_scale[0];
                 var tmax = temperature_scale[1];
                 var percentage_color = (temp - tmin)/(tmax - tmin);
@@ -697,14 +697,14 @@ export function create_random_points_cloud(MesoNH_O_array,MesoNH_U_array,MesoNH_
                 } else if(percentage_color >1){
                     percentage_color = 1;
                 }
-                
-                
+
+
                 general_config.temp_values.push(temp);
 
                 var cell_volume = l_x*l_y*l_z;
-                
+
                 var relative_density;
-                
+
                 if(general_config.relative_density_factor < 1){
                     var add_factor = 1-general_config.relative_density_factor;
                     if(percentage_color < 0.5){
@@ -726,12 +726,12 @@ export function create_random_points_cloud(MesoNH_O_array,MesoNH_U_array,MesoNH_
                         relative_density = general_config.particle_density + general_config.particle_density*add_factor*(percentage_color-0.5)*2;
                     }
                 }
-                
+
                 var particle_length = parseInt(relative_density*cell_volume);
-                
+
                 var size;
                 var basic_size = 10000;
-                
+
                 if(general_config.relative_size_factor < 1){
                     var add_factor = 1-general_config.relative_size_factor;
                     if(percentage_color < 0.5){
@@ -753,9 +753,9 @@ export function create_random_points_cloud(MesoNH_O_array,MesoNH_U_array,MesoNH_
                         size = parseInt(basic_size + basic_size*add_factor*(percentage_color-0.5)*2);
                     }
                 }
-				
-				
-                                        
+
+
+
                 for(var p =0; p< particle_length; p++){
                     var pX = (Math.random()-0.5)*2 * (l_x/2) + x_o,
                      pY = (Math.random()-0.5)*2 * (l_y/2) + y_o,
@@ -775,31 +775,31 @@ export function create_random_points_cloud(MesoNH_O_array,MesoNH_U_array,MesoNH_
                 }
             }
         }
-    }	
-    
+    }
+
 
     for(var m=0; m<id_meso_array.length; m++){
         for(var j=0; j<nj; j++){
             for(var i=0; i<ni; i++){
                 var index_1 = j*ni + i;
-                
+
                 var id = id_meso_array[m];
                 var temp = parseFloat(MesoNH_O_array[index_1]['tht_'+id]);
-                
-				var index_sup_1 = j*ni + i + (id-1)*ni*nj;	
-				var index_sup_2 = j*ni + i + (id-0)*ni*nj;	
+
+				var index_sup_1 = j*ni + i + (id-1)*ni*nj;
+				var index_sup_2 = j*ni + i + (id-0)*ni*nj;
 				var h = general_config.data_volume_3D['limit_meso'][index_sup_1] + (general_config.data_volume_3D['limit_meso'][index_sup_2] - general_config.data_volume_3D['limit_meso'][index_sup_1])/2 - MesoNH_O_array[index_1].zs;
                 var h_w = general_config.data_volume_3D['limit_meso'][index_sup_1] - MesoNH_O_array[index_1].zs;
-                                                
+
                 var x_o = MesoNH_O_array[index_1].x - general_config.Coord_X_paris;
-                var y_o = MesoNH_O_array[index_1].y - general_config.Coord_Y_paris;					
+                var y_o = MesoNH_O_array[index_1].y - general_config.Coord_Y_paris;
                 var z_o = MesoNH_O_array[index_1].zs + h;
-                
+
                 var l_x = (MesoNH_O_array[index_1].x - MesoNH_U_array[index_1].x)*2;
                 var l_y = (MesoNH_O_array[index_1].y - MesoNH_V_array[index_1].y)*2;
                 var l_z = (h-h_w)*2;
-                                
-                                
+
+
                 var tmin = temperature_scale[0];
                 var tmax = temperature_scale[1];
                 var percentage_color = (temp - tmin)/(tmax - tmin);
@@ -808,13 +808,13 @@ export function create_random_points_cloud(MesoNH_O_array,MesoNH_U_array,MesoNH_
                 } else if(percentage_color >1){
                     percentage_color = 1;
                 }
-                                    
+
                 general_config.temp_values.push(temp);
 
                 var cell_volume = l_x*l_y*l_z;
-                
+
                 var relative_density;
-                
+
                 if(general_config.relative_density_factor < 1){
                     var add_factor = 1-general_config.relative_density_factor;
                     if(percentage_color < 0.5){
@@ -836,13 +836,13 @@ export function create_random_points_cloud(MesoNH_O_array,MesoNH_U_array,MesoNH_
                         relative_density = general_config.particle_density + general_config.particle_density*add_factor*(percentage_color-0.5)*2;
                     }
                 }
-                
-                
+
+
                 var particle_length = parseInt(relative_density*cell_volume);
-                
+
                 var size;
                 var basic_size = 10000;
-                
+
                 if(general_config.relative_size_factor < 1){
                     var add_factor = 1-general_config.relative_size_factor;
                     if(percentage_color < 0.5){
@@ -864,9 +864,9 @@ export function create_random_points_cloud(MesoNH_O_array,MesoNH_U_array,MesoNH_
                         size = parseInt(basic_size + basic_size*add_factor*(percentage_color-0.5)*2);
                     }
                 }
-				
-				
-                    
+
+
+
                 for(var p =0; p< particle_length; p++){
                     var pX = (Math.random()-0.5)*2 * (l_x/2) + x_o,
                       pY = (Math.random()-0.5)*2 * (l_y/2) + y_o,
@@ -884,13 +884,13 @@ export function create_random_points_cloud(MesoNH_O_array,MesoNH_U_array,MesoNH_
                     h_position_array.push(((pZ-MesoNH_O_array[index_1].zs)-general_config.h_min)/(general_config.h_max - general_config.h_min));
 					voxel_level_array.push(parseInt(id)+5);
                 }
-                
+
             }
         }
-    }	
-           
+    }
+
     var coord_array_32 = new Float32Array(coord_array);
-    var colors_32 = new Float32Array(colors);  
+    var colors_32 = new Float32Array(colors);
     var sizes_32 = new Float32Array(sizes);
     var transparency_factor_32 = new Float32Array(transparency_factor_array);
     var custompercentage_32 = new Float32Array(custompercentagearray);
@@ -898,12 +898,12 @@ export function create_random_points_cloud(MesoNH_O_array,MesoNH_U_array,MesoNH_
     var x_position_array_32 = new Float32Array(x_position_array);
     var y_position_array_32 = new Float32Array(y_position_array);
     var h_position_array_32 = new Float32Array(h_position_array);
-	
+
 	var voxel_level_array_32 = new Float32Array(voxel_level_array);
-    
-    
+
+
     var bufferGeometry = new THREE.BufferGeometry();
-    
+
     bufferGeometry.setAttribute( 'position', new THREE.BufferAttribute( coord_array_32, 3 ) );
 
     bufferGeometry.setAttribute( 'customsize', new THREE.BufferAttribute(sizes_32,1));
@@ -914,23 +914,23 @@ export function create_random_points_cloud(MesoNH_O_array,MesoNH_U_array,MesoNH_
     bufferGeometry.setAttribute( 'y_position', new THREE.BufferAttribute(y_position_array_32,1));
     bufferGeometry.setAttribute( 'h_position', new THREE.BufferAttribute(h_position_array_32,1));
 	bufferGeometry.setAttribute( 'voxel_level', new THREE.BufferAttribute(voxel_level_array_32,1));
-                
+
     let material = activate_animation()
-    
+
 
     var point = new THREE.Points( bufferGeometry, material);
-    //create_temp_histogram();	 <==== je déplace ailleurs	
-            
+    //create_temp_histogram();	 <==== je déplace ailleurs
+
     grid.add(point);
-    scene.add(grid);
+    scene_points.add(grid);
 }
 
 export function create_2D_plane_series(MesoNH_O_array,MesoNH_U_array,MesoNH_V_array,grid,id_sbl_array,id_meso_array,temperature_scale,THAT,THAT_W,HCanopy,HCanopy_w){
 
     general_config.temp_values = [];
-    var ni = general_config.data_ni, 
+    var ni = general_config.data_ni,
     nj = general_config.data_nj;
-    let tab_temp= [];   
+    let tab_temp= [];
     var coord_array = [];
     var colors = [];
     var sizes = [];
@@ -939,21 +939,21 @@ export function create_2D_plane_series(MesoNH_O_array,MesoNH_U_array,MesoNH_V_ar
     var z_position_array = [];
     var x_position_array = [];
     var y_position_array = [];
-    
+
     var h_position_array = [];
-	
+
 	var voxel_level_array = [];
-    
+
     general_config.z_min = null;
     general_config.z_max = null;
     general_config.x_min = null;
     general_config.x_max = null;
     general_config.y_min = null;
     general_config.y_max = null;
-    
+
     general_config.h_min = null;
     general_config.h_max = null;
-    
+
     for(var m=0; m<id_sbl_array.length; m++){
         for(var j=0; j<nj; j++){
             for(var i=0; i<ni; i++){
@@ -961,22 +961,22 @@ export function create_2D_plane_series(MesoNH_O_array,MesoNH_U_array,MesoNH_V_ar
 
                 var id = id_sbl_array[m];
                 var temp = parseFloat(MesoNH_O_array[index_1]['teb_'+id]);
-                
-				var index_sup_1 = j*ni + i + (id-1)*ni*nj;	
-				var index_sup_2 = j*ni + i + id*ni*nj;					
+
+				var index_sup_1 = j*ni + i + (id-1)*ni*nj;
+				var index_sup_2 = j*ni + i + id*ni*nj;
                 var h = general_config.data_volume_3D['limit_teb'][index_sup_1] - MesoNH_O_array[index_1].zs + (general_config.data_volume_3D['limit_teb'][index_sup_2] - general_config.data_volume_3D['limit_teb'][index_sup_1])/2;
                 var h_w = general_config.data_volume_3D['limit_teb'][index_sup_1]  - MesoNH_O_array[index_1].zs;
-                
+
                 tab_temp.push(temp);
 
                 var x_o = MesoNH_O_array[index_1].x - general_config.Coord_X_paris;
-                var y_o = MesoNH_O_array[index_1].y - general_config.Coord_Y_paris;					
+                var y_o = MesoNH_O_array[index_1].y - general_config.Coord_Y_paris;
                 var z_o = MesoNH_O_array[index_1].zs + h;
-                                
+
                 var l_x = (MesoNH_O_array[index_1].x - MesoNH_U_array[index_1].x)*2;
                 var l_y = (MesoNH_O_array[index_1].y - MesoNH_V_array[index_1].y)*2;
                 var l_z = (h - h_w)*2;
-                
+
                 if(general_config.h_min != null && general_config.h_max != null){
                     if(h_w < general_config.h_min){
                         general_config.h_min = h_w;
@@ -988,7 +988,7 @@ export function create_2D_plane_series(MesoNH_O_array,MesoNH_U_array,MesoNH_V_ar
                     general_config.h_min = h_w;
                     general_config.h_max = (h_w + l_z);
                 }
-               
+
                 if(general_config.z_min != null && general_config.z_max != null){
                     if((z_o - l_z/2) < general_config.z_min){
                         general_config.z_min = z_o - l_z/2;
@@ -1000,7 +1000,7 @@ export function create_2D_plane_series(MesoNH_O_array,MesoNH_U_array,MesoNH_V_ar
                     general_config.z_min = z_o - l_z/2;
                     general_config.z_max = z_o + l_z/2;
                 }
-                
+
                 if(general_config.x_min != null && general_config.x_max != null){
                     if((x_o - l_x/2) < general_config.x_min){
                         general_config.x_min = x_o - l_x/2;
@@ -1012,7 +1012,7 @@ export function create_2D_plane_series(MesoNH_O_array,MesoNH_U_array,MesoNH_V_ar
                     general_config.x_min = x_o - l_x/2;
                     general_config.x_max = x_o + l_x/2;
                 }
-                
+
                 if(general_config.y_min != null && general_config.y_max != null){
                     if((y_o - l_y/2) < general_config.y_min){
                         general_config.y_min = y_o - l_y/2;
@@ -1024,34 +1024,34 @@ export function create_2D_plane_series(MesoNH_O_array,MesoNH_U_array,MesoNH_V_ar
                     general_config.y_min = y_o - l_y/2;
                     general_config.y_max = y_o + l_y/2;
                 }
-                
+
             }
         }
-    }	
-    
+    }
+
 
     for(var m=0; m<id_meso_array.length; m++){
         for(var j=0; j<nj; j++){
             for(var i=0; i<ni; i++){
                 var index_1 = j*ni + i;
-                
+
                 var id = id_meso_array[m];
                 var temp = parseFloat(MesoNH_O_array[index_1]['tht_'+id]);
-                
-				var index_sup_1 = j*ni + i + (id-1)*ni*nj;	
-				var index_sup_2 = j*ni + i + (id-0)*ni*nj;	
+
+				var index_sup_1 = j*ni + i + (id-1)*ni*nj;
+				var index_sup_2 = j*ni + i + (id-0)*ni*nj;
 				var h = general_config.data_volume_3D['limit_meso'][index_sup_1] + (general_config.data_volume_3D['limit_meso'][index_sup_2] - general_config.data_volume_3D['limit_meso'][index_sup_1])/2 - MesoNH_O_array[index_1].zs;
                 var h_w = general_config.data_volume_3D['limit_meso'][index_sup_1] - MesoNH_O_array[index_1].zs;
-                
+
                 tab_temp.push(temp)
                 var x_o = MesoNH_O_array[index_1].x - general_config.Coord_X_paris;
-                var y_o = MesoNH_O_array[index_1].y - general_config.Coord_Y_paris;					
+                var y_o = MesoNH_O_array[index_1].y - general_config.Coord_Y_paris;
                 var z_o = MesoNH_O_array[index_1].zs + h;
-                
+
                 var l_x = (MesoNH_O_array[index_1].x - MesoNH_U_array[index_1].x)*2;
                 var l_y = (MesoNH_O_array[index_1].y - MesoNH_V_array[index_1].y)*2;
                 var l_z = (h-h_w)*2;
-                                
+
                 if(general_config.h_min != null && general_config.h_max != null){
                     if(h_w < general_config.h_min){
                         general_config.h_min = h_w;
@@ -1063,7 +1063,7 @@ export function create_2D_plane_series(MesoNH_O_array,MesoNH_U_array,MesoNH_V_ar
                     general_config.h_min = h_w;
                     general_config.h_max = (h_w + l_z);
                 }
-                    
+
                 if(general_config.z_min != null && general_config.z_max != null){
                     if((z_o - l_z/2) < general_config.z_min){
                         general_config.z_min = z_o - l_z/2;
@@ -1075,7 +1075,7 @@ export function create_2D_plane_series(MesoNH_O_array,MesoNH_U_array,MesoNH_V_ar
                     general_config.z_min = z_o - l_z/2;
                     general_config.z_max = z_o + l_z/2;
                 }
-                
+
                 if(general_config.x_min != null && general_config.x_max != null){
                     if((x_o - l_x/2) < general_config.x_min){
                         general_config.x_min = x_o - l_x/2;
@@ -1087,7 +1087,7 @@ export function create_2D_plane_series(MesoNH_O_array,MesoNH_U_array,MesoNH_V_ar
                     general_config.x_min = x_o - l_x/2;
                     general_config.x_max = x_o + l_x/2;
                 }
-                
+
                 if(general_config.y_min != null && general_config.y_max != null){
                     if((y_o - l_y/2) < general_config.y_min){
                         general_config.y_min = y_o - l_y/2;
@@ -1101,23 +1101,23 @@ export function create_2D_plane_series(MesoNH_O_array,MesoNH_U_array,MesoNH_V_ar
                 }
             }
         }
-    }	
-    
+    }
+
     tab_temp.sort((a,b) => a-b)
 
     for(var m=0; m<id_sbl_array.length; m++){
         for(var j=0; j<nj; j++){
             for(var i=0; i<ni; i++){
                 var index_1 = j*ni + i;
-				
+
                 var id = id_sbl_array[m];
                 var temp = MesoNH_O_array[index_1]['teb_'+id];
-                
-				var index_sup_1 = j*ni + i + (id-1)*ni*nj;	
-				var index_sup_2 = j*ni + i + id*ni*nj;					
+
+				var index_sup_1 = j*ni + i + (id-1)*ni*nj;
+				var index_sup_2 = j*ni + i + id*ni*nj;
                 var h = general_config.data_volume_3D['limit_teb'][index_sup_1] - MesoNH_O_array[index_1].zs + (general_config.data_volume_3D['limit_teb'][index_sup_2] - general_config.data_volume_3D['limit_teb'][index_sup_1])/2;
                 var h_w = general_config.data_volume_3D['limit_teb'][index_sup_1]  - MesoNH_O_array[index_1].zs;
-                
+
                 var tmin = temperature_scale[0];
                 var tmax = temperature_scale[1];
                 if (temp >= tmin && temp <= tmax) {
@@ -1125,266 +1125,266 @@ export function create_2D_plane_series(MesoNH_O_array,MesoNH_U_array,MesoNH_V_ar
                     var x_u = MesoNH_U_array[index_1].x - general_config.Coord_X_paris;
                     var y_u = MesoNH_U_array[index_1].y - general_config.Coord_Y_paris;
                     var z_u = MesoNH_U_array[index_1].zs + h;
-                    
+
                     var x_v = MesoNH_V_array[index_1].x - general_config.Coord_X_paris;
                     var y_v = MesoNH_V_array[index_1].y - general_config.Coord_Y_paris;
                     var z_v = MesoNH_V_array[index_1].zs + h;
-                    
+
                     var z_o = MesoNH_O_array[index_1].zs + h;
-                    
+
                     var l_x = (MesoNH_O_array[index_1].x - MesoNH_U_array[index_1].x)*2
                     var l_y = (MesoNH_O_array[index_1].y - MesoNH_V_array[index_1].y)*2
-                    
-                    //up				
-                    coord_array.push(x_u*general_config.cst_X); 
+
+                    //up
+                    coord_array.push(x_u*general_config.cst_X);
                     coord_array.push(z_o*general_config.cst_Z);
                     coord_array.push(-(y_v + l_y)*general_config.cst_Y);
                     coord_array.push(x_u*general_config.cst_X);
-                    coord_array.push(z_o*general_config.cst_Z); 
-                    coord_array.push(-y_v*general_config.cst_Y);
-                    coord_array.push((x_u + l_x)*general_config.cst_X); 
                     coord_array.push(z_o*general_config.cst_Z);
                     coord_array.push(-y_v*general_config.cst_Y);
-					
+                    coord_array.push((x_u + l_x)*general_config.cst_X);
+                    coord_array.push(z_o*general_config.cst_Z);
+                    coord_array.push(-y_v*general_config.cst_Y);
+
 					voxel_level_array.push(id);
 					voxel_level_array.push(id);
 					voxel_level_array.push(id);
-                    
-                    coord_array.push(x_u*general_config.cst_X); 
+
+                    coord_array.push(x_u*general_config.cst_X);
                     coord_array.push(z_o*general_config.cst_Z);
                     coord_array.push(-(y_v + l_y)*general_config.cst_Y);
-                    coord_array.push((x_u + l_x)*general_config.cst_X); 
+                    coord_array.push((x_u + l_x)*general_config.cst_X);
                     coord_array.push(z_o*general_config.cst_Z);
                     coord_array.push(-y_v*general_config.cst_Y);
-                    coord_array.push((x_u + l_x)*general_config.cst_X); 
+                    coord_array.push((x_u + l_x)*general_config.cst_X);
                     coord_array.push(z_o*general_config.cst_Z);
                     coord_array.push(-(y_v + l_y)*general_config.cst_Y);
-					
+
 					voxel_level_array.push(id);
 					voxel_level_array.push(id);
 					voxel_level_array.push(id);
-                    
+
                     //down
-                    coord_array.push(x_u*general_config.cst_X); 
+                    coord_array.push(x_u*general_config.cst_X);
                     coord_array.push(z_o*general_config.cst_Z);
                     coord_array.push(-(y_v + l_y)*general_config.cst_Y);
-                    coord_array.push((x_u + l_x)*general_config.cst_X); 
+                    coord_array.push((x_u + l_x)*general_config.cst_X);
                     coord_array.push(z_o*general_config.cst_Z);
                     coord_array.push(-y_v*general_config.cst_Y);
-                    coord_array.push(x_u*general_config.cst_X); 
+                    coord_array.push(x_u*general_config.cst_X);
                     coord_array.push(z_o*general_config.cst_Z);
                     coord_array.push(-y_v*general_config.cst_Y);
-					
+
 					voxel_level_array.push(id);
 					voxel_level_array.push(id);
 					voxel_level_array.push(id);
-                    
-                    coord_array.push(x_u*general_config.cst_X); 
+
+                    coord_array.push(x_u*general_config.cst_X);
                     coord_array.push(z_o*general_config.cst_Z);
                     coord_array.push(-(y_v + l_y)*general_config.cst_Y);
-                    coord_array.push((x_u + l_x)*general_config.cst_X); 
+                    coord_array.push((x_u + l_x)*general_config.cst_X);
                     coord_array.push(z_o*general_config.cst_Z);
                     coord_array.push(-(y_v + l_y)*general_config.cst_Y);
-                    coord_array.push((x_u + l_x)*general_config.cst_X); 
+                    coord_array.push((x_u + l_x)*general_config.cst_X);
                     coord_array.push(z_o*general_config.cst_Z);
                     coord_array.push(-y_v*general_config.cst_Y);
-					
+
 					voxel_level_array.push(id);
 					voxel_level_array.push(id);
 					voxel_level_array.push(id);
-                    
-                    
-                    
+
+
+
                     var percentage_color = (temp - tmin)/(tmax - tmin);
                     if(percentage_color<0){
                         percentage_color = 0;
                     } else if(percentage_color >1){
                         percentage_color = 1;
                     }
-                    
+
                     general_config.temp_values.push(temp);
-                    
+
 
                     var transparency = general_config.transparency_factor;
 
-					
-					
-					
+
+
+
                 } else {
                     general_config.temp_values.push(temp);
                 }
-                
+
             }
         }
-    }	
+    }
 
     for(var m=0; m<id_meso_array.length; m++){
         for(var j=0; j<nj; j++){
             for(var i=0; i<ni; i++){
                 var index_1 = j*ni + i;
-                
+
                 var id = id_meso_array[m];
                 var temp = parseFloat(MesoNH_O_array[index_1]['tht_'+id]);
-               
-			   var index_sup_1 = j*ni + i + (id-1)*ni*nj;	
-				var index_sup_2 = j*ni + i + (id-0)*ni*nj;	
+
+			   var index_sup_1 = j*ni + i + (id-1)*ni*nj;
+				var index_sup_2 = j*ni + i + (id-0)*ni*nj;
 				var h = general_config.data_volume_3D['limit_meso'][index_sup_1] + (general_config.data_volume_3D['limit_meso'][index_sup_2] - general_config.data_volume_3D['limit_meso'][index_sup_1])/2 - MesoNH_O_array[index_1].zs;
                 var h_w = general_config.data_volume_3D['limit_meso'][index_sup_1] - MesoNH_O_array[index_1].zs;
-				  
+
                 var tmin = temperature_scale[0];
                 var tmax = temperature_scale[1];
                 if (temp >= tmin && temp <= tmax) {
                     var x_u = MesoNH_U_array[index_1].x - general_config.Coord_X_paris;
                     var y_u = MesoNH_U_array[index_1].y - general_config.Coord_Y_paris;
                     var z_u = MesoNH_U_array[index_1].zs + h;
-                    
+
                     var x_v = MesoNH_V_array[index_1].x - general_config.Coord_X_paris;
                     var y_v = MesoNH_V_array[index_1].y - general_config.Coord_Y_paris;
                     var z_v = MesoNH_V_array[index_1].zs + h;
-                    
+
                     var z_o = MesoNH_O_array[index_1].zs + h;
-                    
+
                     var l_x = (MesoNH_O_array[index_1].x - MesoNH_U_array[index_1].x)*2
                     var l_y = (MesoNH_O_array[index_1].y - MesoNH_V_array[index_1].y)*2
-                    
-                    //up				
-                    coord_array.push(x_u*general_config.cst_X); 
+
+                    //up
+                    coord_array.push(x_u*general_config.cst_X);
                     coord_array.push(z_o*general_config.cst_Z);
                     coord_array.push(-(y_v + l_y)*general_config.cst_Y);
-                    coord_array.push(x_u*general_config.cst_X); 
+                    coord_array.push(x_u*general_config.cst_X);
                     coord_array.push(z_o*general_config.cst_Z);
                     coord_array.push(-y_v*general_config.cst_Y);
-                    coord_array.push((x_u + l_x)*general_config.cst_X); 
+                    coord_array.push((x_u + l_x)*general_config.cst_X);
                     coord_array.push(z_o*general_config.cst_Z);
                     coord_array.push(-y_v*general_config.cst_Y);
-					
+
 					voxel_level_array.push(parseInt(id)+5);
 					voxel_level_array.push(parseInt(id)+5);
 					voxel_level_array.push(parseInt(id)+5);
-                    
-                    coord_array.push(x_u*general_config.cst_X); 
+
+                    coord_array.push(x_u*general_config.cst_X);
                     coord_array.push(z_o*general_config.cst_Z);
                     coord_array.push(-(y_v + l_y)*general_config.cst_Y);
-                    coord_array.push((x_u + l_x)*general_config.cst_X); 
+                    coord_array.push((x_u + l_x)*general_config.cst_X);
                     coord_array.push(z_o*general_config.cst_Z);
                     coord_array.push(-y_v*general_config.cst_Y);
-                    coord_array.push((x_u + l_x)*general_config.cst_X); 
+                    coord_array.push((x_u + l_x)*general_config.cst_X);
                     coord_array.push(z_o*general_config.cst_Z);
                     coord_array.push(-(y_v + l_y)*general_config.cst_Y);
-					
+
 					voxel_level_array.push(parseInt(id)+5);
 					voxel_level_array.push(parseInt(id)+5);
 					voxel_level_array.push(parseInt(id)+5);
-                    
+
                     //down
-                    coord_array.push(x_u*general_config.cst_X); 
+                    coord_array.push(x_u*general_config.cst_X);
                     coord_array.push(z_o*general_config.cst_Z);
                     coord_array.push(-(y_v + l_y)*general_config.cst_Y);
-                    coord_array.push((x_u + l_x)*general_config.cst_X); 
+                    coord_array.push((x_u + l_x)*general_config.cst_X);
                     coord_array.push(z_o*general_config.cst_Z);
                     coord_array.push(-y_v*general_config.cst_Y);
-                    coord_array.push(x_u*general_config.cst_X); 
+                    coord_array.push(x_u*general_config.cst_X);
                     coord_array.push(z_o*general_config.cst_Z);
                     coord_array.push(-y_v*general_config.cst_Y);
-					
+
 					voxel_level_array.push(parseInt(id)+5);
 					voxel_level_array.push(parseInt(id)+5);
 					voxel_level_array.push(parseInt(id)+5);
-                    
-                    coord_array.push(x_u*general_config.cst_X); 
+
+                    coord_array.push(x_u*general_config.cst_X);
                     coord_array.push(z_o*general_config.cst_Z);
                     coord_array.push(-(y_v + l_y)*general_config.cst_Y);
-                    coord_array.push((x_u + l_x)*general_config.cst_X); 
+                    coord_array.push((x_u + l_x)*general_config.cst_X);
                     coord_array.push(z_o*general_config.cst_Z);
                     coord_array.push(-(y_v + l_y)*general_config.cst_Y);
-                    coord_array.push((x_u + l_x)*general_config.cst_X); 
+                    coord_array.push((x_u + l_x)*general_config.cst_X);
                     coord_array.push(z_o*general_config.cst_Z);
                     coord_array.push(-y_v*general_config.cst_Y);
-					
+
 					voxel_level_array.push(parseInt(id)+5);
 					voxel_level_array.push(parseInt(id)+5);
 					voxel_level_array.push(parseInt(id)+5);
-                    
-                    
-                    
+
+
+
                     var percentage_color = (temp - tmin)/(tmax - tmin);
                     if(percentage_color<0){
                         percentage_color = 0;
                     } else if(percentage_color >1){
                         percentage_color = 1;
                     }
-                    
+
                     general_config.temp_values.push(temp);
 
-                    
+
                     var transparency = general_config.transparency_factor;
 
-					
+
                 } else {
                     general_config.temp_values.push(temp);
                 }
-                
-                
+
+
             }
         }
-    }			
-    
-            
+    }
+
+
     var coord_array_32 = new Float32Array(coord_array);
-    var colors_32 = new Float32Array(colors); 
+    var colors_32 = new Float32Array(colors);
 	var voxel_level_array_32 = new Float32Array(voxel_level_array);
-	
+
 	var bufferGeometry = new THREE.BufferGeometry();
-    
+
     bufferGeometry.setAttribute( 'position', new THREE.BufferAttribute( coord_array_32, 3 ) );
 
 	bufferGeometry.setAttribute( 'voxel_level', new THREE.BufferAttribute(voxel_level_array_32,1));
-	
+
 	var texture = new THREE.DataTexture3D( general_config.data_volume_3D.data_temp, general_config.data_volume_3D.x_length, general_config.data_volume_3D.y_length, general_config.data_volume_3D.z_length );
 	texture.format = THREE.RedFormat;
 	texture.type = THREE.FloatType;
 	texture.unpackAlignment = 1;
-	
+
 	var texture_limit_meso = new THREE.DataTexture3D( general_config.data_volume_3D.limit_meso, general_config.data_volume_3D.x_length, general_config.data_volume_3D.y_length, 33.0 );
 	texture_limit_meso.format = THREE.RedFormat;
 	texture_limit_meso.type = THREE.FloatType;
 	texture_limit_meso.unpackAlignment = 1;
-	
+
 	var texture_limit_teb = new THREE.DataTexture3D( general_config.data_volume_3D.limit_teb, general_config.data_volume_3D.x_length, general_config.data_volume_3D.y_length, 7.0 );
 	texture_limit_teb.format = THREE.RedFormat;
 	texture_limit_teb.type = THREE.FloatType;
 	texture_limit_teb.unpackAlignment = 1;
-	
-	
+
+
 	var texture_zs = new THREE.DataTexture( general_config.data_volume_3D.data_zs, general_config.data_volume_3D.x_length, general_config.data_volume_3D.y_length);
 	texture_zs.format = THREE.RedFormat;
 	texture_zs.type = THREE.FloatType;
 	texture_zs.unpackAlignment = 1;
-	
+
 	// Colormap textures
 	var cmtextures = {
 		blue_red_2: new THREE.TextureLoader().load( 'color/blue_red_2.png', render ),
 			rainbow: new THREE.TextureLoader().load( 'color/rainbow.png', render ),
 			orange_red: new THREE.TextureLoader().load( 'color/orange_red.png', render )
 	};
-	
+
 	var limit_meso_array = [1.0,2.0,4.0,6.0,9.0,13.0,47.0,60.0,132.0,218.4,322.1,446.5,595.8,775.0,989.9,1247.9,1557.5,1929.0,2374.8,2909.8,3551.8,4251.8,4951.8,5651.8,6351.8,7051.8,7751.8,8451.8,9151.8,9851.8,10551.8,11251.8,11951.8,12651.8,13351.8,14051.8,14751.8,15451.8];
-	
-	
+
+
 	var material = new THREE.ShaderMaterial( {
 						side: THREE.DoubleSide,
-						transparent:true,
+						//transparent:true,
 						uniforms: {
-							//light_position_1: { value: scene.children[0].position },
-							//light_color_1: { value: scene.children[0].color },
-							//light_position_2: { value: scene.children[1].position },
-							//light_color_2: { value: scene.children[1].color },
-							//light_position_3: { value: scene.children[2].position },
-							//light_color_3: { value: scene.children[2].color },
-							//light_position_4: { value: scene.children[3].position },
-							//light_color_4: { value: scene.children[3].color },
-							//light_position_5: { value: scene.children[4].position },
-							//light_color_5: { value: scene.children[4].color },
+							//light_position_1: { value: scene_horizontal_planes.children[0].position },
+							//light_color_1: { value: scene_horizontal_planes.children[0].color },
+							//light_position_2: { value: scene_horizontal_planes.children[1].position },
+							//light_color_2: { value: scene_horizontal_planes.children[1].color },
+							//light_position_3: { value: scene_horizontal_planes.children[2].position },
+							//light_color_3: { value: scene_horizontal_planes.children[2].color },
+							//light_position_4: { value: scene_horizontal_planes.children[3].position },
+							//light_color_4: { value: scene_horizontal_planes.children[3].color },
+							//light_position_5: { value: scene_horizontal_planes.children[4].position },
+							//light_color_5: { value: scene_horizontal_planes.children[4].color },
 							u_data: { value: texture },
 							zs_data: { value: texture_zs},
 							meso_limit: {value: texture_limit_meso},
@@ -1409,31 +1409,31 @@ export function create_2D_plane_series(MesoNH_O_array,MesoNH_U_array,MesoNH_V_ar
 						vertexShader: document.getElementById( 'vertexshader_2D_plane' ).textContent,
 						fragmentShader: document.getElementById( 'fragmentshader_2D_plane' ).textContent
 					} );
-	
-	
+
+
     var mesh = new THREE.Mesh( bufferGeometry, material);
-   
+
 	console.log(general_config.x_min * general_config.cst_X);
 	console.log(-(general_config.y_min * general_config.cst_Y));
 	console.log(general_config.z_min * general_config.cst_Z);
 	console.log(general_config.x_max * general_config.cst_X);
 	console.log(-(general_config.y_max * general_config.cst_Y));
 	console.log(general_config.z_max * general_config.cst_Z);
-	
-   
+
+
     //create_temp_histogram();	 <==== je déplace ds showPointsPlanes
-            
+
     grid.add(mesh);
     scene_horizontal_planes.add(grid);
- 
+
 }
 
 export function create_2D_points_cloud(MesoNH_O_array,MesoNH_U_array,MesoNH_V_array,grid,id_sbl_array,id_meso_array,temperature_scale,THAT,THAT_W,HCanopy,HCanopy_w,number_points){
-    
+
     general_config.temp_values = [];
-    var ni = general_config.data_ni, 
+    var ni = general_config.data_ni,
     nj = general_config.data_nj;
-    let tab_temp = [];       
+    let tab_temp = [];
     var coord_array = [];
     var colors = [];
     var sizes = [];
@@ -1442,43 +1442,43 @@ export function create_2D_points_cloud(MesoNH_O_array,MesoNH_U_array,MesoNH_V_ar
     var z_position_array = [];
     var x_position_array = [];
     var y_position_array = [];
-    
+
     var h_position_array = [];
-	
+
 	var voxel_level_array = [];
-    
+
     general_config.z_min = null;
     general_config.z_max = null;
     general_config.x_min = null;
     general_config.x_max = null;
     general_config.y_min = null;
     general_config.y_max = null;
-    
+
     general_config.h_min = null;
     general_config.h_max = null;
     for(var m=0; m<id_sbl_array.length; m++){
         for(var j=0; j<nj; j++){
             for(var i=0; i<ni; i++){
                 var index_1 = j*ni + i;
-				
-				
+
+
                 var id = id_sbl_array[m];
                 var temp = parseFloat(MesoNH_O_array[index_1]['teb_'+id]);
-                				
-				var index_sup_1 = j*ni + i + (id-1)*ni*nj;	
-				var index_sup_2 = j*ni + i + id*ni*nj;					
+
+				var index_sup_1 = j*ni + i + (id-1)*ni*nj;
+				var index_sup_2 = j*ni + i + id*ni*nj;
                 var h = general_config.data_volume_3D['limit_teb'][index_sup_1] - MesoNH_O_array[index_1].zs + (general_config.data_volume_3D['limit_teb'][index_sup_2] - general_config.data_volume_3D['limit_teb'][index_sup_1])/2;
                 var h_w = general_config.data_volume_3D['limit_teb'][index_sup_1]  - MesoNH_O_array[index_1].zs;
-                
+
                 tab_temp.push(temp)
                 var x_o = MesoNH_O_array[index_1].x - general_config.Coord_X_paris;
-                var y_o = MesoNH_O_array[index_1].y - general_config.Coord_Y_paris;					
+                var y_o = MesoNH_O_array[index_1].y - general_config.Coord_Y_paris;
                 var z_o = MesoNH_O_array[index_1].zs + h;
-                                
+
                 var l_x = (MesoNH_O_array[index_1].x - MesoNH_U_array[index_1].x)*2;
                 var l_y = (MesoNH_O_array[index_1].y - MesoNH_V_array[index_1].y)*2;
                 var l_z = (h - h_w)*2;
-                
+
                 if(general_config.h_min != null && general_config.h_max != null){
                     if(h_w < general_config.h_min){
                         general_config.h_min = h_w;
@@ -1490,7 +1490,7 @@ export function create_2D_points_cloud(MesoNH_O_array,MesoNH_U_array,MesoNH_V_ar
                     general_config.h_min = h_w;
                     general_config.h_max = (h_w + l_z);
                 }
-                
+
                 if(general_config.z_min != null && general_config.z_max != null){
                     if((z_o - l_z/2) < general_config.z_min){
                         general_config.z_min = z_o - l_z/2;
@@ -1502,7 +1502,7 @@ export function create_2D_points_cloud(MesoNH_O_array,MesoNH_U_array,MesoNH_V_ar
                     general_config.z_min = z_o - l_z/2;
                     general_config.z_max = z_o + l_z/2;
                 }
-                
+
                 if(general_config.x_min != null && general_config.x_max != null){
                     if((x_o - l_x/2) < general_config.x_min){
                         general_config.x_min = x_o - l_x/2;
@@ -1514,7 +1514,7 @@ export function create_2D_points_cloud(MesoNH_O_array,MesoNH_U_array,MesoNH_V_ar
                     general_config.x_min = x_o - l_x/2;
                     general_config.x_max = x_o + l_x/2;
                 }
-                
+
                 if(general_config.y_min != null && general_config.y_max != null){
                     if((y_o - l_y/2) < general_config.y_min){
                         general_config.y_min = y_o - l_y/2;
@@ -1526,35 +1526,35 @@ export function create_2D_points_cloud(MesoNH_O_array,MesoNH_U_array,MesoNH_V_ar
                     general_config.y_min = y_o - l_y/2;
                     general_config.y_max = y_o + l_y/2;
                 }
-                
+
             }
         }
-    }	
-    
+    }
+
 
     for(var m=0; m<id_meso_array.length; m++){
         for(var j=0; j<nj; j++){
             for(var i=0; i<ni; i++){
                 var index_1 = j*ni + i;
-                
+
                 var id = id_meso_array[m];
                 var temp = parseFloat(MesoNH_O_array[index_1]['tht_'+id]);
-                
-				var index_sup_1 = j*ni + i + (id-1)*ni*nj;	
-				var index_sup_2 = j*ni + i + (id-0)*ni*nj;	
+
+				var index_sup_1 = j*ni + i + (id-1)*ni*nj;
+				var index_sup_2 = j*ni + i + (id-0)*ni*nj;
 				var h = general_config.data_volume_3D['limit_meso'][index_sup_1] + (general_config.data_volume_3D['limit_meso'][index_sup_2] - general_config.data_volume_3D['limit_meso'][index_sup_1])/2 - MesoNH_O_array[index_1].zs;
                 var h_w = general_config.data_volume_3D['limit_meso'][index_sup_1] - MesoNH_O_array[index_1].zs;
 
                 tab_temp.push(temp);
-                                                
+
                 var x_o = MesoNH_O_array[index_1].x - general_config.Coord_X_paris;
-                var y_o = MesoNH_O_array[index_1].y - general_config.Coord_Y_paris;					
+                var y_o = MesoNH_O_array[index_1].y - general_config.Coord_Y_paris;
                 var z_o = MesoNH_O_array[index_1].zs + h;
-                
+
                 var l_x = (MesoNH_O_array[index_1].x - MesoNH_U_array[index_1].x)*2;
                 var l_y = (MesoNH_O_array[index_1].y - MesoNH_V_array[index_1].y)*2;
                 var l_z = (h-h_w)*2;
-                                
+
                 if(general_config.h_min != null && general_config.h_max != null){
                     if(h_w < general_config.h_min){
                         general_config.h_min = h_w;
@@ -1566,7 +1566,7 @@ export function create_2D_points_cloud(MesoNH_O_array,MesoNH_U_array,MesoNH_V_ar
                     general_config.h_min = h_w;
                     general_config.h_max = (h_w + l_z);
                 }
-                    
+
                 if(general_config.z_min != null && general_config.z_max != null){
                     if((z_o - l_z/2) < general_config.z_min){
                         general_config.z_min = z_o - l_z/2;
@@ -1578,7 +1578,7 @@ export function create_2D_points_cloud(MesoNH_O_array,MesoNH_U_array,MesoNH_V_ar
                     general_config.z_min = z_o - l_z/2;
                     general_config.z_max = z_o + l_z/2;
                 }
-                
+
                 if(general_config.x_min != null && general_config.x_max != null){
                     if((x_o - l_x/2) < general_config.x_min){
                         general_config.x_min = x_o - l_x/2;
@@ -1590,7 +1590,7 @@ export function create_2D_points_cloud(MesoNH_O_array,MesoNH_U_array,MesoNH_V_ar
                     general_config.x_min = x_o - l_x/2;
                     general_config.x_max = x_o + l_x/2;
                 }
-                
+
                 if(general_config.y_min != null && general_config.y_max != null){
                     if((y_o - l_y/2) < general_config.y_min){
                         general_config.y_min = y_o - l_y/2;
@@ -1602,11 +1602,11 @@ export function create_2D_points_cloud(MesoNH_O_array,MesoNH_U_array,MesoNH_V_ar
                     general_config.y_min = y_o - l_y/2;
                     general_config.y_max = y_o + l_y/2;
                 }
-            
-                
+
+
             }
         }
-    }	
+    }
 
 
     tab_temp.sort((a,b) => a-b)
@@ -1617,26 +1617,26 @@ export function create_2D_points_cloud(MesoNH_O_array,MesoNH_U_array,MesoNH_V_ar
                 var index_1 = j*ni + i;
                 var id = id_sbl_array[m];
                 var temp = parseFloat(MesoNH_O_array[index_1]['teb_'+id]);
-                
-				var index_sup_1 = j*ni + i + (id-1)*ni*nj;	
-				var index_sup_2 = j*ni + i + id*ni*nj;					
+
+				var index_sup_1 = j*ni + i + (id-1)*ni*nj;
+				var index_sup_2 = j*ni + i + id*ni*nj;
                 var h = general_config.data_volume_3D['limit_teb'][index_sup_1] - MesoNH_O_array[index_1].zs + (general_config.data_volume_3D['limit_teb'][index_sup_2] - general_config.data_volume_3D['limit_teb'][index_sup_1])/2;
                 var h_w = general_config.data_volume_3D['limit_teb'][index_sup_1]  - MesoNH_O_array[index_1].zs;
-                
+
                 var x_u = MesoNH_U_array[index_1].x - general_config.Coord_X_paris;
                 var y_u = MesoNH_U_array[index_1].y - general_config.Coord_Y_paris;
                 var z_u = MesoNH_U_array[index_1].zs + h;
-                
+
                 var x_v = MesoNH_V_array[index_1].x - general_config.Coord_X_paris;
                 var y_v = MesoNH_V_array[index_1].y - general_config.Coord_Y_paris;
                 var z_v = MesoNH_V_array[index_1].zs + h;
-                
+
                 var z_o = MesoNH_O_array[index_1].zs + h;
-                
+
                 var l_x = (MesoNH_O_array[index_1].x - MesoNH_U_array[index_1].x)*2;
                 var l_y = (MesoNH_O_array[index_1].y - MesoNH_V_array[index_1].y)*2;
                 var l_z = (h-h_w)*2;
-                
+
                 var tmin = temperature_scale[0];
                 var tmax = temperature_scale[1];
                 var percentage_color = (temp - tmin)/(tmax - tmin);
@@ -1645,15 +1645,15 @@ export function create_2D_points_cloud(MesoNH_O_array,MesoNH_U_array,MesoNH_V_ar
                 } else if(percentage_color >1){
                     percentage_color = 1;
                 }
-                
-                general_config.temp_values.push(temp);
-                
 
-                
-                                    
+                general_config.temp_values.push(temp);
+
+
+
+
                 var size;
                 var basic_size = 10000;
-                
+
                 if(general_config.relative_size_factor < 1){
                     var add_factor = 1-general_config.relative_size_factor;
                     if(percentage_color < 0.5){
@@ -1675,18 +1675,18 @@ export function create_2D_points_cloud(MesoNH_O_array,MesoNH_U_array,MesoNH_V_ar
                         size = parseInt(basic_size + basic_size*add_factor*(percentage_color-0.5)*2);
                     }
                 }
-                            
+
                 var number_points_offset_x = l_x/number_points;
                 var number_points_offset_y = l_y/number_points;
-				
-				
-                
+
+
+
                 for(var a=0; a<number_points; a++){
                     for(var b=0; b<number_points; b++){
                         var pX = (x_u + a*number_points_offset_x);
                         var pY = (y_v + b*number_points_offset_y);
                         var pZ = z_o;
-                        coord_array.push(pX*general_config.cst_X); 
+                        coord_array.push(pX*general_config.cst_X);
                         coord_array.push(pZ*general_config.cst_Z);
                         coord_array.push(-pY*general_config.cst_Y);
 
@@ -1700,39 +1700,39 @@ export function create_2D_points_cloud(MesoNH_O_array,MesoNH_U_array,MesoNH_V_ar
 						voxel_level_array.push(id);
                     }
                 }
-                    
+
             }
         }
-    }	
+    }
 
     for(var m=0; m<id_meso_array.length; m++){
         for(var j=0; j<nj; j++){
             for(var i=0; i<ni; i++){
                 var index_1 = j*ni + i;
-                
+
                 var id = id_meso_array[m];
                 var temp = parseFloat(MesoNH_O_array[index_1]['tht_'+id]);
-                
-				var index_sup_1 = j*ni + i + (id-1)*ni*nj;	
-				var index_sup_2 = j*ni + i + (id-0)*ni*nj;	
+
+				var index_sup_1 = j*ni + i + (id-1)*ni*nj;
+				var index_sup_2 = j*ni + i + (id-0)*ni*nj;
 				var h = general_config.data_volume_3D['limit_meso'][index_sup_1] + (general_config.data_volume_3D['limit_meso'][index_sup_2] - general_config.data_volume_3D['limit_meso'][index_sup_1])/2 - MesoNH_O_array[index_1].zs;
                 var h_w = general_config.data_volume_3D['limit_meso'][index_sup_1] - MesoNH_O_array[index_1].zs;
-				
+
                 var x_u = MesoNH_U_array[index_1].x - general_config.Coord_X_paris;
                 var y_u = MesoNH_U_array[index_1].y - general_config.Coord_Y_paris;
                 var z_u = MesoNH_U_array[index_1].zs + h;
-                
+
                 var x_v = MesoNH_V_array[index_1].x - general_config.Coord_X_paris;
                 var y_v = MesoNH_V_array[index_1].y - general_config.Coord_Y_paris;
                 var z_v = MesoNH_V_array[index_1].zs + h;
-                
+
                 var z_o = MesoNH_O_array[index_1].zs + h;
-                
+
                 var l_x = (MesoNH_O_array[index_1].x - MesoNH_U_array[index_1].x)*2;
                 var l_y = (MesoNH_O_array[index_1].y - MesoNH_V_array[index_1].y)*2;
                 var l_z = (h-h_w)*2;
-                        
-                
+
+
                 var tmin = temperature_scale[0];
                 var tmax = temperature_scale[1];
                 var percentage_color = (temp - tmin)/(tmax - tmin);
@@ -1741,14 +1741,14 @@ export function create_2D_points_cloud(MesoNH_O_array,MesoNH_U_array,MesoNH_V_ar
                 } else if(percentage_color >1){
                     percentage_color = 1;
                 }
-                
+
                 general_config.temp_values.push(temp);
 
-                
-                                    
+
+
                 var size;
                 var basic_size = 10000;
-                
+
                 if(general_config.relative_size_factor < 1){
                     var add_factor = 1-general_config.relative_size_factor;
                     if(percentage_color < 0.5){
@@ -1770,18 +1770,18 @@ export function create_2D_points_cloud(MesoNH_O_array,MesoNH_U_array,MesoNH_V_ar
                         size = parseInt(basic_size + basic_size*add_factor*(percentage_color-0.5)*2);
                     }
                 }
-                            
+
                 var number_points_offset_x = l_x/number_points;
                 var number_points_offset_y = l_y/number_points;
-				
-				
-                
+
+
+
                 for(var a=0; a<number_points; a++){
                     for(var b=0; b<number_points; b++){
                         var pX = (x_u + a*number_points_offset_x);
                         var pY = (y_v + b*number_points_offset_y);
                         var pZ = z_o;
-                        coord_array.push(pX*general_config.cst_X); 
+                        coord_array.push(pX*general_config.cst_X);
                         coord_array.push(pZ*general_config.cst_Z);
                         coord_array.push(-pY*general_config.cst_Y);
 
@@ -1795,13 +1795,13 @@ export function create_2D_points_cloud(MesoNH_O_array,MesoNH_U_array,MesoNH_V_ar
 						voxel_level_array.push(parseInt(id)+5);
                     }
                 }
-                                    
+
             }
         }
-    }			
-    
+    }
+
     var coord_array_32 = new Float32Array(coord_array);
-    var colors_32 = new Float32Array(colors);  
+    var colors_32 = new Float32Array(colors);
     var sizes_32 = new Float32Array(sizes);
     var transparency_factor_32 = new Float32Array(transparency_factor_array);
     var custompercentage_32 = new Float32Array(custompercentagearray);
@@ -1809,12 +1809,12 @@ export function create_2D_points_cloud(MesoNH_O_array,MesoNH_U_array,MesoNH_V_ar
     var x_position_array_32 = new Float32Array(x_position_array);
     var y_position_array_32 = new Float32Array(y_position_array);
     var h_position_array_32 = new Float32Array(h_position_array);
-	
+
 	var voxel_level_array_32 = new Float32Array(voxel_level_array);
-                
-    
+
+
     var bufferGeometry = new THREE.BufferGeometry();
-    
+
     bufferGeometry.setAttribute( 'position', new THREE.BufferAttribute( coord_array_32, 3 ) );
 
     bufferGeometry.setAttribute( 'customsize', new THREE.BufferAttribute(sizes_32,1));
@@ -1825,22 +1825,22 @@ export function create_2D_points_cloud(MesoNH_O_array,MesoNH_U_array,MesoNH_V_ar
     bufferGeometry.setAttribute( 'y_position', new THREE.BufferAttribute(y_position_array_32,1));
     bufferGeometry.setAttribute( 'h_position', new THREE.BufferAttribute(h_position_array_32,1));
 	bufferGeometry.setAttribute( 'voxel_level', new THREE.BufferAttribute(voxel_level_array_32,1));
-    
+
     let material = activate_animation()
-    
+
 
     var point = new THREE.Points( bufferGeometry, material);
-        
-    //create_temp_histogram();	 <==== je déplace ds showPointsPlanes	
-        
+
+    //create_temp_histogram();	 <==== je déplace ds showPointsPlanes
+
     grid.add(point);
-    scene.add(grid);
+    scene_points.add(grid);
 }
 
 export function create_regular_points_cloud(MesoNH_O_array,MesoNH_U_array,MesoNH_V_array,grid,id_sbl_array,id_meso_array,temperature_scale,THAT,THAT_W,HCanopy,HCanopy_w){
 
     general_config.temp_values = [];
-    var ni = general_config.data_ni, 
+    var ni = general_config.data_ni,
     nj = general_config.data_nj;
     let tab_temp = [];
     var coord_array = [];
@@ -1851,43 +1851,43 @@ export function create_regular_points_cloud(MesoNH_O_array,MesoNH_U_array,MesoNH
     var z_position_array = [];
     var x_position_array = [];
     var y_position_array = [];
-    
+
     var h_position_array = [];
-	
+
 	var voxel_level_array = [];
-    
+
     general_config.z_min = null;
     general_config.z_max = null;
     general_config.x_min = null;
     general_config.x_max = null;
     general_config.y_min = null;
     general_config.y_max = null;
-    
+
     general_config.h_min = null;
     general_config.h_max = null;
-    
+
     for(var m=0; m<id_sbl_array.length; m++){
         for(var j=0; j<nj; j++){
             for(var i=0; i<ni; i++){
                 var index_1 = j*ni + i;
-				
+
                 var id = id_sbl_array[m];
                 var temp = parseFloat(MesoNH_O_array[index_1]['teb_'+id]);
-                
-				var index_sup_1 = j*ni + i + (id-1)*ni*nj;	
-				var index_sup_2 = j*ni + i + id*ni*nj;					
+
+				var index_sup_1 = j*ni + i + (id-1)*ni*nj;
+				var index_sup_2 = j*ni + i + id*ni*nj;
                 var h = general_config.data_volume_3D['limit_teb'][index_sup_1] - MesoNH_O_array[index_1].zs + (general_config.data_volume_3D['limit_teb'][index_sup_2] - general_config.data_volume_3D['limit_teb'][index_sup_1])/2;
                 var h_w = general_config.data_volume_3D['limit_teb'][index_sup_1]  - MesoNH_O_array[index_1].zs;
-				
+
                 tab_temp.push(temp)
                 var x_o = MesoNH_O_array[index_1].x - general_config.Coord_X_paris;
-                var y_o = MesoNH_O_array[index_1].y - general_config.Coord_Y_paris;					
+                var y_o = MesoNH_O_array[index_1].y - general_config.Coord_Y_paris;
                 var z_o = MesoNH_O_array[index_1].zs + h;
-                                
+
                 var l_x = (MesoNH_O_array[index_1].x - MesoNH_U_array[index_1].x)*2;
                 var l_y = (MesoNH_O_array[index_1].y - MesoNH_V_array[index_1].y)*2;
                 var l_z = (h - h_w)*2;
-                
+
                 if(general_config.h_min != null && general_config.h_max != null){
                     if(h_w < general_config.h_min){
                         general_config.h_min = h_w;
@@ -1899,7 +1899,7 @@ export function create_regular_points_cloud(MesoNH_O_array,MesoNH_U_array,MesoNH
                     general_config.h_min = h_w;
                     general_config.h_max = (h_w + l_z);
                 }
-                
+
                 if(general_config.z_min != null && general_config.z_max != null){
                     if((z_o - l_z/2) < general_config.z_min){
                         general_config.z_min = z_o - l_z/2;
@@ -1911,7 +1911,7 @@ export function create_regular_points_cloud(MesoNH_O_array,MesoNH_U_array,MesoNH
                     general_config.z_min = z_o - l_z/2;
                     general_config.z_max = z_o + l_z/2;
                 }
-                
+
                 if(general_config.x_min != null && general_config.x_max != null){
                     if((x_o - l_x/2) < general_config.x_min){
                         general_config.x_min = x_o - l_x/2;
@@ -1923,7 +1923,7 @@ export function create_regular_points_cloud(MesoNH_O_array,MesoNH_U_array,MesoNH
                     general_config.x_min = x_o - l_x/2;
                     general_config.x_max = x_o + l_x/2;
                 }
-                
+
                 if(general_config.y_min != null && general_config.y_max != null){
                     if((y_o - l_y/2) < general_config.y_min){
                         general_config.y_min = y_o - l_y/2;
@@ -1935,34 +1935,34 @@ export function create_regular_points_cloud(MesoNH_O_array,MesoNH_U_array,MesoNH
                     general_config.y_min = y_o - l_y/2;
                     general_config.y_max = y_o + l_y/2;
                 }
-                
+
             }
         }
-    }	
-     
-	
+    }
+
+
     for(var m=0; m<id_meso_array.length; m++){
         for(var j=0; j<nj; j++){
             for(var i=0; i<ni; i++){
-                var index_1 = j*ni + i;          
+                var index_1 = j*ni + i;
                 var id = id_meso_array[m];
                 var temp = parseFloat(MesoNH_O_array[index_1]['tht_'+id]);
-                
-				var index_sup_1 = j*ni + i + (id-1)*ni*nj;	
-				var index_sup_2 = j*ni + i + (id-0)*ni*nj;	
+
+				var index_sup_1 = j*ni + i + (id-1)*ni*nj;
+				var index_sup_2 = j*ni + i + (id-0)*ni*nj;
 				var h = general_config.data_volume_3D['limit_meso'][index_sup_1] + (general_config.data_volume_3D['limit_meso'][index_sup_2] - general_config.data_volume_3D['limit_meso'][index_sup_1])/2 - MesoNH_O_array[index_1].zs;
                 var h_w = general_config.data_volume_3D['limit_meso'][index_sup_1] - MesoNH_O_array[index_1].zs;
-				
+
                 tab_temp.push(temp);
-                                                
+
                 var x_o = MesoNH_O_array[index_1].x - general_config.Coord_X_paris;
-                var y_o = MesoNH_O_array[index_1].y - general_config.Coord_Y_paris;					
+                var y_o = MesoNH_O_array[index_1].y - general_config.Coord_Y_paris;
                 var z_o = MesoNH_O_array[index_1].zs + h;
-                
+
                 var l_x = (MesoNH_O_array[index_1].x - MesoNH_U_array[index_1].x)*2;
                 var l_y = (MesoNH_O_array[index_1].y - MesoNH_V_array[index_1].y)*2;
                 var l_z = (h-h_w)*2;
-                                
+
                 if(general_config.h_min != null && general_config.h_max != null){
                     if(h_w < general_config.h_min){
                         general_config.h_min = h_w;
@@ -1974,7 +1974,7 @@ export function create_regular_points_cloud(MesoNH_O_array,MesoNH_U_array,MesoNH
                     general_config.h_min = h_w;
                     general_config.h_max = (h_w + l_z);
                 }
-                    
+
                 if(general_config.z_min != null && general_config.z_max != null){
                     if((z_o - l_z/2) < general_config.z_min){
                         general_config.z_min = z_o - l_z/2;
@@ -1986,7 +1986,7 @@ export function create_regular_points_cloud(MesoNH_O_array,MesoNH_U_array,MesoNH
                     general_config.z_min = z_o - l_z/2;
                     general_config.z_max = z_o + l_z/2;
                 }
-                
+
                 if(general_config.x_min != null && general_config.x_max != null){
                     if((x_o - l_x/2) < general_config.x_min){
                         general_config.x_min = x_o - l_x/2;
@@ -1998,7 +1998,7 @@ export function create_regular_points_cloud(MesoNH_O_array,MesoNH_U_array,MesoNH
                     general_config.x_min = x_o - l_x/2;
                     general_config.x_max = x_o + l_x/2;
                 }
-                
+
                 if(general_config.y_min != null && general_config.y_max != null){
                     if((y_o - l_y/2) < general_config.y_min){
                         general_config.y_min = y_o - l_y/2;
@@ -2010,37 +2010,37 @@ export function create_regular_points_cloud(MesoNH_O_array,MesoNH_U_array,MesoNH
                     general_config.y_min = y_o - l_y/2;
                     general_config.y_max = y_o + l_y/2;
                 }
-            
-                
+
+
             }
         }
-    }	
-    
-   
+    }
+
+
     tab_temp.sort((a,b) => a-b)
 
     for(var m=0; m<id_sbl_array.length; m++){
         for(var j=0; j<nj; j++){
             for(var i=0; i<ni; i++){
                 var index_1 = j*ni + i;
-				
+
                 var id = id_sbl_array[m];
                 var temp = parseFloat(MesoNH_O_array[index_1]['teb_'+id]);
-                
-				var index_sup_1 = j*ni + i + (id-1)*ni*nj;	
-				var index_sup_2 = j*ni + i + id*ni*nj;					
+
+				var index_sup_1 = j*ni + i + (id-1)*ni*nj;
+				var index_sup_2 = j*ni + i + id*ni*nj;
                 var h = general_config.data_volume_3D['limit_teb'][index_sup_1] - MesoNH_O_array[index_1].zs + (general_config.data_volume_3D['limit_teb'][index_sup_2] - general_config.data_volume_3D['limit_teb'][index_sup_1])/2;
                 var h_w = general_config.data_volume_3D['limit_teb'][index_sup_1]  - MesoNH_O_array[index_1].zs;
-                
+
                 var x_o = MesoNH_O_array[index_1].x - general_config.Coord_X_paris;
-                var y_o = MesoNH_O_array[index_1].y - general_config.Coord_Y_paris;					
+                var y_o = MesoNH_O_array[index_1].y - general_config.Coord_Y_paris;
                 var z_o = MesoNH_O_array[index_1].zs + h;
-                                
+
                 var l_x = (MesoNH_O_array[index_1].x - MesoNH_U_array[index_1].x)*2;
                 var l_y = (MesoNH_O_array[index_1].y - MesoNH_V_array[index_1].y)*2;
                 var l_z = (h - h_w)*2;
-                
-                            
+
+
                 var tmin = temperature_scale[0];
                 var tmax = temperature_scale[1];
                 var percentage_color = (temp - tmin)/(tmax - tmin);
@@ -2049,14 +2049,14 @@ export function create_regular_points_cloud(MesoNH_O_array,MesoNH_U_array,MesoNH
                 } else if(percentage_color >1){
                     percentage_color = 1;
                 }
-                
+
                 general_config.temp_values.push(temp);
 
-                    
+
                 var cell_volume = l_x*l_y*l_z;
-                
+
                 var relative_density;
-                
+
                 if(general_config.relative_density_factor < 1){
                     var add_factor = 1-general_config.relative_density_factor;
                     if(percentage_color < 0.5){
@@ -2078,10 +2078,10 @@ export function create_regular_points_cloud(MesoNH_O_array,MesoNH_U_array,MesoNH
                         relative_density = general_config.particle_density + general_config.particle_density*add_factor*(percentage_color-0.5)*2;
                     }
                 }
-                                    
+
                 var size;
                 var basic_size = 10000;
-                
+
                 if(general_config.relative_size_factor < 1){
                     var add_factor = 1-general_config.relative_size_factor;
                     if(percentage_color < 0.5){
@@ -2103,19 +2103,19 @@ export function create_regular_points_cloud(MesoNH_O_array,MesoNH_U_array,MesoNH
                         size = parseInt(basic_size + basic_size*add_factor*(percentage_color-0.5)*2);
                     }
                 }
-				
-				
-                    
+
+
+
                 var particle_length_XY = parseInt(relative_density*l_x*l_y);
-                
+
                 var offset_xy = l_x/Math.sqrt(particle_length_XY);
-                
+
                 var number_particule_x = parseInt(Math.sqrt(particle_length_XY));
                 var number_particule_y = parseInt(Math.sqrt(particle_length_XY));
                 var number_particule_z = parseInt((l_z*general_config.cst_Z)/(offset_xy*general_config.cst_X));
-                
-                
-                
+
+
+
                 if(number_particule_x <1){
                 number_particule_x=1;
                 }
@@ -2126,7 +2126,7 @@ export function create_regular_points_cloud(MesoNH_O_array,MesoNH_U_array,MesoNH
                 number_particule_z=1;
                 }
                 var offset_z = l_z/number_particule_z;
-                var counter =0;									
+                var counter =0;
                 for(var a=0; a<number_particule_x; a++){
                     for(var b=0; b<number_particule_y; b++){
                         for(var c=0; c<number_particule_z; c++){
@@ -2148,32 +2148,32 @@ export function create_regular_points_cloud(MesoNH_O_array,MesoNH_U_array,MesoNH
                         }
                     }
                 }
-                                            
+
             }
         }
-    }	
+    }
     for(var m=0; m<id_meso_array.length; m++){
         for(var j=0; j<nj; j++){
             for(var i=0; i<ni; i++){
                 var index_1 = j*ni + i;
-                
+
                 var id = id_meso_array[m];
                 var temp = parseFloat(MesoNH_O_array[index_1]['tht_'+id]);
-                
-				var index_sup_1 = j*ni + i + (id-1)*ni*nj;	
-				var index_sup_2 = j*ni + i + (id-0)*ni*nj;	
+
+				var index_sup_1 = j*ni + i + (id-1)*ni*nj;
+				var index_sup_2 = j*ni + i + (id-0)*ni*nj;
 				var h = general_config.data_volume_3D['limit_meso'][index_sup_1] + (general_config.data_volume_3D['limit_meso'][index_sup_2] - general_config.data_volume_3D['limit_meso'][index_sup_1])/2 - MesoNH_O_array[index_1].zs;
                 var h_w = general_config.data_volume_3D['limit_meso'][index_sup_1] - MesoNH_O_array[index_1].zs;
-                                                
+
                 var x_o = MesoNH_O_array[index_1].x - general_config.Coord_X_paris;
-                var y_o = MesoNH_O_array[index_1].y - general_config.Coord_Y_paris;					
+                var y_o = MesoNH_O_array[index_1].y - general_config.Coord_Y_paris;
                 var z_o = MesoNH_O_array[index_1].zs + h;
-                
+
                 var l_x = (MesoNH_O_array[index_1].x - MesoNH_U_array[index_1].x)*2;
                 var l_y = (MesoNH_O_array[index_1].y - MesoNH_V_array[index_1].y)*2;
                 var l_z = (h-h_w)*2;
-                                
-                                
+
+
                 var tmin = temperature_scale[0];
                 var tmax = temperature_scale[1];
                 var percentage_color = (temp - tmin)/(tmax - tmin);
@@ -2182,13 +2182,13 @@ export function create_regular_points_cloud(MesoNH_O_array,MesoNH_U_array,MesoNH
                 } else if(percentage_color >1){
                     percentage_color = 1;
                 }
-                
+
                 general_config.temp_values.push(temp);
 
                 var cell_volume = l_x*l_y*l_z;
-                
+
                 var relative_density;
-                
+
                 if(general_config.relative_density_factor < 1){
                     var add_factor = 1-general_config.relative_density_factor;
                     if(percentage_color < 0.5){
@@ -2210,12 +2210,12 @@ export function create_regular_points_cloud(MesoNH_O_array,MesoNH_U_array,MesoNH
                         relative_density = general_config.particle_density + general_config.particle_density*add_factor*(percentage_color-0.5)*2;
                     }
                 }
-                
-                
-                
+
+
+
                 var size;
                 var basic_size = 10000;
-                
+
                 if(general_config.relative_size_factor < 1){
                     var add_factor = 1-general_config.relative_size_factor;
                     if(percentage_color < 0.5){
@@ -2237,19 +2237,19 @@ export function create_regular_points_cloud(MesoNH_O_array,MesoNH_U_array,MesoNH
                         size = parseInt(basic_size + basic_size*add_factor*(percentage_color-0.5)*2);
                     }
                 }
-				
-				
-                    
+
+
+
                 var particle_length_XY = parseInt(relative_density*l_x*l_y);
-                
+
                 var offset_xy = l_x/Math.sqrt(particle_length_XY);
-                
+
                 var number_particule_x = parseInt(Math.sqrt(particle_length_XY));
                 var number_particule_y = parseInt(Math.sqrt(particle_length_XY));
                 var number_particule_z = parseInt((l_z*general_config.cst_Z)/(offset_xy*general_config.cst_X));
-                
-                
-                
+
+
+
                 if(number_particule_x <1){
                 number_particule_x=1;
                 }
@@ -2260,7 +2260,7 @@ export function create_regular_points_cloud(MesoNH_O_array,MesoNH_U_array,MesoNH
                 number_particule_z=1;
                 }
                 var offset_z = l_z/number_particule_z;
-                                
+
                 for(var a=0; a<number_particule_x; a++){
                     for(var b=0; b<number_particule_y; b++){
                         for(var c=0; c<number_particule_z; c++){
@@ -2282,15 +2282,15 @@ export function create_regular_points_cloud(MesoNH_O_array,MesoNH_U_array,MesoNH
                         }
                     }
                 }
-                
-                
-                
+
+
+
             }
         }
-    }			
-                    
+    }
+
     var coord_array_32 = new Float32Array(coord_array);
-    var colors_32 = new Float32Array(colors);  
+    var colors_32 = new Float32Array(colors);
     var sizes_32 = new Float32Array(sizes);
     var transparency_factor_32 = new Float32Array(transparency_factor_array);
     var custompercentage_32 = new Float32Array(custompercentagearray);
@@ -2299,10 +2299,10 @@ export function create_regular_points_cloud(MesoNH_O_array,MesoNH_U_array,MesoNH
     var y_position_array_32 = new Float32Array(y_position_array);
     var h_position_array_32 = new Float32Array(h_position_array);
 	var voxel_level_array_32 = new Float32Array(voxel_level_array);
-            
-    
+
+
     var bufferGeometry = new THREE.BufferGeometry();
-    
+
     bufferGeometry.setAttribute( 'position', new THREE.BufferAttribute( coord_array_32, 3 ) );
 
     bufferGeometry.setAttribute( 'customsize', new THREE.BufferAttribute(sizes_32,1));
@@ -2313,14 +2313,14 @@ export function create_regular_points_cloud(MesoNH_O_array,MesoNH_U_array,MesoNH
     bufferGeometry.setAttribute( 'y_position', new THREE.BufferAttribute(y_position_array_32,1));
     bufferGeometry.setAttribute( 'h_position', new THREE.BufferAttribute(h_position_array_32,1));
 	bufferGeometry.setAttribute( 'voxel_level', new THREE.BufferAttribute(voxel_level_array_32,1));
-        
+
     let material = activate_animation()
-        
+
     var point = new THREE.Points( bufferGeometry, material);
 
-            
+
     grid.add(point);
-    scene.add(grid);
+    scene_points.add(grid);
 }
 
 export function render(){
@@ -2329,11 +2329,11 @@ export function render(){
         general_config.grid.children[0].material.uniforms.u_time.value += general_config.animation_speed_factor;
     }
     controls.update();
-    
+
     //scene, scene_building, scene_points, scene_horizontal_planes, scene_vertical_planes
 	//rtTexture_building,rtTexture_points,rtTexture_horizontal_planes,rtTexture_vertical_planes,material_building_rendered_plane
-	
-	
+
+  renderer.setClearColor(0x000000, 1);
 	renderer.setRenderTarget( rtTexture_building );
 	renderer.clear();
 	renderer.render( scene_building, camera );
@@ -2341,21 +2341,20 @@ export function render(){
 	renderer.setRenderTarget( rtTexture_points );
 	renderer.clear();
 	renderer.render( scene_points, camera );
-	
+
 	renderer.setRenderTarget( rtTexture_horizontal_planes );
 	renderer.clear();
 	renderer.render( scene_horizontal_planes, camera );
-	
+
 	renderer.setRenderTarget( rtTexture_vertical_planes );
 	renderer.clear();
 	renderer.render( scene_vertical_planes, camera );
 
 
+	renderer.setClearColor(0x000000, 0);
 	renderer.setRenderTarget( null );
 	renderer.clear();
-	renderer.render( scene, camera_screen );
-	
-	//renderer.render( scene, camera );
+	renderer.render( scene_screen, camera_screen );
 }
 
 
@@ -2364,7 +2363,7 @@ export function render(){
 
 export function hexToRgb(hex) {
   var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-  
+
   return result ? {
     r: parseInt(result[1], 16),
     g: parseInt(result[2], 16),
@@ -2429,31 +2428,31 @@ var z_offset=0;
 
   for(var a =0; a< data.features.length; a++){
         var feature = data.features[a];
-		
-			
+
+
 		var x = feature.geometry.coordinates[0][0][0][0]-general_config.Coord_X_paris;
 		var y = feature.geometry.coordinates[0][0][0][1]-general_config.Coord_Y_paris;
-			
-		
+
+
 		var voxel_position_x = parseInt((x - general_config.data_volume_3D.x_min)/(general_config.data_volume_3D.x_max - general_config.data_volume_3D.x_min)*general_config.data_ni);
 		var voxel_position_y = parseInt(general_config.data_nj-(y - general_config.data_volume_3D.y_min)/(general_config.data_volume_3D.y_max - general_config.data_volume_3D.y_min)*general_config.data_nj);
-			
+
 		if(voxel_position_x>=0 && voxel_position_x<general_config.data_ni && voxel_position_y>=0 && voxel_position_y<general_config.data_nj){
 			var zs_teb = general_config.data_volume_3D.data_zs_teb[voxel_position_y*general_config.data_ni + voxel_position_x];
 			z_offset = zs_teb - feature.properties.altitude_s;
 		}
-		
+
 		var feature_altitude_s = feature.properties.altitude_s + z_offset
 		var feature_altitude_t = feature.properties.altitude_t + z_offset
-		
-		
-		
-		
-		
-        
+
+
+
+
+
+
         var polygon_coordinate = [];
-        
-        
+
+
         var building_color;
         switch(nature_type){
             case 'typo_maj':
@@ -2508,10 +2507,10 @@ var z_offset=0;
                 building_color = return_building_color(null,'autre');
                 break;
         }
-		
+
 		//building_color = {r:150/255,g:170/255,b:200/255};
-        
-		
+
+
         for(var j =0; j< feature.geometry.coordinates[0][0].length; j++){
             var index_1 = j;
             var index_2;
@@ -2520,35 +2519,35 @@ var z_offset=0;
             } else {
                 index_2 = j+1;
             }
-            									
+
             polygon_coordinate.push((feature.geometry.coordinates[0][0][index_1][0]-general_config.Coord_X_paris)*general_config.cst_X);
             polygon_coordinate.push((feature.geometry.coordinates[0][0][index_1][1]-general_config.Coord_Y_paris)*general_config.cst_Y);
-            
+
             buildings_features_points_array.push((feature.geometry.coordinates[0][0][index_1][0]-general_config.Coord_X_paris)*general_config.cst_X);buildings_features_points_array.push(feature_altitude_s*general_config.cst_Z);buildings_features_points_array.push(-(feature.geometry.coordinates[0][0][index_1][1]-general_config.Coord_Y_paris)*general_config.cst_Y);
             buildings_features_points_array.push((feature.geometry.coordinates[0][0][index_1][0]-general_config.Coord_X_paris)*general_config.cst_X);buildings_features_points_array.push(feature_altitude_t*general_config.cst_Z);buildings_features_points_array.push(-(feature.geometry.coordinates[0][0][index_1][1]-general_config.Coord_Y_paris)*general_config.cst_Y);
             buildings_features_points_array.push((feature.geometry.coordinates[0][0][index_2][0]-general_config.Coord_X_paris)*general_config.cst_X);buildings_features_points_array.push(feature_altitude_s*general_config.cst_Z);buildings_features_points_array.push(-(feature.geometry.coordinates[0][0][index_2][1]-general_config.Coord_Y_paris)*general_config.cst_Y);
-			
+
 			buildings_features_surface.push(feature_altitude_s);
-            
+
             buildings_features_points_array.push((feature.geometry.coordinates[0][0][index_1][0]-general_config.Coord_X_paris)*general_config.cst_X);buildings_features_points_array.push(feature_altitude_t*general_config.cst_Z);buildings_features_points_array.push(-(feature.geometry.coordinates[0][0][index_1][1]-general_config.Coord_Y_paris)*general_config.cst_Y);
             buildings_features_points_array.push((feature.geometry.coordinates[0][0][index_2][0]-general_config.Coord_X_paris)*general_config.cst_X);buildings_features_points_array.push(feature_altitude_t*general_config.cst_Z);buildings_features_points_array.push(-(feature.geometry.coordinates[0][0][index_2][1]-general_config.Coord_Y_paris)*general_config.cst_Y);
             buildings_features_points_array.push((feature.geometry.coordinates[0][0][index_2][0]-general_config.Coord_X_paris)*general_config.cst_X);buildings_features_points_array.push(feature_altitude_s*general_config.cst_Z);buildings_features_points_array.push(-(feature.geometry.coordinates[0][0][index_2][1]-general_config.Coord_Y_paris)*general_config.cst_Y);
-			
+
 			buildings_features_surface.push(feature_altitude_s);
-            
+
             var N_X = - (feature_altitude_t*general_config.cst_Z-feature_altitude_s*general_config.cst_Z)*((feature.geometry.coordinates[0][0][index_2][1]-general_config.Coord_Y_paris)*general_config.cst_Y-(feature.geometry.coordinates[0][0][index_1][1]-general_config.Coord_Y_paris)*general_config.cst_Y);
             var N_Y = (feature_altitude_t*general_config.cst_Z-feature_altitude_s*general_config.cst_Z)*((feature.geometry.coordinates[0][0][index_2][0]-general_config.Coord_X_paris)*general_config.cst_X-(feature.geometry.coordinates[0][0][index_1][0]-general_config.Coord_X_paris)*general_config.cst_X);
-            
+
             var normal_vector = new THREE.Vector2( N_X, N_Y );
             normal_vector.normalize();
-            
+
             buildings_features_normal_array.push(normal_vector.x);buildings_features_normal_array.push(0);buildings_features_normal_array.push(normal_vector.y);
             buildings_features_normal_array.push(normal_vector.x);buildings_features_normal_array.push(0);buildings_features_normal_array.push(normal_vector.y);
             buildings_features_normal_array.push(normal_vector.x);buildings_features_normal_array.push(0);buildings_features_normal_array.push(normal_vector.y);
             buildings_features_normal_array.push(normal_vector.x);buildings_features_normal_array.push(0);buildings_features_normal_array.push(normal_vector.y);
             buildings_features_normal_array.push(normal_vector.x);buildings_features_normal_array.push(0);buildings_features_normal_array.push(normal_vector.y);
             buildings_features_normal_array.push(normal_vector.x);buildings_features_normal_array.push(0);buildings_features_normal_array.push(normal_vector.y);
-                                            
+
             buildings_features_color_array.push(building_color.r);buildings_features_color_array.push(building_color.g);buildings_features_color_array.push(building_color.b);
             buildings_features_color_array.push(building_color.r);buildings_features_color_array.push(building_color.g);buildings_features_color_array.push(building_color.b);
             buildings_features_color_array.push(building_color.r);buildings_features_color_array.push(building_color.g);buildings_features_color_array.push(building_color.b);
@@ -2556,15 +2555,15 @@ var z_offset=0;
             buildings_features_color_array.push(building_color.r);buildings_features_color_array.push(building_color.g);buildings_features_color_array.push(building_color.b);
             buildings_features_color_array.push(building_color.r);buildings_features_color_array.push(building_color.g);buildings_features_color_array.push(building_color.b);
         }
-        
+
         var polygon_triangulate = earcut(polygon_coordinate,null,2);
         for(var t=0; t<polygon_triangulate.length; t++){
             buildings_features_points_array.push(polygon_coordinate[polygon_triangulate[t]*2]);
             buildings_features_points_array.push(feature_altitude_t*general_config.cst_Z);
             buildings_features_points_array.push(-polygon_coordinate[polygon_triangulate[t]*2 + 1]);
-			
+
 			buildings_features_surface.push(feature_altitude_s);
-            
+
             buildings_features_color_array.push(building_color.r);buildings_features_color_array.push(building_color.g);buildings_features_color_array.push(building_color.b);
             buildings_features_normal_array.push(0);buildings_features_normal_array.push(1);buildings_features_normal_array.push(0);
         }
@@ -2572,29 +2571,29 @@ var z_offset=0;
             ground_features_points_array.push(polygon_coordinate[polygon_triangulate[t]*2]);
             ground_features_points_array.push(feature_altitude_s*general_config.cst_Z);
             ground_features_points_array.push(-polygon_coordinate[polygon_triangulate[t]*2 + 1]);
-			
+
 			buildings_features_surface.push(feature_altitude_s);
-            
+
             ground_features_color_array.push(building_color.r);ground_features_color_array.push(building_color.g);ground_features_color_array.push(building_color.b);
             ground_features_normal_array.push(0);ground_features_normal_array.push(1);ground_features_normal_array.push(0);
         }
-        
-        
+
+
   }
   var buildings_feature_coord_array_32 = new Float32Array(buildings_features_points_array);
     var buildings_feature_colors_32 = new Float32Array(buildings_features_color_array);
     var buildings_feature_normal_32 = new Float32Array(buildings_features_normal_array);
-	
+
 
  var ground_feature_coord_array_32 = new Float32Array(ground_features_points_array);
     var ground_feature_colors_32 = new Float32Array(ground_features_color_array);
-    var ground_feature_normal_32 = new Float32Array(ground_features_normal_array);	
-       
+    var ground_feature_normal_32 = new Float32Array(ground_features_normal_array);
+
 	var texture_zs = new THREE.DataTexture( general_config.data_volume_3D.data_zs, general_config.data_volume_3D.x_length, general_config.data_volume_3D.y_length);
 	texture_zs.format = THREE.RedFormat;
 	texture_zs.type = THREE.FloatType;
 	texture_zs.unpackAlignment = 1;
-	
+
     var buildings_feature_material = new THREE.ShaderMaterial( {
 						side: THREE.DoubleSide,
 						uniforms: {
@@ -2608,17 +2607,17 @@ var z_offset=0;
 							light_color_4: { value: scene.children[3].color },
 							//light_position_5: { value: scene.children[4].position },
 							//light_color_5: { value: scene.children[4].color },
-							transparency: { value: general_config.buildings_transparency }
+							//transparency: { value: general_config.buildings_transparency }
 						},
 						vertexShader: document.getElementById( 'vertexshader_buildings' ).textContent,
 						fragmentShader: document.getElementById( 'fragmentshader_buildings' ).textContent,
 						// blending: THREE.AdditiveBlending,
 						//depthTest: false,
-						transparent: true
+						// transparent: true
 					} );
     var buildings_feature_bufferGeometry = new THREE.BufferGeometry();
-	
-	
+
+
 	var ground_feature_material = new THREE.ShaderMaterial( {
 						side: THREE.DoubleSide,
 						uniforms: {
@@ -2632,7 +2631,7 @@ var z_offset=0;
 							light_color_4: { value: scene.children[3].color },
 							//light_position_5: { value: scene.children[4].position },
 							//light_color_5: { value: scene.children[4].color },
-							transparency: { type: "f", value: 1.0 }
+							//transparency: { type: "f", value: 1.0 }
 						},
 						vertexShader: document.getElementById( 'vertexshader_buildings' ).textContent,
 						fragmentShader: document.getElementById( 'fragmentshader_buildings' ).textContent,
@@ -2640,7 +2639,7 @@ var z_offset=0;
 						//depthTest: false,
 						transparent: false
 					} );
-	
+
 	//var buildings_feature_material = new THREE.MeshPhongMaterial( {
 	//	color: new THREE.Color( building_color.r, building_color.g, building_color.b ),
 	//	opacity: general_config.buildings_transparency,
@@ -2654,7 +2653,7 @@ var z_offset=0;
 	//	transparent: true,
 	//	side: THREE.DoubleSide,
 	//	} );
-	
+
 	//var buildings_feature_material =new THREE.MeshPhongMaterial( {
 	//	color: building_color,
 	//	opacity: general_config.buildings_transparency,
@@ -2666,32 +2665,33 @@ var z_offset=0;
 	//	opacity: 1.0,
 	//	transparent: false
 	//})
-	
-	
+
+
     var buildings_feature_bufferGeometry = new THREE.BufferGeometry();
-    
+
     buildings_feature_bufferGeometry.setAttribute( 'position', new THREE.BufferAttribute( buildings_feature_coord_array_32, 3 ) );
     buildings_feature_bufferGeometry.setAttribute( 'customNormal', new THREE.BufferAttribute( buildings_feature_normal_32, 3 ) );
     buildings_feature_bufferGeometry.setAttribute( 'color', new THREE.BufferAttribute( buildings_feature_colors_32, 3 ) );
     var buildings_feature_mesh = new THREE.Mesh( buildings_feature_bufferGeometry, buildings_feature_material);
-	
+
 	var ground_feature_bufferGeometry = new THREE.BufferGeometry();
-    
+
     ground_feature_bufferGeometry.setAttribute( 'position', new THREE.BufferAttribute( ground_feature_coord_array_32, 3 ) );
     ground_feature_bufferGeometry.setAttribute( 'customNormal', new THREE.BufferAttribute( ground_feature_normal_32, 3 ) );
     ground_feature_bufferGeometry.setAttribute( 'color', new THREE.BufferAttribute( ground_feature_colors_32, 3 ) );
     var ground_feature_mesh = new THREE.Mesh( ground_feature_bufferGeometry, ground_feature_material);
-    
-    
-      general_config.grid_building.add(ground_feature_mesh);  
+
+
+      general_config.grid_building.add(ground_feature_mesh);
     general_config.grid_building.add(buildings_feature_mesh);
-	
+
     scene.add(general_config.grid_building);
 
 }
 
 export function change_buildings_transparency(transparency){
-	general_config.grid_building.children[1].material.uniforms.transparency = {type: "f", value: transparency};
+	material_screen.uniforms.opacity_buildings.value = transparency;
+	general_config.buildings_transparency = transparency;
 	//general_config.grid_building.children[1].material.opacity = transparency;
 }
 
@@ -2767,7 +2767,7 @@ export function return_building_color(type,nature_type){
                 break;
             default:
                 color_hex = '#7f7f7f';
-        }		
+        }
     } else if (nature_type == 'build_dens'){
         var color_1 = '#F6CAE5';
         var color_2 = '#94002F';
@@ -2775,7 +2775,7 @@ export function return_building_color(type,nature_type){
             color_hex = approximateColor1ToColor2ByPercent(color_1, color_2, type);
         } else {
             color_hex = '#7f7f7f';
-        }	
+        }
     } else if (nature_type == 'hydro_dens'){
         var color_1 = '#7198EC';
         var color_2 = '#04065A';
@@ -2783,7 +2783,7 @@ export function return_building_color(type,nature_type){
             color_hex = approximateColor1ToColor2ByPercent(color_1, color_2, type);
         } else {
             color_hex = '#7f7f7f';
-        }	
+        }
     } else if (nature_type == 'veget_dens'){
         var color_1 = '#FFF4B9';
         var color_2 = '#005F13';
@@ -2791,7 +2791,7 @@ export function return_building_color(type,nature_type){
             color_hex = approximateColor1ToColor2ByPercent(color_1, color_2, type);
         } else {
             color_hex = '#7f7f7f';
-        }	
+        }
     } else if (nature_type == 'road_dens'){
         var color_1 = '#EEEEEE';
         var color_2 = '#676767';
@@ -2799,7 +2799,7 @@ export function return_building_color(type,nature_type){
             color_hex = approximateColor1ToColor2ByPercent(color_1, color_2, type);
         } else {
             color_hex = '#7f7f7f';
-        }	
+        }
     } else if (nature_type == 'ba'){
         var color_1 = '#EEEEEE';
         var color_2 = '#676767';
@@ -2807,7 +2807,7 @@ export function return_building_color(type,nature_type){
             color_hex = approximateColor1ToColor2ByPercent(color_1, color_2, type/100);
         } else {
             color_hex = '#7f7f7f';
-        }	
+        }
     } else if (nature_type == 'bgh'){
         var color_1 = '#EEEEEE';
         var color_2 = '#676767';
@@ -2815,7 +2815,7 @@ export function return_building_color(type,nature_type){
             color_hex = approximateColor1ToColor2ByPercent(color_1, color_2, type/100);
         } else {
             color_hex = '#7f7f7f';
-        }	
+        }
     } else if (nature_type == 'icif'){
         var color_1 = '#EEEEEE';
         var color_2 = '#676767';
@@ -2823,7 +2823,7 @@ export function return_building_color(type,nature_type){
             color_hex = approximateColor1ToColor2ByPercent(color_1, color_2, type/100);
         } else {
             color_hex = '#7f7f7f';
-        }	
+        }
     } else if (nature_type == 'icio'){
         var color_1 = '#EEEEEE';
         var color_2 = '#676767';
@@ -2831,7 +2831,7 @@ export function return_building_color(type,nature_type){
             color_hex = approximateColor1ToColor2ByPercent(color_1, color_2, type/100);
         } else {
             color_hex = '#7f7f7f';
-        }	
+        }
     } else if (nature_type == 'id'){
         var color_1 = '#EEEEEE';
         var color_2 = '#676767';
@@ -2839,7 +2839,7 @@ export function return_building_color(type,nature_type){
             color_hex = approximateColor1ToColor2ByPercent(color_1, color_2, type/100);
         } else {
             color_hex = '#7f7f7f';
-        }	
+        }
     } else if (nature_type == 'local'){
         var color_1 = '#EEEEEE';
         var color_2 = '#676767';
@@ -2847,7 +2847,7 @@ export function return_building_color(type,nature_type){
             color_hex = approximateColor1ToColor2ByPercent(color_1, color_2, type/100);
         } else {
             color_hex = '#7f7f7f';
-        }	
+        }
     } else if (nature_type == 'pcif'){
         var color_1 = '#EEEEEE';
         var color_2 = '#676767';
@@ -2855,7 +2855,7 @@ export function return_building_color(type,nature_type){
             color_hex = approximateColor1ToColor2ByPercent(color_1, color_2, type/100);
         } else {
             color_hex = '#7f7f7f';
-        }	
+        }
     } else if (nature_type == 'pcio'){
         var color_1 = '#EEEEEE';
         var color_2 = '#676767';
@@ -2863,7 +2863,7 @@ export function return_building_color(type,nature_type){
             color_hex = approximateColor1ToColor2ByPercent(color_1, color_2, type/100);
         } else {
             color_hex = '#7f7f7f';
-        }	
+        }
     } else if (nature_type == 'pd'){
         var color_1 = '#EEEEEE';
         var color_2 = '#676767';
@@ -2871,7 +2871,7 @@ export function return_building_color(type,nature_type){
             color_hex = approximateColor1ToColor2ByPercent(color_1, color_2, type/100);
         } else {
             color_hex = '#7f7f7f';
-        }	
+        }
     } else if (nature_type == 'psc'){
         var color_1 = '#EEEEEE';
         var color_2 = '#676767';
@@ -2879,51 +2879,51 @@ export function return_building_color(type,nature_type){
             color_hex = approximateColor1ToColor2ByPercent(color_1, color_2, type/100);
         } else {
             color_hex = '#7f7f7f';
-        }	
+        }
     }
-            
-    
+
+
     var color_rgb = hexToRgb(color_hex);
-                
+
     color.r = color_rgb.r/255;
     color.g = color_rgb.g/255;
     color.b = color_rgb.b/255;
-    
+
     return color;
 }
 
 export function getHCLcolor(tableau, temp, percentage, HCLscale){
     let color,i;
-    let tab_temp = tableau.slice(); 
+    let tab_temp = tableau.slice();
     let array = [];
     let nb_arr = general_config.nb_array;
-    
+
     if(general_config.active_color_class == "ecarts_egaux"){
-        
+
         let temp_min =  general_config.temp_array[0];
         let temp_max = general_config.temp_array[1]
         let ecart = ((temp_max - temp_min) /nb_arr )
         for (i = 0; i < nb_arr; ++i) {
-            //creation de n sous tableaux vides 
+            //creation de n sous tableaux vides
             array.push([]);
         }
         tab_temp.forEach(temperature => {
             for (i =0; i < array.length; ++i) {
                 if(temperature >= temp_min + (ecart*i) && temperature <= temp_min + (ecart*(i+1)) ) {
                     array[i].push(temperature);
-                } 
+                }
             }
         })
         //console.log(array)
         /*
          on peut 'return array' ici pour avoir le tableau composé des sous tableaux
         */
-        
+
     } else if (general_config.active_color_class == "effectifs_egaux") {
         let nbeMaxDeVals = Math.ceil(tab_temp.length / nb_arr);
         for (i = 0; i < nb_arr; ++ i) {
             if ((tab_temp.length / (nb_arr-i)) < nbeMaxDeVals && nbeMaxDeVals > 1) {
-                array.push(tab_temp.splice(0, nbeMaxDeVals-1)) 
+                array.push(tab_temp.splice(0, nbeMaxDeVals-1))
             } else {
                 array.push(tab_temp.splice(0, nbeMaxDeVals))
             }
@@ -2932,8 +2932,8 @@ export function getHCLcolor(tableau, temp, percentage, HCLscale){
         on peut 'return array' ici pour avoir le tableau composé des sous tableaux
 
         */
-        
-        
+
+
     }
     //A adapter quand on changera les couleurs par un .png
     for (i = 0 ;  i < nb_arr; ++i) {
@@ -2952,18 +2952,18 @@ export function getHCLcolor(tableau, temp, percentage, HCLscale){
 }
 
 export function create_temp_histogram(){
-    
+
     var temp_deg=[];
     for(var j = 0; j<general_config.temp_values.length; j++){
         temp_deg.push(general_config.temp_values[j] - 273.15);
     }
     var margin = {top: 10, right: 40, bottom: 30, left: 30},
-    width = 400 - margin.left - margin.right, 
+    width = 400 - margin.left - margin.right,
     /* ne souhait pas mettre width ds gnl config, si on le change ici, il faut le changer dans la fonction 'chargerParams'
     où la largeur est renseignée en dur (pour le moment 330)*/
     height = 200 - margin.top - margin.bottom;
     //Pour ne pas avoir plusieurs histo a la suite, on efface et on recommence ac d'autres données
-    
+
     $('#temp_histogram_content').html('');
     // append the svg object to the body of the page
     var svg = d3.select("#temp_histogram_content")
@@ -2976,18 +2976,18 @@ export function create_temp_histogram(){
                 "translate(" + margin.left + "," + margin.top + ")");
 
         // temp minimum et maximum initiales dans l'histogramme, mais temp array est init entre 20° et 30°
-        
+
 
         // X axis: scale and draw:
         var x = d3.scaleLinear()
-            .domain([general_config.domain_min, general_config.domain_max])    
+            .domain([general_config.domain_min, general_config.domain_max])
             .range([0, width]);
         svg.append("g")
             .attr("transform", "translate(0," + height + ")")
             .call(d3.axisBottom(x));
 
         // set the parameters for the histogram
-        var histogram = d3.histogram()            
+        var histogram = d3.histogram()
             .value(function(d) { return d; })   // I need to give the vector of value (price est lié aux données test)
             // pour nous ca sera les temperatures
             .domain(x.domain())  // then the domain of the graphic
@@ -2995,20 +2995,20 @@ export function create_temp_histogram(){
 
         // And apply this function to data to get the bins
         var bins = histogram(temp_deg);
-       
+
         // Y axis: scale and draw:
         var y = d3.scaleLinear()
             .range([height, 0]);
             y.domain([0, d3.max(bins, function(d) { return d.length; })]);   // d3.hist has to be called before the Y axis obviously
-        
+
         let yAxis = d3.axisLeft(y)
             .tickValues([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
         svg.append("g")
             .call(yAxis);
 
-        
 
-        
+
+
         // append the bar rectangles to the svg element
         svg.selectAll("rect")
             .data(bins)
@@ -3043,7 +3043,7 @@ export function create_temp_histogram(){
                 line.raise()
                     .attr("x",  d3.event.x)
                     .attr("y",  0);
-                
+
                 let ecart = (borne_temp_max.x.baseVal.value - borne_temp_min.x.baseVal.value)-2;
                 ecart <= (width /(general_config.domain_max-general_config.domain_min)) ? borne_temp_min.x.baseVal.value = borne_temp_max.x.baseVal.value - (width /(general_config.domain_max-general_config.domain_min)) : null;
                 // vérifier qu'il ne sorte pas de width n'est pas utile puisque temp max le bloquera
@@ -3051,19 +3051,19 @@ export function create_temp_histogram(){
                 borne_temp_min.x.baseVal.value <= 0 ? borne_temp_min.x.baseVal.value = 0 : null;
 
                 let temperatureMini = (borne_temp_min.x.baseVal.value/width)*(general_config.domain_max-general_config.domain_min)+general_config.domain_min
-                
+
                 $('#temp_min_input').val(""+temperatureMini.toFixed(2))
                 general_config.temp_array = [parseFloat($("#temp_min_input").val())+273.15,parseFloat($("#temp_max_input").val())+273.15];
-                
+
             }
-            
+
             function dragended() {
                 line.classed("dragging", false);
 
                 recreate_scene();
             }
         }
-            
+
         //line de temp max
         svg.append("rect")
             .attr("x", ((general_config.temp_array[1]-273.15-general_config.domain_min) / (general_config.domain_max - general_config.domain_min) * width))
@@ -3094,22 +3094,22 @@ export function create_temp_histogram(){
                     let temperatureMaxi = (borne_temp_max.x.baseVal.value/width)*(general_config.domain_max-general_config.domain_min)+general_config.domain_min
                     $('#temp_max_input').val(""+temperatureMaxi.toFixed(2))
                     general_config.temp_array = [parseFloat($("#temp_min_input").val())+273.15,parseFloat($("#temp_max_input").val())+273.15];
-                    
+
                 }
-                
+
                 function dragended2(d) {
                     line.classed("dragging", false);
-                    
-                    recreate_scene();   
+
+                    recreate_scene();
                 }
             }
-        
-            
-        
+
+
+
         let borne_temp_min = document.querySelector('#rect_temp_min')
         let borne_temp_max = document.querySelector('#rect_temp_max')
         let minDomainMax = (borne_temp_max.x.baseVal.value/width)*(general_config.domain_max-general_config.domain_min)+general_config.domain_min;
-        let maxDomainMin = (borne_temp_min.x.baseVal.value/width)*(general_config.domain_max-general_config.domain_min)+general_config.domain_min;  
+        let maxDomainMin = (borne_temp_min.x.baseVal.value/width)*(general_config.domain_max-general_config.domain_min)+general_config.domain_min;
         let div_inputs_flex = `<div id='domain_inputs_flex'> </div>`;
         let div_inputs_min = `<div id="div_inputs_min"></div>`;
         let div_inputs_max = `<div id="div_inputs_max"></div>`;
@@ -3122,15 +3122,15 @@ export function create_temp_histogram(){
         $('#div_inputs_max').append(inputMax)
         $('#domain_min_input').on("change", changeDomainMin)
         function changeDomainMin() {
-            
+
             general_config.domain_min = parseInt($('#domain_min_input').val())
-            create_temp_histogram();          
+            create_temp_histogram();
         }
         $('#domain_max_input').on("change", changeDomainMax)
         function changeDomainMax() {
-            
+
             general_config.domain_max = parseInt($('#domain_max_input').val())
-            create_temp_histogram()            
+            create_temp_histogram()
         }
 }
 
@@ -3161,12 +3161,12 @@ export function getRoadColor(type){
             default:
                 color_hex = '#06e270';
         }
-        
+
     var color_rgb = hexToRgb(color_hex);
     color.r = color_rgb.r/255;
     color.g = color_rgb.g/255;
     color.b = color_rgb.b/255;
-    
+
     return color;
 }
 
@@ -3192,13 +3192,13 @@ export function create_data_texture(Meso_NH, MesoNH_U, MesoNH_V, x_length, y_len
 		"z_max_meso":null,
 		"data_zs_teb":null
         };
-    
+
 	var data_array = [],
 	data_array_temp = [],
 	data_zs = [],
 	data_limit_teb = [],
 	date_limit_meso = [];
-	
+
 	var data_tebzh_1 = [],
 	data_tebzh_2 = [],
 	data_tebzh_3 = [],
@@ -3206,19 +3206,19 @@ export function create_data_texture(Meso_NH, MesoNH_U, MesoNH_V, x_length, y_len
 	data_tebzh_5 = [],
 	data_tebzh_6 = [],
 	data_tebzh_7 = [];
-	
+
 	var z_min_teb = null;
 	var z_max_teb = null;
 	var z_min_meso = null;
 	var z_max_meso = null;
-	
+
 	var data_tebz_6 = [];
 	var data_mesoz_2 = [];
 	var data_mesoz_3 = [];
-	
+
 	var data_zs_teb = [];
-		
-	    
+
+
     for (var t=0; t< Meso_NH.length; t++){
         data_zs.push(Meso_NH[t].zs);
 		var zh=0;
@@ -3229,20 +3229,20 @@ export function create_data_texture(Meso_NH, MesoNH_U, MesoNH_V, x_length, y_len
 		data_tebzh_5.push(parseFloat(Meso_NH[t].tebz_4) + (parseFloat(Meso_NH[t].tebz_4)-zh));zh = parseFloat(Meso_NH[t].tebz_4) + (parseFloat(Meso_NH[t].tebz_4)-zh);
 		data_tebzh_6.push(parseFloat(Meso_NH[t].tebz_5) + (parseFloat(Meso_NH[t].tebz_5)-zh));zh = parseFloat(Meso_NH[t].tebz_5) + (parseFloat(Meso_NH[t].tebz_5)-zh);
 		data_tebzh_7.push(parseFloat(Meso_NH[t].tebz_6) + (parseFloat(Meso_NH[t].tebz_6)-zh));zh = parseFloat(Meso_NH[t].tebz_6) + (parseFloat(Meso_NH[t].tebz_6)-zh);
-				                       
+
 		data_tebz_6.push(parseFloat(Meso_NH[t].tebz_6));
 		data_mesoz_2.push(general_config.THAT_W[1]*((general_config.THAT_W[general_config.THAT_W.length-1] - parseFloat(Meso_NH[t].zs))/general_config.THAT_W[general_config.THAT_W.length-1]) + parseFloat(Meso_NH[t].zs));
 		data_mesoz_3.push(general_config.THAT_W[2]*((general_config.THAT_W[general_config.THAT_W.length-1] - parseFloat(Meso_NH[t].zs))/general_config.THAT_W[general_config.THAT_W.length-1]) + parseFloat(Meso_NH[t].zs));
-		
+
 		data_zs_teb.push((data_mesoz_2[t] +(data_mesoz_3[t] - data_mesoz_2[t])/2) - data_tebz_6[t]);
     }
-		
-		
+
+
 	z_min_teb = 0;
 	z_max_teb = 0;
 	z_min_meso = 0;
 	z_max_meso = 0;
-		
+
 	for (var t=0; t< Meso_NH.length; t++){
 		data_limit_teb.push(data_zs_teb[t] + data_tebzh_1[t]);
 		if((data_zs_teb[t] + data_tebzh_1[t]) < z_min_teb){
@@ -3270,26 +3270,26 @@ export function create_data_texture(Meso_NH, MesoNH_U, MesoNH_V, x_length, y_len
 			z_max_teb = data_zs_teb[t] + data_tebzh_7[t];
 		}
 	}
-	
+
 
 	for (var id = 1; id <= 6; id++) {
 		for (var t=0; t< Meso_NH.length; t++){
 			data_array_temp.push(Meso_NH[t]['teb_'+id]);
-						
+
 		}
 	}
-	
+
 	for (var t=0; t< Meso_NH.length; t++){
 		date_limit_meso.push(general_config.THAT_W[0]*((general_config.THAT_W[general_config.THAT_W.length-1] - parseFloat(Meso_NH[t].zs))/general_config.THAT_W[general_config.THAT_W.length-1]) + parseFloat(Meso_NH[t].zs));
 		if((general_config.THAT_W[0]*((general_config.THAT_W[general_config.THAT_W.length-1] - parseFloat(Meso_NH[t].zs))/general_config.THAT_W[general_config.THAT_W.length-1]) + parseFloat(Meso_NH[t].zs)) < z_min_meso){
 			z_min_meso = general_config.THAT_W[0]*((general_config.THAT_W[general_config.THAT_W.length-1] - parseFloat(Meso_NH[t].zs))/general_config.THAT_W[general_config.THAT_W.length-1]) + parseFloat(Meso_NH[t].zs);
 		}
 	}
-	
+
 	for (var id = 2; id <= 32; id++) {
 		for (var t=0; t< Meso_NH.length; t++){
 			data_array_temp.push(Meso_NH[t]['tht_'+id]);
-			
+
 			date_limit_meso.push(general_config.THAT_W[id-1]*((general_config.THAT_W[general_config.THAT_W.length-1] - parseFloat(Meso_NH[t].zs))/general_config.THAT_W[general_config.THAT_W.length-1]) + parseFloat(Meso_NH[t].zs));
 		}
 	}
@@ -3299,19 +3299,19 @@ export function create_data_texture(Meso_NH, MesoNH_U, MesoNH_V, x_length, y_len
 			z_max_meso = general_config.THAT_W[31]*((general_config.THAT_W[general_config.THAT_W.length-1] - parseFloat(Meso_NH[t].zs))/general_config.THAT_W[general_config.THAT_W.length-1]) + parseFloat(Meso_NH[t].zs) + (general_config.THAT[general_config.THAT.length-1] - general_config.THAT_W[general_config.THAT_W.length-1])*2;
 		}
 	}
-	
+
     for (var t=0; t< data_array_temp.length; t++){
 		data_array.push((data_array_temp[t] - temp_min)/(temp_max-temp_min));
 	}
-	
+
 	var x_min = null;
 	var x_max = null;
 	var y_min = null;
 	var y_max = null;
-	
+
 	for (var t=0; t< Meso_NH.length; t++){
 		var x_o = Meso_NH[t].x - general_config.Coord_X_paris;
-        var y_o = Meso_NH[t].y - general_config.Coord_Y_paris;	
+        var y_o = Meso_NH[t].y - general_config.Coord_Y_paris;
 		var l_x = (Meso_NH[t].x - MesoNH_U[t].x)*2;
         var l_y = (Meso_NH[t].y - MesoNH_V[t].y)*2;
 		if(x_min != null && x_max != null){
@@ -3325,7 +3325,7 @@ export function create_data_texture(Meso_NH, MesoNH_U, MesoNH_V, x_length, y_len
             x_min = x_o - l_x/2;
             x_max = x_o + l_x/2;
         }
-        
+
         if(y_min != null && y_max != null){
             if((y_o - l_y/2) < y_min){
                 y_min = y_o - l_y/2;
@@ -3338,14 +3338,14 @@ export function create_data_texture(Meso_NH, MesoNH_U, MesoNH_V, x_length, y_len
             y_max = y_o + l_y/2;
         }
 	}
-	
-    
+
+
     var data_array_32 = new Float32Array(data_array);
-    var data_array_temp_32 = new Float32Array(data_array_temp);	
+    var data_array_temp_32 = new Float32Array(data_array_temp);
     var data_zs_32 = new Float32Array(data_zs);
 	var data_limit_teb_32 = new Float32Array(data_limit_teb);
 	var data_limit_meso_32 = new Float32Array(date_limit_meso);
-    
+
 
     volume.data = data_array_32;
     volume.data_temp = data_array_temp_32;
@@ -3361,11 +3361,11 @@ export function create_data_texture(Meso_NH, MesoNH_U, MesoNH_V, x_length, y_len
 	volume.z_max_teb = z_max_teb;
 	volume.z_min_meso = z_min_meso;
 	volume.z_max_meso = z_max_meso;
-	
+
 	console.log(volume);
-			
+
     return volume;
-    
+
 }
 
 export function set_light_position(){
@@ -3374,19 +3374,18 @@ export function set_light_position(){
 	var x_light_max = general_config.data_volume_3D.x_max + 1000;
 	var y_light_max = general_config.data_volume_3D.y_max + 1000;
 	var z_light = 600;
-		 	
-			
+
+
 			console.log(scene_building)
 	scene_building.children[0].position.set(x_light_min * general_config.cst_X,z_light * general_config.cst_Z,-y_light_min * general_config.cst_Y);
 	scene_building.children[1].position.set(x_light_min * general_config.cst_X,z_light * general_config.cst_Z,-y_light_max * general_config.cst_Y);
 	scene_building.children[2].position.set(x_light_max * general_config.cst_X,z_light * general_config.cst_Z,-y_light_min * general_config.cst_Y);
 	scene_building.children[3].position.set(x_light_max * general_config.cst_X,z_light * general_config.cst_Z,-y_light_max * general_config.cst_Y);
-	
+
 	scene_vertical_planes.children[0].position.set(x_light_min * general_config.cst_X,z_light * general_config.cst_Z,-y_light_min * general_config.cst_Y);
 	scene_vertical_planes.children[1].position.set(x_light_min * general_config.cst_X,z_light * general_config.cst_Z,-y_light_max * general_config.cst_Y);
 	scene_vertical_planes.children[2].position.set(x_light_max * general_config.cst_X,z_light * general_config.cst_Z,-y_light_min * general_config.cst_Y);
 	scene_vertical_planes.children[3].position.set(x_light_max * general_config.cst_X,z_light * general_config.cst_Z,-y_light_max * general_config.cst_Y);
-	
-	
-}
 
+
+}
