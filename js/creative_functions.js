@@ -234,7 +234,6 @@ export function create_2D_vertical_plane_series(road_summit_data, grid,id_sbl_ar
 		var h_min = general_config.data_volume_3D.z_min_teb;
 		var h_max = general_config.data_volume_3D.z_max_teb;
 		
-		console.log(h_min,h_max);
 						
 		for(var a =0; a< road_summit_data.features.length - 1; a++){
 			var feature_1 = road_summit_data.features[a];
@@ -677,7 +676,14 @@ export function create_random_points_cloud(MesoNH_O_array,MesoNH_U_array,MesoNH_
                                                 
                 var tmin = temperature_scale[0];
                 var tmax = temperature_scale[1];
-                var percentage_color = (temp - tmin)/(tmax - tmin);
+                var percentage_color;
+				if(general_config.active_color_control == 0){
+					percentage_color = 0.5;
+				} else if(general_config.active_color_control == 1){
+					percentage_color = (temp - tmin)/(tmax - tmin);
+				} else if(general_config.active_color_control == 2){
+					percentage_color = (temp - 297.92)/(300.8 - 297.92);
+				}
                 if(percentage_color<0){
                     percentage_color = 0;
                 } else if(percentage_color >1){
@@ -788,7 +794,14 @@ export function create_random_points_cloud(MesoNH_O_array,MesoNH_U_array,MesoNH_
                                 
                 var tmin = temperature_scale[0];
                 var tmax = temperature_scale[1];
-                var percentage_color = (temp - tmin)/(tmax - tmin);
+                var percentage_color;
+				if(general_config.active_color_control == 0){
+					percentage_color = 0.5;
+				} else if(general_config.active_color_control == 1){
+					percentage_color = (temp - tmin)/(tmax - tmin);
+				} else if(general_config.active_color_control == 2){
+					percentage_color = (temp - 297.92)/(300.8 - 297.92);
+				}
                 if(percentage_color<0){
                     percentage_color = 0;
                 } else if(percentage_color >1){
@@ -1181,7 +1194,14 @@ export function create_2D_plane_series(MesoNH_O_array,MesoNH_U_array,MesoNH_V_ar
                     
                     
                     
-                    var percentage_color = (temp - tmin)/(tmax - tmin);
+                    var percentage_color;
+				if(general_config.active_color_control == 0){
+					percentage_color = 0.5;
+				} else if(general_config.active_color_control == 1){
+					percentage_color = (temp - tmin)/(tmax - tmin);
+				} else if(general_config.active_color_control == 2){
+					percentage_color = (temp - 297.92)/(300.8 - 297.92);
+				}
                     if(percentage_color<0){
                         percentage_color = 0;
                     } else if(percentage_color >1){
@@ -1293,7 +1313,14 @@ export function create_2D_plane_series(MesoNH_O_array,MesoNH_U_array,MesoNH_V_ar
                     
                     
                     
-                    var percentage_color = (temp - tmin)/(tmax - tmin);
+                    var percentage_color;
+				if(general_config.active_color_control == 0){
+					percentage_color = 0.5;
+				} else if(general_config.active_color_control == 1){
+					percentage_color = (temp - tmin)/(tmax - tmin);
+				} else if(general_config.active_color_control == 2){
+					percentage_color = (temp - 297.92)/(300.8 - 297.92);
+				}
                     if(percentage_color<0){
                         percentage_color = 0;
                     } else if(percentage_color >1){
@@ -1391,12 +1418,12 @@ export function create_2D_plane_series(MesoNH_O_array,MesoNH_U_array,MesoNH_V_ar
 	
     var mesh = new THREE.Mesh( bufferGeometry, material);
    
-	console.log(general_config.x_min * general_config.cst_X);
-	console.log(-(general_config.y_min * general_config.cst_Y));
-	console.log(general_config.z_min * general_config.cst_Z);
-	console.log(general_config.x_max * general_config.cst_X);
-	console.log(-(general_config.y_max * general_config.cst_Y));
-	console.log(general_config.z_max * general_config.cst_Z);
+	//console.log(general_config.x_min * general_config.cst_X);
+	//console.log(-(general_config.y_min * general_config.cst_Y));
+	//console.log(general_config.z_min * general_config.cst_Z);
+	//console.log(general_config.x_max * general_config.cst_X);
+	//console.log(-(general_config.y_max * general_config.cst_Y));
+	//console.log(general_config.z_max * general_config.cst_Z);
 	
    
     //create_temp_histogram();	 <==== je déplace ds showPointsPlanes
@@ -1617,7 +1644,14 @@ export function create_2D_points_cloud(MesoNH_O_array,MesoNH_U_array,MesoNH_V_ar
                 
                 var tmin = temperature_scale[0];
                 var tmax = temperature_scale[1];
-                var percentage_color = (temp - tmin)/(tmax - tmin);
+                var percentage_color;
+				if(general_config.active_color_control == 0){
+					percentage_color = 0.5;
+				} else if(general_config.active_color_control == 1){
+					percentage_color = (temp - tmin)/(tmax - tmin);
+				} else if(general_config.active_color_control == 2){
+					percentage_color = (temp - 297.92)/(300.8 - 297.92);
+				}
                 if(percentage_color<0){
                     percentage_color = 0;
                 } else if(percentage_color >1){
@@ -1713,7 +1747,14 @@ export function create_2D_points_cloud(MesoNH_O_array,MesoNH_U_array,MesoNH_V_ar
                 
                 var tmin = temperature_scale[0];
                 var tmax = temperature_scale[1];
-                var percentage_color = (temp - tmin)/(tmax - tmin);
+                var percentage_color;
+				if(general_config.active_color_control == 0){
+					percentage_color = 0.5;
+				} else if(general_config.active_color_control == 1){
+					percentage_color = (temp - tmin)/(tmax - tmin);
+				} else if(general_config.active_color_control == 2){
+					percentage_color = (temp - 297.92)/(300.8 - 297.92);
+				}
                 if(percentage_color<0){
                     percentage_color = 0;
                 } else if(percentage_color >1){
@@ -2021,7 +2062,15 @@ export function create_regular_points_cloud(MesoNH_O_array,MesoNH_U_array,MesoNH
                             
                 var tmin = temperature_scale[0];
                 var tmax = temperature_scale[1];
-                var percentage_color = (temp - tmin)/(tmax - tmin);
+
+				var percentage_color;
+				if(general_config.active_color_control == 0){
+					percentage_color = 0.5;
+				} else if(general_config.active_color_control == 1){
+					percentage_color = (temp - tmin)/(tmax - tmin);
+				} else if(general_config.active_color_control == 2){
+					percentage_color = (temp - 297.92)/(300.8 - 297.92);
+				}
                 if(percentage_color<0){
                     percentage_color = 0;
                 } else if(percentage_color >1){
@@ -2154,7 +2203,14 @@ export function create_regular_points_cloud(MesoNH_O_array,MesoNH_U_array,MesoNH
                                 
                 var tmin = temperature_scale[0];
                 var tmax = temperature_scale[1];
-                var percentage_color = (temp - tmin)/(tmax - tmin);
+                var percentage_color;
+				if(general_config.active_color_control == 0){
+					percentage_color = 0.5;
+				} else if(general_config.active_color_control == 1){
+					percentage_color = (temp - tmin)/(tmax - tmin);
+				} else if(general_config.active_color_control == 2){
+					percentage_color = (temp - 297.92)/(300.8 - 297.92);
+				}
                 if(percentage_color<0){
                     percentage_color = 0;
                 } else if(percentage_color >1){
@@ -3271,12 +3327,12 @@ export function create_data_texture(Meso_NH, MesoNH_U, MesoNH_V, x_length, y_len
 		
 	}
 	
-	console.log("teb_1",Math.min(...temp_teb_1),Math.max(...temp_teb_1));
-	console.log("teb_2",Math.min(...temp_teb_2),Math.max(...temp_teb_2));
-	console.log("teb_3",Math.min(...temp_teb_3),Math.max(...temp_teb_3));
-	console.log("teb_4",Math.min(...temp_teb_4),Math.max(...temp_teb_4));
-	console.log("teb_5",Math.min(...temp_teb_5),Math.max(...temp_teb_5));
-	console.log("teb_6",Math.min(...temp_teb_6),Math.max(...temp_teb_6));
+	//console.log("teb_1",Math.min(...temp_teb_1),Math.max(...temp_teb_1));
+	//console.log("teb_2",Math.min(...temp_teb_2),Math.max(...temp_teb_2));
+	//console.log("teb_3",Math.min(...temp_teb_3),Math.max(...temp_teb_3));
+	//console.log("teb_4",Math.min(...temp_teb_4),Math.max(...temp_teb_4));
+	//console.log("teb_5",Math.min(...temp_teb_5),Math.max(...temp_teb_5));
+	//console.log("teb_6",Math.min(...temp_teb_6),Math.max(...temp_teb_6));
 
 	for (var id = 1; id <= 6; id++) {
 		for (var t=0; t< Meso_NH.length; t++){
@@ -3368,7 +3424,6 @@ export function create_data_texture(Meso_NH, MesoNH_U, MesoNH_V, x_length, y_len
 	volume.z_min_meso = z_min_meso;
 	volume.z_max_meso = z_max_meso;
 	
-	console.log(volume);
 			
     return volume;
     
