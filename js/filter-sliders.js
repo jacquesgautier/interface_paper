@@ -317,3 +317,19 @@ $( function() {
     }
   });
 } );
+
+$( function() {
+  $( "#vertical_plane_transparency_slider" ).slider({
+    
+    min: 0,
+    max: 100,
+    value: general_config.vertical_plane_transparency*100 ,
+    slide: function (event, ui) {
+      general_config.vertical_plane_transparency = ui.value/100;
+      $("#vertical_plane_transparency_label").html("vertical_plane_transparency: " + general_config.vertical_plane_transparency);
+    },
+    stop: function (e, ui) {
+      recreate_scene();
+    }
+  });
+} );
