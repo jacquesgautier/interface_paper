@@ -126,12 +126,20 @@
 							</div>-->
 						</div>
 					</div>
-					<div class="interface_labels">2D Planes</div>
+					<div class="interface_labels">horizontal planes</div>
 					<div id="transparency_control">
 						<div id="transparency_control_label">transparency_factor: 1</div>
 						<div id="transparency_control_input">
 
 							<div class="slider" id="transparency_slider"></div>
+						</div>
+					</div>
+					<div class="interface_labels">vertical planes</div>
+					<div id="vertical_plane_transparency_control">
+						<div id="vertical_plane_transparency_label">vertical_plane_transparency_factor: 1</div>
+						<div id="vertical_plane_transparency_control_input">
+
+							<div class="slider" id="vertical_plane_transparency_slider"></div>
 						</div>
 					</div>
 					<div class="interface_labels">point cloud</div>
@@ -1529,6 +1537,8 @@
 		uniform float cst_Z;
 		uniform float zs;
 		uniform int active_color_control;
+		
+		uniform float transparency;
 
 		varying vec3 Normal;
 
@@ -1678,7 +1688,7 @@
 				d += max(0.0,dot(Normal,light_direction[0]));
 				d += max(0.0,dot(Normal,light_direction[1]));
 		
-				gl_FragColor = vec4(d * point_color_3,1.0);
+				gl_FragColor = vec4(d * point_color_3,transparency);
 				}
 		}
 	</script>
