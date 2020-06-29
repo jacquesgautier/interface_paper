@@ -102,6 +102,7 @@ export var general_config = {
 	"grid_vertical2D":null,
 	"data_road":null,
 	"grid_building":null,
+	"grid_building_print":null,
 	"buildings_transparency":1,
 	"points_transparency":1,
 	"active_color_control":2
