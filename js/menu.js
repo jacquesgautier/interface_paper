@@ -96,6 +96,7 @@ export function initialise() {
 
 	
 	$("#buildings_presence_input").on('click', add_hide_buildings);
+	$("#buildings_print_presence_input").on('click', add_hide_buildings);
 
     //event sur le bouton avec les choix de données
     $('#load_data').on('click', loadChosenData);
