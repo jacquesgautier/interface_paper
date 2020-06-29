@@ -329,6 +329,7 @@ export function create_2D_vertical_plane_series(road_summit_data, grid,id_sbl_ar
 				cst_Y: {value: general_config.cst_Y},
 				cst_Z: {value: general_config.cst_Z},
 				active_color_control: {value: general_config.active_color_control},
+				transparency: {value: general_config.points_transparency},
 				transparent: true
 			},
 			vertexShader: document.getElementById( 'vertexshader_3D_plane' ).textContent,
@@ -443,6 +444,7 @@ export function create_2D_vertical_plane_series(road_summit_data, grid,id_sbl_ar
 				cst_Y: {value: general_config.cst_Y},
 				cst_Z: {value: general_config.cst_Z},
 				active_color_control: {value: general_config.active_color_control},
+				transparency: {value: general_config.points_transparency},
 				transparent: true
 			},
 			vertexShader: document.getElementById( 'vertexshader_3D_plane' ).textContent,
