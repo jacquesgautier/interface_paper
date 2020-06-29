@@ -2422,8 +2422,16 @@ if(general_config.grid_building == null){
 			} else {
 				scene.remove(general_config.grid_building);
 			}
-			general_config.grid_building = new THREE.Object3D();
+general_config.grid_building = new THREE.Object3D();
 
+if(general_config.grid_building_print == null){
+			} else {
+				scene.remove(general_config.grid_building_print);
+			}
+general_config.grid_building_print = new THREE.Object3D();
+
+			
+			
 var buildings_features_points_array = [];
 var buildings_features_color_array = [];
 var buildings_features_normal_array = [];
@@ -2679,10 +2687,11 @@ var z_offset=0;
     var ground_feature_mesh = new THREE.Mesh( ground_feature_bufferGeometry, ground_feature_material);
     
     
-      general_config.grid_building.add(ground_feature_mesh);  
+      general_config.grid_building_print.add(ground_feature_mesh);  
     general_config.grid_building.add(buildings_feature_mesh);
 	
 	if($('#buildings_presence_input').is(':checked') == true){
+		scene.add(general_config.grid_building_print);
 		scene.add(general_config.grid_building);
 	}
     
@@ -2690,7 +2699,7 @@ var z_offset=0;
 }
 
 export function change_buildings_transparency(transparency){
-	general_config.grid_building.children[1].material.uniforms.transparency = {type: "f", value: transparency};
+	general_config.grid_building.children[0].material.uniforms.transparency = {type: "f", value: transparency};
 	//general_config.grid_building.children[1].material.opacity = transparency;
 }
 
@@ -3445,6 +3454,16 @@ export function add_hide_buildings(){
 		
 		if(general_config.grid_building != null){
 			scene.remove(general_config.grid_building);
+		} 
+		
+	}
+	
+	if($('#buildings_print_presence_input').is(':checked') == true){
+		scene.add(general_config.grid_building_print);
+	} else {
+		
+		if(general_config.grid_building_print != null){
+			scene.remove(general_config.grid_building_print);
 		} 
 		
 	}
