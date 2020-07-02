@@ -1,4 +1,4 @@
-import {general_config, renderer, scene, camera, controls, mesh} from './initialisation.js'
+import {general_config, renderer, scene_screen, material_screen, scene_building, scene_building_print, scene_points, scene_horizontal_planes, scene_vertical_planes, rtTexture_building, rtTexture_building_print, rtTexture_points,rtTexture_horizontal_planes,rtTexture_vertical_planes, camera, controls, mesh,camera_screen} from './initialisation.js'
 import * as THREE from './three.module.js';
 
 
@@ -80,7 +80,7 @@ export function activate_animation() {
             uniforms,
             vertexShader: document.getElementById( 'vertexshader_fix_3D_points' ).textContent,
             fragmentShader: document.getElementById( 'fragmentshader_3D_points' ).textContent,
-            transparent: true
+            transparent: false
         } );
     } else if (general_config.is_animated == true){
         if(general_config.animation_parameter == 'temp'){
@@ -88,7 +88,7 @@ export function activate_animation() {
                 uniforms,
                 vertexShader: document.getElementById( 'vertexshader_fix_3D_anim_temp' ).textContent,
                 fragmentShader: document.getElementById( 'fragmentshader_3D_points' ).textContent,
-                transparent: true
+                transparent: false
             } );
             
         } else if(general_config.animation_parameter == 'Z'){
@@ -96,7 +96,7 @@ export function activate_animation() {
                 uniforms,
                 vertexShader: document.getElementById( 'vertexshader_fix_3D_anim_z' ).textContent,
                 fragmentShader: document.getElementById( 'fragmentshader_3D_points' ).textContent,
-                transparent: true
+                transparent: false
             } );
             
         }
@@ -105,7 +105,7 @@ export function activate_animation() {
                 uniforms,
                 vertexShader: document.getElementById( 'vertexshader_fix_3D_anim_x' ).textContent,
                 fragmentShader: document.getElementById( 'fragmentshader_3D_points' ).textContent,
-                transparent: true
+                transparent: false
             } );
         
             
@@ -114,7 +114,7 @@ export function activate_animation() {
                 uniforms,
                 vertexShader: document.getElementById( 'vertexshader_fix_3D_anim_y' ).textContent,
                 fragmentShader: document.getElementById( 'fragmentshader_3D_points' ).textContent,
-                transparent: true
+                transparent: false
             } );
         
         }
@@ -138,14 +138,14 @@ export function recreate_scene() {
     let datackbx = document.querySelectorAll('.type_de_points')
     if(general_config.grid_plane == null){
     } else {
-        scene.remove(general_config.grid_plane);
+        scene_horizontal_planes.remove(general_config.grid_plane);
     }
     general_config.grid_plane = new THREE.Object3D();
     create_2D_plane_series(general_config.data_points_O_2,general_config.data_points_U_2,general_config.data_points_V_2,general_config.grid_plane,general_config.id_sbl_array_real_plane,general_config.id_meso_array_real_plane,general_config.temp_array,general_config.THAT,general_config.THAT_W,general_config.HCanopy,general_config.HCanopy_w);
 	
 	if(general_config.grid_vertical2D == null){
 	} else {
-		scene.remove(general_config.grid_vertical2D);
+		scene_vertical_planes.remove(general_config.grid_vertical2D);
 	}
 	general_config.grid_vertical2D = new THREE.Object3D();
 		
@@ -158,14 +158,14 @@ export function recreate_scene() {
 			if (box.id === "data_ckbx") {
 				if(general_config.grid == null){
 				} else {
-					scene.remove(general_config.grid);
+					scene_points.remove(general_config.grid);
 				}
 				general_config.grid = new THREE.Object3D();
 				create_random_points_cloud(general_config.data_points_O_2,general_config.data_points_U_2,general_config.data_points_V_2,general_config.grid,general_config.id_sbl_array,general_config.id_meso_array,general_config.temp_array,general_config.THAT,general_config.THAT_W,general_config.HCanopy,general_config.HCanopy_w);
 			} else if (box.id === "data_ckbx_real_plane_points") {
 				if(general_config.grid == null){
 				} else {
-					scene.remove(general_config.grid);
+					scene_points.remove(general_config.grid);
 				}
 				general_config.grid = new THREE.Object3D();
 				create_2D_points_cloud(general_config.data_points_O_2,general_config.data_points_U_2,general_config.data_points_V_2,general_config.grid,general_config.id_sbl_array,general_config.id_meso_array,general_config.temp_array,general_config.THAT,general_config.THAT_W,general_config.HCanopy,general_config.HCanopy_w,general_config.number_of_points_real_plane);
@@ -173,7 +173,7 @@ export function recreate_scene() {
 			} else {
 				if(general_config.grid == null){
 				} else {
-					scene.remove(general_config.grid);
+					scene_points.remove(general_config.grid);
 				}
 				general_config.grid = new THREE.Object3D();
 				create_regular_points_cloud(general_config.data_points_O_2,general_config.data_points_U_2,general_config.data_points_V_2,general_config.grid,general_config.id_sbl_array,general_config.id_meso_array,general_config.temp_array,general_config.THAT,general_config.THAT_W,general_config.HCanopy,general_config.HCanopy_w);
@@ -329,7 +329,7 @@ export function create_2D_vertical_plane_series(road_summit_data, grid,id_sbl_ar
 				cst_Y: {value: general_config.cst_Y},
 				cst_Z: {value: general_config.cst_Z},
 				active_color_control: {value: general_config.active_color_control},
-				transparent: true
+				transparent: false
 			},
 			vertexShader: document.getElementById( 'vertexshader_3D_plane' ).textContent,
 			fragmentShader: document.getElementById( 'fragmentshader_3D_plane' ).textContent
@@ -338,7 +338,7 @@ export function create_2D_vertical_plane_series(road_summit_data, grid,id_sbl_ar
 		var feature_mesh = new THREE.Mesh( feature_bufferGeometry, road_material);
 				
 		grid.add(feature_mesh);
-		scene.add(grid);
+		scene_vertical_planes.add(grid);
 	}
 
 	if(id_meso_array.length>0){
@@ -443,7 +443,7 @@ export function create_2D_vertical_plane_series(road_summit_data, grid,id_sbl_ar
 				cst_Y: {value: general_config.cst_Y},
 				cst_Z: {value: general_config.cst_Z},
 				active_color_control: {value: general_config.active_color_control},
-				transparent: true
+				transparent: false
 			},
 			vertexShader: document.getElementById( 'vertexshader_3D_plane' ).textContent,
 			fragmentShader: document.getElementById( 'fragmentshader_3D_plane' ).textContent
@@ -452,7 +452,7 @@ export function create_2D_vertical_plane_series(road_summit_data, grid,id_sbl_ar
 		var feature_mesh = new THREE.Mesh( feature_bufferGeometry, road_material);
 				
 		grid.add(feature_mesh);
-		scene.add(grid);
+		scene_vertical_planes.add(grid);
 	}
 	
 	
@@ -921,7 +921,7 @@ export function create_random_points_cloud(MesoNH_O_array,MesoNH_U_array,MesoNH_
     //create_temp_histogram();	 <==== je déplace ailleurs	
             
     grid.add(point);
-    scene.add(grid);
+    scene_points.add(grid);
 }
 
 export function create_2D_plane_series(MesoNH_O_array,MesoNH_U_array,MesoNH_V_array,grid,id_sbl_array,id_meso_array,temperature_scale,THAT,THAT_W,HCanopy,HCanopy_w){
@@ -1386,7 +1386,7 @@ export function create_2D_plane_series(MesoNH_O_array,MesoNH_U_array,MesoNH_V_ar
 	
 	var material = new THREE.ShaderMaterial( {
 						side: THREE.DoubleSide,
-						transparent:true,
+						transparent:false,
 						uniforms: {
 							light_direction: { value: light_direction },
 							light_ambient: { value: light_ambient },
@@ -1429,7 +1429,7 @@ export function create_2D_plane_series(MesoNH_O_array,MesoNH_U_array,MesoNH_V_ar
     //create_temp_histogram();	 <==== je déplace ds showPointsPlanes
             
     grid.add(mesh);
-    scene.add(grid);
+    scene_horizontal_planes.add(grid);
  
 }
 
@@ -1853,7 +1853,7 @@ export function create_2D_points_cloud(MesoNH_O_array,MesoNH_U_array,MesoNH_V_ar
     //create_temp_histogram();	 <==== je déplace ds showPointsPlanes	
         
     grid.add(point);
-    scene.add(grid);
+    scene_points.add(grid);
 }
 
 export function create_regular_points_cloud(MesoNH_O_array,MesoNH_U_array,MesoNH_V_array,grid,id_sbl_array,id_meso_array,temperature_scale,THAT,THAT_W,HCanopy,HCanopy_w){
@@ -2354,7 +2354,7 @@ export function create_regular_points_cloud(MesoNH_O_array,MesoNH_U_array,MesoNH
 
             
     grid.add(point);
-    scene.add(grid);
+    scene_points.add(grid);
 }
 
 export function render(){
@@ -2363,8 +2363,36 @@ export function render(){
         general_config.grid.children[0].material.uniforms.u_time.value += general_config.animation_speed_factor;
     }
     controls.update();
-    
-    renderer.render( scene, camera );
+
+    //scene, scene_building, scene_building_print, scene_points, scene_horizontal_planes, scene_vertical_planes
+	//rtTexture_building,rtTexture_points,rtTexture_horizontal_planes,rtTexture_vertical_planes,material_building_rendered_plane
+
+  renderer.setClearColor(0x000000, 1);
+	renderer.setRenderTarget( rtTexture_building );
+	renderer.clear();
+	renderer.render( scene_building, camera );
+	
+	renderer.setRenderTarget( rtTexture_building_print );
+	renderer.clear();
+	renderer.render( scene_building_print, camera );
+
+	renderer.setRenderTarget( rtTexture_points );
+	renderer.clear();
+	renderer.render( scene_points, camera );
+
+	renderer.setRenderTarget( rtTexture_horizontal_planes );
+	renderer.clear();
+	renderer.render( scene_horizontal_planes, camera );
+
+	renderer.setRenderTarget( rtTexture_vertical_planes );
+	renderer.clear();
+	renderer.render( scene_vertical_planes, camera );
+
+
+	renderer.setClearColor(0x000000, 0);
+	renderer.setRenderTarget( null );
+	renderer.clear();
+	renderer.render( scene_screen, camera_screen );
 }
 
 
@@ -2416,17 +2444,17 @@ export function mix(start, end, percent) {
 
 
 
-export function create_buildings(data,scene,nature_type) {
+export function create_buildings(data,nature_type) {
 
 if(general_config.grid_building == null){
 			} else {
-				scene.remove(general_config.grid_building);
+				scene_building.remove(general_config.grid_building);
 			}
 general_config.grid_building = new THREE.Object3D();
 
 if(general_config.grid_building_print == null){
 			} else {
-				scene.remove(general_config.grid_building_print);
+				scene_building_print.remove(general_config.grid_building_print);
 			}
 general_config.grid_building_print = new THREE.Object3D();
 
@@ -2628,7 +2656,7 @@ var z_offset=0;
 						fragmentShader: document.getElementById( 'fragmentshader_buildings' ).textContent,
 						// blending: THREE.AdditiveBlending,
 						//depthTest: false,
-						transparent: true
+						transparent: false
 					} );
     var buildings_feature_bufferGeometry = new THREE.BufferGeometry();
 	
@@ -2691,15 +2719,15 @@ var z_offset=0;
     general_config.grid_building.add(buildings_feature_mesh);
 	
 	if($('#buildings_presence_input').is(':checked') == true){
-		scene.add(general_config.grid_building_print);
-		scene.add(general_config.grid_building);
+		scene_building_print.add(general_config.grid_building_print);
+		scene_building.add(general_config.grid_building);
 	}
     
 
 }
 
 export function change_buildings_transparency(transparency){
-	general_config.grid_building.children[0].material.uniforms.transparency = {type: "f", value: transparency};
+	//general_config.grid_building.children[0].material.uniforms.transparency = {type: "f", value: transparency};
 	//general_config.grid_building.children[1].material.opacity = transparency;
 }
 
@@ -3449,21 +3477,21 @@ export function set_lights(){
 export function add_hide_buildings(){
 	
 	if($('#buildings_presence_input').is(':checked') == true){
-		scene.add(general_config.grid_building);
+		scene_building.add(general_config.grid_building);
 	} else {
 		
 		if(general_config.grid_building != null){
-			scene.remove(general_config.grid_building);
+			scene_building.remove(general_config.grid_building);
 		} 
 		
 	}
 	
 	if($('#buildings_print_presence_input').is(':checked') == true){
-		scene.add(general_config.grid_building_print);
+		scene_building_print.add(general_config.grid_building_print);
 	} else {
 		
 		if(general_config.grid_building_print != null){
-			scene.remove(general_config.grid_building_print);
+			scene_building_print.remove(general_config.grid_building_print);
 		} 
 		
 	}
