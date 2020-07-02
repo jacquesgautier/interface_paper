@@ -126,12 +126,20 @@
 							</div>-->
 						</div>
 					</div>
-					<div class="interface_labels">2D Planes</div>
+					<div class="interface_labels">horizontal planes</div>
 					<div id="transparency_control">
 						<div id="transparency_control_label">transparency_factor: 1</div>
 						<div id="transparency_control_input">
 
 							<div class="slider" id="transparency_slider"></div>
+						</div>
+					</div>
+					<div class="interface_labels">vertical planes</div>
+					<div id="vertical_plane_transparency_control">
+						<div id="vertical_plane_transparency_label">vertical_plane_transparency_factor: 1</div>
+						<div id="vertical_plane_transparency_control_input">
+
+							<div class="slider" id="vertical_plane_transparency_slider"></div>
 						</div>
 					</div>
 					<div class="interface_labels">point cloud</div>
@@ -556,8 +564,8 @@
 			if(texture4.a < 0.8){
 				discard;
 			}
-			
-			gl_FragColor = vec4(gl_FragColor[0],gl_FragColor[1],gl_FragColor[2],transparency);
+			float depth = gl_FragCoord.z;
+			gl_FragColor = vec4(gl_FragColor[0],gl_FragColor[1],gl_FragColor[2],depth);
 			
 			gl_FragColor = gl_FragColor * texture4;
 
@@ -1437,8 +1445,8 @@
 					float val = (6.0-mod((float(int(voxel_position[2]))+0.5),6.0))/6.0;
 					gl_FragColor = texture2D(u_cmdata, vec2(val, 0.5));
 				}
-				
-				gl_FragColor= vec4(gl_FragColor[0],gl_FragColor[1],gl_FragColor[2],transparency_factor);
+				float depth = gl_FragCoord.z;
+				gl_FragColor= vec4(gl_FragColor[0],gl_FragColor[1],gl_FragColor[2],depth);
 
 
 
@@ -1481,7 +1489,8 @@
 			float d = light_ambient;
 			d += max(0.0,dot(Normal,light_direction[0]));
 			d += max(0.0,dot(Normal,light_direction[1]));
-			gl_FragColor= vec4(d * v_color,transparency);
+			float depth = gl_FragCoord.z;
+			gl_FragColor= vec4(d * v_color,depth);
 		}
 	</script>
 
@@ -1678,10 +1687,65 @@
 				d += max(0.0,dot(Normal,light_direction[0]));
 				d += max(0.0,dot(Normal,light_direction[1]));
 		
-				gl_FragColor = vec4(d * point_color_3,1.0);
+				float depth = gl_FragCoord.z;
+				gl_FragColor = vec4(d * point_color_3,depth);
 				}
 		}
 	</script>
+	
+	<script id="vertexShader_screen" type="x-shader/x-vertex">
+
+			varying vec2 vUv;
+
+			void main() {
+
+				vUv = uv;
+				gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+
+			}
+
+		</script>
+
+		<script id="fragment_shader_screen" type="x-shader/x-fragment">
+
+			varying vec2 vUv;
+			uniform sampler2D texture_points;
+			uniform sampler2D texture_buildings;
+			uniform sampler2D texture_buildings_print;
+			uniform sampler2D texture_horizontal_planes;
+			uniform sampler2D texture_vertical_planes;
+			uniform float opacity_buildings;
+			uniform float opacity_horizontal_planes;
+			uniform float opacity_vertical_planes;
+			uniform float opacity_points;
+			void main() {
+
+				vec4 points = texture2D( texture_points, vUv );
+				vec4 buildings = texture2D( texture_buildings, vUv );
+				vec4 buildings_print = texture2D( texture_buildings_print, vUv );
+				vec4 horizontal_planes = texture2D( texture_horizontal_planes, vUv );
+				vec4 vertical_planes = texture2D( texture_vertical_planes, vUv );
+				vec3 color = vec3(0.);
+				float depth = 2.;
+				//if (depth > points.a) { color = mix(color, points.rgb, 0.5); depth = points.a; }
+				//if (depth > horizontal_planes.a) { color = mix(color,horizontal_planes.rgb, opacity_horizontal_planes); depth = horizontal_planes.a; }
+				//if (depth > vertical_planes.a) { color = mix(color,vertical_planes.rgb, 0.5); depth = vertical_planes.a; }
+				//if (depth > buildings_print.a) { color = mix(color,buildings_print.rgb, 1.0); depth = buildings_print.a; }
+				//if (depth > buildings.a) { color = mix(color,buildings.rgb, opacity_buildings); depth = buildings.a; }
+				if (depth > buildings_print.a) { color = mix(color,buildings_print.rgb, 1.0); depth = buildings_print.a; }
+				if (depth > buildings.a) { color = mix(color,buildings.rgb, 1.0); depth = buildings.a; }
+				if (depth > points.a) { color = mix(color, points.rgb, 1.0); depth = points.a; }
+				if (depth > horizontal_planes.a) { color = mix(color,horizontal_planes.rgb, 1.0); depth = horizontal_planes.a; }
+				if (depth > vertical_planes.a) { color = mix(color,vertical_planes.rgb, 1.0); depth = vertical_planes.a; }
+				
+				
+				gl_FragColor = vec4(color,1.);
+			}
+
+	</script>
+	
+	
+	
 	<script type="module">
 
 		import { init} from './js/initialisation.js'
