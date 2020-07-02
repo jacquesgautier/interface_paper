@@ -372,6 +372,8 @@
 		varying float transparency;
 		varying float tempPercentage;
 		
+		varying float voxel_position_z_1;
+		
 		varying float temp_val;
 
 		float sample1(vec3 texcoords) {
@@ -446,6 +448,8 @@
 					
 			voxel_position = vec3(voxel_position_x,voxel_position_y,voxel_position_z);
 
+			voxel_position_z_1 = voxel_position_z;
+			
 			float val = sample1(voxel_position/u_size);
 			temp_val = val;
 
@@ -516,6 +520,7 @@
 		
 		varying float temp_val;
 		
+		varying float voxel_position_z_1;
 
 		varying float transparency;
 		varying float tempPercentage;
@@ -566,6 +571,9 @@
 			}
 			
 			gl_FragColor = vec4(gl_FragColor[0],gl_FragColor[1],gl_FragColor[2],transparency);
+			
+			//gl_FragColor = vec4(float(int(voxel_position_z_1))/6.0,0.0,0.0,transparency);
+			
 			
 			gl_FragColor = gl_FragColor * texture4;
 
