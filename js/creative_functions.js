@@ -308,6 +308,7 @@ export function create_2D_vertical_plane_series(road_summit_data, grid,id_sbl_ar
 		
 		var road_material = new THREE.ShaderMaterial( {
 			side: THREE.DoubleSide,
+			transparent: true,
 			uniforms: {
 				light_direction: { value: light_direction },
 				light_ambient: { value: light_ambient },
@@ -329,8 +330,7 @@ export function create_2D_vertical_plane_series(road_summit_data, grid,id_sbl_ar
 				cst_Y: {value: general_config.cst_Y},
 				cst_Z: {value: general_config.cst_Z},
 				active_color_control: {value: general_config.active_color_control},
-				transparency: {value: general_config.points_transparency},
-				transparent: true
+				transparency: {type: "f", value: general_config.vertical_plane_transparency}
 			},
 			vertexShader: document.getElementById( 'vertexshader_3D_plane' ).textContent,
 			fragmentShader: document.getElementById( 'fragmentshader_3D_plane' ).textContent
@@ -423,6 +423,7 @@ export function create_2D_vertical_plane_series(road_summit_data, grid,id_sbl_ar
 
 		var road_material = new THREE.ShaderMaterial( {
 			side: THREE.DoubleSide,
+				transparent: true,
 			uniforms: {
 				light_direction: { value: light_direction },
 				light_ambient: { value: light_ambient },
@@ -444,8 +445,7 @@ export function create_2D_vertical_plane_series(road_summit_data, grid,id_sbl_ar
 				cst_Y: {value: general_config.cst_Y},
 				cst_Z: {value: general_config.cst_Z},
 				active_color_control: {value: general_config.active_color_control},
-				transparency: {value: general_config.points_transparency},
-				transparent: true
+				transparency: {type: "f", value: general_config.vertical_plane_transparency}
 			},
 			vertexShader: document.getElementById( 'vertexshader_3D_plane' ).textContent,
 			fragmentShader: document.getElementById( 'fragmentshader_3D_plane' ).textContent
@@ -455,9 +455,7 @@ export function create_2D_vertical_plane_series(road_summit_data, grid,id_sbl_ar
 				
 		grid.add(feature_mesh);
 		scene.add(grid);
-	}
-	
-	
+	}	
 }
 
 export function create_random_points_cloud(MesoNH_O_array,MesoNH_U_array,MesoNH_V_array,grid,id_sbl_array,id_meso_array,temperature_scale,THAT,THAT_W,HCanopy,HCanopy_w){
@@ -720,8 +718,30 @@ export function create_random_points_cloud(MesoNH_O_array,MesoNH_U_array,MesoNH_
                         relative_density = general_config.particle_density + general_config.particle_density*add_factor*(percentage_color-0.5)*2;
                     }
                 }
+				
+				var particle_length_XY = parseInt(relative_density*l_x*l_y);
                 
-                var particle_length = parseInt(relative_density*cell_volume);
+                var offset_xy = l_x/Math.sqrt(particle_length_XY);
+                
+                var number_particule_x = parseInt(Math.sqrt(particle_length_XY));
+                var number_particule_y = parseInt(Math.sqrt(particle_length_XY));
+                var number_particule_z = parseInt((l_z*general_config.cst_Z)/(offset_xy*general_config.cst_X));
+				
+				if(number_particule_x<1){
+					number_particule_x = 1;
+				}
+				if(number_particule_y<1){
+					number_particule_y = 1;
+				}
+				if(number_particule_z<1){
+					number_particule_z = 1;
+				}
+				
+				var new_density = (number_particule_x*number_particule_y*number_particule_z)/cell_volume
+                
+				var particle_length = parseInt(new_density*cell_volume);
+				
+                //var particle_length = parseInt(relative_density*cell_volume);
                 
                 var size;
                 var basic_size = 10000;
@@ -839,7 +859,29 @@ export function create_random_points_cloud(MesoNH_O_array,MesoNH_U_array,MesoNH_
                 }
                 
                 
-                var particle_length = parseInt(relative_density*cell_volume);
+                var particle_length_XY = parseInt(relative_density*l_x*l_y);
+                
+                var offset_xy = l_x/Math.sqrt(particle_length_XY);
+                
+                var number_particule_x = parseInt(Math.sqrt(particle_length_XY));
+                var number_particule_y = parseInt(Math.sqrt(particle_length_XY));
+                var number_particule_z = parseInt((l_z*general_config.cst_Z)/(offset_xy*general_config.cst_X));
+				
+				if(number_particule_x<1){
+					number_particule_x = 1;
+				}
+				if(number_particule_y<1){
+					number_particule_y = 1;
+				}
+				if(number_particule_z<1){
+					number_particule_z = 1;
+				}
+				
+				var new_density = (number_particule_x*number_particule_y*number_particule_z)/cell_volume
+                
+				var particle_length = parseInt(new_density*cell_volume);
+				
+                //var particle_length = parseInt(relative_density*cell_volume);
                 
                 var size;
                 var basic_size = 10000;
@@ -2133,9 +2175,11 @@ export function create_regular_points_cloud(MesoNH_O_array,MesoNH_U_array,MesoNH
                     }
                 }
 				
-				
                     
                 var particle_length_XY = parseInt(relative_density*l_x*l_y);
+				if(particle_length_XY <1){
+                particle_length_XY=1;
+                }
                 
                 var offset_xy = l_x/Math.sqrt(particle_length_XY);
                 
@@ -2159,9 +2203,30 @@ export function create_regular_points_cloud(MesoNH_O_array,MesoNH_U_array,MesoNH
                 for(var a=0; a<number_particule_x; a++){
                     for(var b=0; b<number_particule_y; b++){
                         for(var c=0; c<number_particule_z; c++){
-                            var pX = (x_o - l_x/2 + a*offset_xy);
-                            var pY = (y_o - l_y/2 + b*offset_xy);
-                            var pZ = (z_o - l_z/2 + c*offset_z);
+                            //var pX = (x_o - l_x/2 + a*offset_xy);
+                            //var pY = (y_o - l_y/2 + b*offset_xy);
+                            //var pZ = (z_o - l_z/2 + c*offset_z);
+							
+							var pX;
+							var pY;
+							var pZ;
+							
+							if(a%2 == 0){
+								pX = (x_o + a*offset_xy + (((number_particule_x+1)%2)/2)*offset_xy);
+							} else {
+								pX = (x_o - (a-((number_particule_x+1)%2))*offset_xy - (((number_particule_x+1)%2)/2)*offset_xy);
+							}
+							if(b%2 == 0){
+								pY = (y_o + b*offset_xy + (((number_particule_y+1)%2)/2)*offset_xy);
+							} else {
+								pY = (y_o - (b-((number_particule_y+1)%2))*offset_xy - (((number_particule_y+1)%2)/2)*offset_xy);
+							}
+							if(c%2 == 0){
+								pZ = (z_o + c*offset_z + (((number_particule_z+1)%2)/2)*offset_xy);
+							} else {
+								pZ = (z_o - (c-((number_particule_z+1)%2))*offset_z - (((number_particule_z+1)%2)/2)*offset_xy);
+							}
+							
                             coord_array.push(pX*general_config.cst_X);
                             coord_array.push(pZ*general_config.cst_Z);
                             coord_array.push(-pY*general_config.cst_Y);
@@ -2278,6 +2343,10 @@ export function create_regular_points_cloud(MesoNH_O_array,MesoNH_U_array,MesoNH
                     
                 var particle_length_XY = parseInt(relative_density*l_x*l_y);
                 
+				if(particle_length_XY <1){
+                particle_length_XY=1;
+                }
+				
                 var offset_xy = l_x/Math.sqrt(particle_length_XY);
                 
                 var number_particule_x = parseInt(Math.sqrt(particle_length_XY));
@@ -2300,9 +2369,29 @@ export function create_regular_points_cloud(MesoNH_O_array,MesoNH_U_array,MesoNH
                 for(var a=0; a<number_particule_x; a++){
                     for(var b=0; b<number_particule_y; b++){
                         for(var c=0; c<number_particule_z; c++){
-                            var pX = (x_o - l_x/2 + a*offset_xy);
-                            var pY = (y_o - l_y/2 + b*offset_xy);
-                            var pZ = (z_o - l_z/2 + c*offset_z);
+                            //var pX = (x_o - l_x/2 + a*offset_xy);
+                            //var pY = (y_o - l_y/2 + b*offset_xy);
+                            //var pZ = (z_o - l_z/2 + c*offset_z);
+							
+							var pX;
+							var pY;
+							var pZ;
+							
+							if(a%2 == 0){
+								pX = (x_o + a*offset_xy + (((number_particule_x+1)%2)/2)*offset_xy);
+							} else {
+								pX = (x_o - (a-((number_particule_x+1)%2))*offset_xy - (((number_particule_x+1)%2)/2)*offset_xy);
+							}
+							if(b%2 == 0){
+								pY = (y_o + b*offset_xy + (((number_particule_y+1)%2)/2)*offset_xy);
+							} else {
+								pY = (y_o - (b-((number_particule_y+1)%2))*offset_xy - (((number_particule_y+1)%2)/2)*offset_xy);
+							}
+							if(c%2 == 0){
+								pZ = (z_o + c*offset_z + (((number_particule_z+1)%2)/2)*offset_xy);
+							} else {
+								pZ = (z_o - (c-((number_particule_z+1)%2))*offset_z - (((number_particule_z+1)%2)/2)*offset_xy);
+							}
                             coord_array.push(pX*general_config.cst_X);
                             coord_array.push(pZ*general_config.cst_Z);
                             coord_array.push(-pY*general_config.cst_Y);
