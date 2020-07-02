@@ -1,4 +1,4 @@
-import {general_config} from './initialisation.js'
+import {general_config,change_material_screen} from './initialisation.js'
 import { recreate_scene,change_buildings_transparency } from './creative_functions.js';
 
 
@@ -242,7 +242,9 @@ $( function() {
     },
     stop: function (e, ui) {
 
-      recreate_scene()
+      //recreate_scene()
+	  change_material_screen();
+	   
     }
   });
 } );
@@ -259,7 +261,8 @@ $( function() {
     },
     stop: function (e, ui) {
 
-      recreate_scene()
+      //recreate_scene()
+	  change_material_screen();
     }
   });
 } );
@@ -313,7 +316,25 @@ $( function() {
       $("#buildings_transparency_label").html("buildings_transparency: " + general_config.buildings_transparency);
     },
     stop: function (e, ui) {
-      change_buildings_transparency(general_config.buildings_transparency);
+      //change_buildings_transparency(general_config.buildings_transparency);
+	  change_material_screen();
+    }
+  });
+} );
+
+$( function() {
+  $( "#vertical_plane_transparency_slider" ).slider({
+    
+    min: 0,
+    max: 100,
+    value: general_config.vertical_plane_transparency*100 ,
+    slide: function (event, ui) {
+      general_config.vertical_plane_transparency = ui.value/100;
+      $("#vertical_plane_transparency_label").html("vertical_plane_transparency: " + general_config.vertical_plane_transparency);
+    },
+    stop: function (e, ui) {
+      //change_buildings_transparency(general_config.buildings_transparency);
+	  change_material_screen();
     }
   });
 } );
