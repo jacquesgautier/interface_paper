@@ -7,7 +7,7 @@ import {chosenColor, numberInArray} from './color_function.js'
 
 
 
-export var renderer, scene, camera, controls, mesh;
+export var renderer, scene_screen,scene_building,scene_building_print,scene_points,scene_horizontal_planes,scene_vertical_planes,rtTexture_building,rtTexture_building_print,rtTexture_points,rtTexture_vertical_planes,rtTexture_horizontal_planes,camera_screen, camera, controls, mesh,material_vertical_plane_rendered_plane,quad_screen,material_screen;
 
 export var general_config = {
     "data_points_O_2":null,
@@ -105,7 +105,8 @@ export var general_config = {
 	"grid_building_print":null,
 	"buildings_transparency":1,
 	"points_transparency":1,
-	"active_color_control":2
+	"active_color_control":2,
+	"vertical_plane_transparency":1
 }	
 
 export function init(){
@@ -252,17 +253,33 @@ export function init(){
     renderer.setSize( window.innerWidth, window.innerHeight );
     document.getElementById('container').appendChild(renderer.domElement);
     
-    scene = new THREE.Scene();
-    
-	scene.background = new THREE.Color('black');
+    //scene = new THREE.Scene();
+    //scene.background = new THREE.Color('black');
+	
+	scene_screen = new THREE.Scene();
+
+	scene_building = new THREE.Scene();
+	scene_building_print = new THREE.Scene();
+	scene_points = new THREE.Scene();
+	scene_horizontal_planes = new THREE.Scene();
+	scene_vertical_planes = new THREE.Scene();
+	
+	rtTexture_building = new THREE.WebGLRenderTarget( window.innerWidth, window.innerHeight, { minFilter: THREE.LinearFilter, magFilter: THREE.NearestFilter, format: THREE.RGBAFormat, type: THREE.FloatType } );
+	rtTexture_building_print = new THREE.WebGLRenderTarget( window.innerWidth, window.innerHeight, { minFilter: THREE.LinearFilter, magFilter: THREE.NearestFilter, format: THREE.RGBAFormat, type: THREE.FloatType } );
+	rtTexture_points = new THREE.WebGLRenderTarget( window.innerWidth, window.innerHeight, { minFilter: THREE.LinearFilter, magFilter: THREE.NearestFilter, format: THREE.RGBAFormat, type: THREE.FloatType } );
+	rtTexture_vertical_planes = new THREE.WebGLRenderTarget( window.innerWidth, window.innerHeight, { minFilter: THREE.LinearFilter, magFilter: THREE.NearestFilter, format: THREE.RGBAFormat, type: THREE.FloatType } );
+	rtTexture_horizontal_planes = new THREE.WebGLRenderTarget( window.innerWidth, window.innerHeight, { minFilter: THREE.LinearFilter, magFilter: THREE.NearestFilter, format: THREE.RGBAFormat, type: THREE.FloatType } );
 	
     camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 10000 );
     controls = new OrbitControls( camera, renderer.domElement );
     camera.position.set( general_config.camera_x, general_config.camera_y, general_config.camera_z );
     controls.update();
+	
+	camera_screen = new THREE.OrthographicCamera( window.innerWidth / - 2, window.innerWidth / 2, window.innerHeight / 2, window.innerHeight / - 2, - 10000, 10000 );
+	camera_screen.position.z = 100;
 
-    var axesHelper = new THREE.AxesHelper( 100 );
-    scene.add( axesHelper );
+    //var axesHelper = new THREE.AxesHelper( 100 );
+    //scene.add( axesHelper );
     
     general_config.h_factor = 1;
     general_config.temp_array = [293.15,303.15];
@@ -361,8 +378,60 @@ export function init(){
     });
     
 
+	//create rendered planes
 
+	material_screen = new THREE.ShaderMaterial( {
+
+					uniforms: {
+						texture_points: { value: rtTexture_points.texture },
+						texture_buildings: { value: rtTexture_building.texture },
+						texture_buildings_print: { value: rtTexture_building_print.texture },
+						texture_horizontal_planes: { value: rtTexture_horizontal_planes.texture },
+						texture_vertical_planes: { value: rtTexture_vertical_planes.texture },
+						opacity_buildings: {type: "f", value: general_config.buildings_transparency},//general_config.buildings_transparency },
+						opacity_horizontal_planes: {type: "f", value: general_config.transparency_factor },
+						opacity_vertical_planes: {type: "f", value: general_config.vertical_plane_transparency },
+						opacity_points: {type: "f", value: general_config.points_transparency},//general_config.points_transparency }
+					},
+					vertexShader: document.getElementById( 'vertexShader_screen' ).textContent,
+					fragmentShader: document.getElementById( 'fragment_shader_screen' ).textContent,
+
+					depthWrite: false
+
+				} );
+
+	var plane = new THREE.PlaneBufferGeometry( window.innerWidth, window.innerHeight );
+	quad_screen = new THREE.Mesh( plane, material_screen );
+	quad_screen.position.z = - 100;
+	scene_screen.background = new THREE.Color('black');
+	scene_screen.add( quad_screen );
     
     
+}
+
+export function change_material_screen(){
+	
+	material_screen = new THREE.ShaderMaterial( {
+
+					uniforms: {
+						texture_points: { value: rtTexture_points.texture },
+						texture_buildings: { value: rtTexture_building.texture },
+						texture_buildings_print: { value: rtTexture_building_print.texture },
+						texture_horizontal_planes: { value: rtTexture_horizontal_planes.texture },
+						texture_vertical_planes: { value: rtTexture_vertical_planes.texture },
+						opacity_buildings: {type: "f", value: general_config.buildings_transparency},//general_config.buildings_transparency },
+						opacity_horizontal_planes: {type: "f", value: general_config.transparency_factor },
+						opacity_vertical_planes: {type: "f", value: general_config.vertical_plane_transparency },
+						opacity_points: {type: "f", value: general_config.points_transparency},//general_config.points_transparency }
+					},
+					vertexShader: document.getElementById( 'vertexShader_screen' ).textContent,
+					fragmentShader: document.getElementById( 'fragment_shader_screen' ).textContent,
+
+					depthWrite: false
+
+				} );
+	console.log(general_config.buildings_transparency)
+	quad_screen.material = material_screen;
+	
 }
 
