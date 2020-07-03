@@ -52,7 +52,7 @@ export var general_config = {
     "animation_speed_factor":0.01,	
     "number_of_points_real_plane":10,
     "temp_min_factor":0,
-    "temp_max_factor":1*2*Math.PI,
+    "temp_max_factor":1,
     "z_min_factor":0,
     "z_max_factor":1,
     "h_min_factor":0,
@@ -106,7 +106,11 @@ export var general_config = {
 	"buildings_transparency":1,
 	"points_transparency":1,
 	"active_color_control":2,
-	"vertical_plane_transparency":1
+	"temp_filter":false,
+	"z_filter":false,
+	"h_filter":false,
+	"x_filter":false,
+	"y_filter":false
 }	
 
 export function init(){
@@ -167,6 +171,7 @@ export function init(){
 		} else {
 			general_config.active_color_control = 2;
 			$("#color_temp_control").hide();
+			general_config.temp_array = [297.92,300.8];
 		}
         recreate_scene();
     })
@@ -266,7 +271,7 @@ export function init(){
     scene.add( axesHelper );
     
     general_config.h_factor = 1;
-    general_config.temp_array = [293.15,303.15];
+    general_config.temp_array = [297.92,300.8];
 
     $("#temp_min_input").on( "keyup", function(e) {
         if (e.keyCode == 13) {
