@@ -30,8 +30,8 @@ export var general_config = {
 	"id_sbl_array_vertical_plane":[],
 	"id_meso_array_vertical_plane":[],
     "type_points":1,
-    "domain_min":15,
-    "domain_max": 35,
+    "domain_min":24,
+    "domain_max": 29,
     "id_meso_array_roads":[],
     "id_sbl_array_roads":[],
     "regular_size":1,
@@ -110,7 +110,8 @@ export var general_config = {
 	"z_filter":false,
 	"h_filter":false,
 	"x_filter":false,
-	"y_filter":false
+	"y_filter":false,
+	"bins":null
 }	
 
 export function init(){
@@ -170,8 +171,9 @@ export function init(){
 			$("#color_temp_control").hide();
 		} else {
 			general_config.active_color_control = 2;
-			$("#color_temp_control").hide();
 			general_config.temp_array = [297.92,300.8];
+			$("#temp_min_input").val(297.92 - 273.15);
+			$("#temp_max_input").val(300.8 - 273.15);
 		}
         recreate_scene();
     })
@@ -272,6 +274,8 @@ export function init(){
     
     general_config.h_factor = 1;
     general_config.temp_array = [297.92,300.8];
+	$("#temp_min_input").val(297.92 - 273.15);
+			$("#temp_max_input").val(300.8 - 273.15);
 
     $("#temp_min_input").on( "keyup", function(e) {
         if (e.keyCode == 13) {
