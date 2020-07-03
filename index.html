@@ -257,6 +257,7 @@
 				<div id="filter_control_label" class="general_control_container_div">Filters</div>
 				<div id="filter_control_container">
 					<div id="temp-double-slider">
+						<div><input type="checkbox" class="filter_ckbx_class" id="temp_filter_ckbx">Filtering temperature</div>
 						<p>
 							<label for="temperatures">Temperatures :</label>
 							<input type="text" id="temperatures-label" readonly style="border:0; color:#361bd3; font-weight:bold;">
@@ -266,6 +267,7 @@
 
 					</div>
 					<div id="z-double-slider">
+						<div><input type="checkbox" class="filter_ckbx_class" id="z_filter_ckbx">Filtering Z</div>
 						<p>
 							<label for="z-slider">Z control :</label>
 							<input type="text" id="z-slider-label" readonly style="border:0; color:#361bd3; font-weight:bold;">
@@ -275,6 +277,7 @@
 
 					</div>
 					<div id="h-double-slider">
+						<div><input type="checkbox" class="filter_ckbx_class" id="h_filter_ckbx">Filtering H</div>
 						<p>
 							<label for="h-slider">H control :</label>
 							<input type="text" id="h-slider-label" readonly style="border:0; color:#361bd3; font-weight:bold;">
@@ -284,6 +287,7 @@
 
 					</div>
 					<div id="x-double-slider">
+						<div><input type="checkbox" class="filter_ckbx_class" id="x_filter_ckbx">Filtering X</div>
 						<p>
 							<label for="x-slider">X control :</label>
 							<input type="text" id="x-slider-label" readonly style="border:0; color:#361bd3; font-weight:bold;">
@@ -293,6 +297,7 @@
 
 					</div>
 					<div id="y-double-slider">
+						<div><input type="checkbox" class="filter_ckbx_class" id="y_filter_ckbx">Filtering Y</div>
 						<p>
 							<label for="y-slider">Y control :</label>
 							<input type="text" id="y-slider-label" readonly style="border:0; color:#361bd3; font-weight:bold;">
@@ -355,6 +360,13 @@
 		uniform float cst_Y;
 		uniform float cst_Z;
 		uniform float zs;
+		
+		uniform bool temp_filter;
+		uniform bool z_filter;
+		uniform bool h_filter;
+		uniform bool x_filter;
+		uniform bool y_filter;
+		varying float to_discard;
 		
 		uniform int active_color_control;
 		
@@ -457,8 +469,10 @@
 			if(active_color_control == 0){
 				tempPercentage = 0.5;
 			} else if(active_color_control == 1){
-				if (val<u_clim[0] || val> u_clim[1]) {
-					tempPercentage = -1.0;
+				if (val<u_clim[0]) {
+					tempPercentage = 0.0;
+				} else if(val> u_clim[1]) {
+					tempPercentage = 1.0;
 				} else {
 					tempPercentage = (val - u_clim[0])/(u_clim[1] - u_clim[0]);
 					if (tempPercentage < 0.0) {
@@ -491,11 +505,40 @@
 			}
 
 			vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
-			if(custompercentage > temp_factor_min && custompercentage < temp_factor_max && x_position > x_factor_min && x_position < x_factor_max && y_position > y_factor_min && y_position < y_factor_max && z_position > z_factor_min && z_position < z_factor_max && h_position > h_factor_min && h_position < h_factor_max){
-				gl_PointSize = regularSize* sizeShader * ( 1.0 / -mvPosition.z );
-			} else {
-				gl_PointSize = 0.0;
+			
+			to_discard = 0.0;
+			if(temp_filter ==  true){
+				if(tempPercentage < temp_factor_min || tempPercentage > temp_factor_max || val < u_clim[0] ||  val > u_clim[1]){
+					to_discard = 1.0;
+				}
 			}
+			if(z_filter ==  true){
+				if(z_position < z_factor_min || z_position > z_factor_max){
+					to_discard = 1.0;
+				}
+			}
+			if(h_filter ==  true){
+				if(h_position < h_factor_min || h_position > h_factor_max){
+					to_discard = 1.0;
+				}
+			}
+			if(x_filter ==  true){
+				if(x_position < x_factor_min || x_position > x_factor_max){
+					to_discard = 1.0;
+				}
+			}
+			if(y_filter ==  true){
+				if(y_position < y_factor_min || y_position > y_factor_max){
+					to_discard = 1.0;
+				}
+			}
+			
+			
+			//if(custompercentage > temp_factor_min && custompercentage < temp_factor_max && x_position > x_factor_min && x_position < x_factor_max && y_position > y_factor_min && y_position < y_factor_max && z_position > z_factor_min && z_position < z_factor_max && h_position > h_factor_min && h_position < h_factor_max){
+				gl_PointSize = regularSize* sizeShader * ( 1.0 / -mvPosition.z );
+			//} else {
+			//	gl_PointSize = 0.0;
+			//}
 
 			transparency = customtransparency;
 			gl_Position = projectionMatrix * mvPosition;
@@ -524,9 +567,15 @@
 
 		varying float transparency;
 		varying float tempPercentage;
+		
+		varying float to_discard;
 
 
 		void main() {
+		
+			if(to_discard > 0.0){
+				discard;
+			}
 
 			if(active_color_control == 1){
 				if(tempPercentage == -1.0){
@@ -610,6 +659,13 @@
 		uniform float zs;
 		uniform float u_time;
 		
+		uniform bool temp_filter;
+		uniform bool z_filter;
+		uniform bool h_filter;
+		uniform bool x_filter;
+		uniform bool y_filter;
+		varying float to_discard;
+		
 		varying float voxel_point_level;
 		
 		uniform sampler3D meso_limit;
@@ -743,19 +799,46 @@
 			}
 
 			vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
-			if(custompercentage > temp_factor_min && custompercentage < temp_factor_max && x_position > x_factor_min && x_position < x_factor_max && y_position > y_factor_min && y_position < y_factor_max && z_position > z_factor_min && z_position < z_factor_max && h_position > h_factor_min && h_position < h_factor_max){
-					if(abs(sin(u_time + custompercentage)) > 0.9){
-						if(abs(sin(u_time + custompercentage)) > 0.95){
+			//if(custompercentage > temp_factor_min && custompercentage < temp_factor_max && x_position > x_factor_min && x_position < x_factor_max && y_position > y_factor_min && y_position < y_factor_max && z_position > z_factor_min && z_position < z_factor_max && h_position > h_factor_min && h_position < h_factor_max){
+			to_discard = 0.0;
+			if(temp_filter ==  true){
+				if(tempPercentage < temp_factor_min || tempPercentage > temp_factor_max || val < u_clim[0] ||  val > u_clim[1]){
+					to_discard = 1.0;
+				}
+			}
+			if(z_filter ==  true){
+				if(z_position < z_factor_min || z_position > z_factor_max){
+					to_discard = 1.0;
+				}
+			}
+			if(h_filter ==  true){
+				if(h_position < h_factor_min || h_position > h_factor_max){
+					to_discard = 1.0;
+				}
+			}
+			if(x_filter ==  true){
+				if(x_position < x_factor_min || x_position > x_factor_max){
+					to_discard = 1.0;
+				}
+			}
+			if(y_filter ==  true){
+				if(y_position < y_factor_min || y_position > y_factor_max){
+					to_discard = 1.0;
+				}
+			}
+					if(abs(sin(u_time + tempPercentage*3.14159265359)) > 0.9){
+						if(abs(sin(u_time + tempPercentage*3.14159265359)) > 0.95){
 							gl_PointSize = regularSize*sizeShader * ( 1.0 / -mvPosition.z );
 						} else {
-							gl_PointSize = ((abs(sin(u_time + custompercentage)) - 0.9)/(0.95 - 0.9))*abs(sin(u_time + custompercentage))*regularSize*sizeShader * ( 1.0 / -mvPosition.z );
+							gl_PointSize = ((abs(sin(u_time + tempPercentage*3.14159265359)) - 0.9)/(0.95 - 0.9))*abs(sin(u_time + tempPercentage*3.14159265359))*regularSize*sizeShader * ( 1.0 / -mvPosition.z );
 						}
 					} else {
-						gl_PointSize = 0.0;
+						//gl_PointSize = 0.0;
+						to_discard = 1.0;
 					}
-				} else {
-						gl_PointSize = 0.0;
-				}
+				//} else {
+						//gl_PointSize = 0.0;
+				//}
 
 			transparency = customtransparency;
 			gl_Position = projectionMatrix * mvPosition;
@@ -787,6 +870,13 @@
 		uniform sampler3D meso_limit;
 		uniform sampler3D teb_limit;
 		
+		uniform bool temp_filter;
+		uniform bool z_filter;
+		uniform bool h_filter;
+		uniform bool x_filter;
+		uniform bool y_filter;
+		varying float to_discard;
+		
 		uniform int active_color_control;
 		
 		uniform float x_min;
@@ -924,7 +1014,33 @@
 				sizeShader = (tempPercentage < 0.5) ? basicSize - (basicSize*addFactor*(0.5*(0.5-tempPercentage))*2.0) : basicSize + (basicSize*addFactor*(0.5*(tempPercentage-0.5))*2.0) ;
 			}
 			vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
-			if(custompercentage > temp_factor_min && custompercentage < temp_factor_max && x_position > x_factor_min && x_position < x_factor_max && y_position > y_factor_min && y_position < y_factor_max && z_position > z_factor_min && z_position < z_factor_max && h_position > h_factor_min && h_position < h_factor_max){
+			//if(custompercentage > temp_factor_min && custompercentage < temp_factor_max && x_position > x_factor_min && x_position < x_factor_max && y_position > y_factor_min && y_position < y_factor_max && z_position > z_factor_min && z_position < z_factor_max && h_position > h_factor_min && h_position < h_factor_max){
+			to_discard = 0.0;
+			if(temp_filter ==  true){
+				if(tempPercentage < temp_factor_min || tempPercentage > temp_factor_max || val < u_clim[0] ||  val > u_clim[1]){
+					to_discard = 1.0;
+				}
+			}
+			if(z_filter ==  true){
+				if(z_position < z_factor_min || z_position > z_factor_max){
+					to_discard = 1.0;
+				}
+			}
+			if(h_filter ==  true){
+				if(h_position < h_factor_min || h_position > h_factor_max){
+					to_discard = 1.0;
+				}
+			}
+			if(x_filter ==  true){
+				if(x_position < x_factor_min || x_position > x_factor_max){
+					to_discard = 1.0;
+				}
+			}
+			if(y_filter ==  true){
+				if(y_position < y_factor_min || y_position > y_factor_max){
+					to_discard = 1.0;
+				}
+			}
 				if(abs(sin(u_time + 3.14159265359*z_position)) > 0.9){
 					if(abs(sin(u_time + 3.14159265359*z_position)) > 0.95){
 						gl_PointSize = regularSize*sizeShader * ( 1.0 / -mvPosition.z );
@@ -932,11 +1048,11 @@
 						gl_PointSize = ((abs(sin(u_time + 3.14159265359*z_position)) - 0.9)/(0.95 - 0.9))*abs(sin(u_time + 3.14159265359*z_position))*regularSize*sizeShader * ( 1.0 / -mvPosition.z );
 					}
 				} else {
-					gl_PointSize = 0.0;
+					to_discard = 1.0;
 				}
-			} else {
-				gl_PointSize = 0.0;
-			}
+			//} else {
+			//	gl_PointSize = 0.0;
+			//}
 
 			transparency = customtransparency;
 			gl_Position = projectionMatrix * mvPosition;
@@ -966,6 +1082,13 @@
 		uniform sampler3D meso_limit;
 		uniform sampler3D teb_limit;
 		
+		uniform bool temp_filter;
+		uniform bool z_filter;
+		uniform bool h_filter;
+		uniform bool x_filter;
+		uniform bool y_filter;
+		varying float to_discard;
+		
 		uniform int active_color_control;
 		
 		varying float voxel_point_level;
@@ -1105,7 +1228,33 @@
 			}
 
 			vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
-			if(custompercentage > temp_factor_min && custompercentage < temp_factor_max && x_position > x_factor_min && x_position < x_factor_max && y_position > y_factor_min && y_position < y_factor_max && z_position > z_factor_min && z_position < z_factor_max && h_position > h_factor_min && h_position < h_factor_max){
+			//if(custompercentage > temp_factor_min && custompercentage < temp_factor_max && x_position > x_factor_min && x_position < x_factor_max && y_position > y_factor_min && y_position < y_factor_max && z_position > z_factor_min && z_position < z_factor_max && h_position > h_factor_min && h_position < h_factor_max){
+			to_discard = 0.0;
+			if(temp_filter ==  true){
+				if(tempPercentage < temp_factor_min || tempPercentage > temp_factor_max || val < u_clim[0] ||  val > u_clim[1]){
+					to_discard = 1.0;
+				}
+			}
+			if(z_filter ==  true){
+				if(z_position < z_factor_min || z_position > z_factor_max){
+					to_discard = 1.0;
+				}
+			}
+			if(h_filter ==  true){
+				if(h_position < h_factor_min || h_position > h_factor_max){
+					to_discard = 1.0;
+				}
+			}
+			if(x_filter ==  true){
+				if(x_position < x_factor_min || x_position > x_factor_max){
+					to_discard = 1.0;
+				}
+			}
+			if(y_filter ==  true){
+				if(y_position < y_factor_min || y_position > y_factor_max){
+					to_discard = 1.0;
+				}
+			}
 				if(abs(sin(u_time + 3.14159265359*x_position)) > 0.9){
 					if(abs(sin(u_time + 3.14159265359*x_position)) > 0.95){
 						gl_PointSize = regularSize*sizeShader * ( 1.0 / -mvPosition.z );
@@ -1113,11 +1262,11 @@
 						gl_PointSize = ((abs(sin(u_time + 3.14159265359*x_position)) - 0.9)/(0.95 - 0.9))*abs(sin(u_time + 3.14159265359*x_position))*regularSize*sizeShader * ( 1.0 / -mvPosition.z );
 					}
 				} else {
-					gl_PointSize = 0.0;
+					to_discard = 0.0;
 				}
-			} else {
-				gl_PointSize = 0.0;
-			}
+			//} else {
+			//	gl_PointSize = 0.0;
+			//}
 
 			transparency = customtransparency;
 			gl_Position = projectionMatrix * mvPosition;
@@ -1143,6 +1292,13 @@
 		uniform vec2 u_clim;
 		uniform sampler2D zs_data;
 		uniform sampler3D u_data;
+		
+		uniform bool temp_filter;
+		uniform bool z_filter;
+		uniform bool h_filter;
+		uniform bool x_filter;
+		uniform bool y_filter;
+		varying float to_discard;
 		
 		uniform sampler3D meso_limit;
 		uniform sampler3D teb_limit;
@@ -1282,7 +1438,33 @@
 			}
 
 			vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
-			if(custompercentage > temp_factor_min && custompercentage < temp_factor_max && x_position > x_factor_min && x_position < x_factor_max && y_position > y_factor_min && y_position < y_factor_max && z_position > z_factor_min && z_position < z_factor_max && h_position > h_factor_min && h_position < h_factor_max){
+			//if(custompercentage > temp_factor_min && custompercentage < temp_factor_max && x_position > x_factor_min && x_position < x_factor_max && y_position > y_factor_min && y_position < y_factor_max && z_position > z_factor_min && z_position < z_factor_max && h_position > h_factor_min && h_position < h_factor_max){
+			to_discard = 0.0;
+			if(temp_filter ==  true){
+				if(tempPercentage < temp_factor_min || tempPercentage > temp_factor_max || val < u_clim[0] ||  val > u_clim[1]){
+					to_discard = 1.0;
+				}
+			}
+			if(z_filter ==  true){
+				if(z_position < z_factor_min || z_position > z_factor_max){
+					to_discard = 1.0;
+				}
+			}
+			if(h_filter ==  true){
+				if(h_position < h_factor_min || h_position > h_factor_max){
+					to_discard = 1.0;
+				}
+			}
+			if(x_filter ==  true){
+				if(x_position < x_factor_min || x_position > x_factor_max){
+					to_discard = 1.0;
+				}
+			}
+			if(y_filter ==  true){
+				if(y_position < y_factor_min || y_position > y_factor_max){
+					to_discard = 1.0;
+				}
+			}
 				if(abs(sin(u_time + 3.14159265359*y_position)) > 0.9){
 					if(abs(sin(u_time + 3.14159265359*y_position)) > 0.95){
 						gl_PointSize = regularSize*sizeShader * ( 1.0 / -mvPosition.z );
@@ -1290,11 +1472,11 @@
 						gl_PointSize = ((abs(sin(u_time + 3.14159265359*y_position)) - 0.9)/(0.95 - 0.9))*abs(sin(u_time + 3.14159265359*y_position))*regularSize*sizeShader * ( 1.0 / -mvPosition.z );
 					}
 				} else {
-					gl_PointSize = 0.0;
+					to_discard = 0.0;
 				}
-			} else {
-				gl_PointSize = 0.0;
-			}
+			//} else {
+			//	gl_PointSize = 0.0;
+			//}
 
 			transparency = customtransparency;
 			gl_Position = projectionMatrix * mvPosition;
@@ -1304,6 +1486,13 @@
 	<script type="x-shader/x-vertex" id="vertexshader_2D_plane">
 		varying vec3 v_position;
 		attribute float voxel_level;
+		
+		uniform bool temp_filter;
+		uniform bool z_filter;
+		uniform bool h_filter;
+		uniform bool x_filter;
+		uniform bool y_filter;
+		varying float to_discard;
 
 		varying float voxel_point_level;
 
@@ -1328,6 +1517,8 @@
 		uniform sampler2D zs_data;
 		uniform sampler2D u_cmdata;
 		uniform sampler2D pointTexture;
+		
+		varying float to_discard;
 		
 		uniform sampler3D meso_limit;
 		uniform sampler3D teb_limit;
@@ -1422,9 +1613,13 @@
 				if(active_color_control == 1){
 					float val = sample1(voxel_position/u_size);
 					if(val<u_clim[0]){
-						gl_FragColor = vec4(0.0,0.0,0.0,0.0);
+						//gl_FragColor = vec4(0.0,0.0,0.0,0.0);
+						float new_val = 0.0;
+						gl_FragColor = texture2D(u_cmdata, vec2(new_val, 0.5));
 					} else if(val>u_clim[1]){
-						gl_FragColor = vec4(0.0,0.0,0.0,0.0);
+						//gl_FragColor = vec4(0.0,0.0,0.0,0.0);
+						float new_val = 1.0;
+						gl_FragColor = texture2D(u_cmdata, vec2(new_val, 0.5));
 					} else{
 						float new_val = (val - u_clim[0])/(u_clim[1] - u_clim[0]);
 						gl_FragColor = texture2D(u_cmdata, vec2(new_val, 0.5));
@@ -1525,6 +1720,12 @@
 		uniform sampler3D u_data;
 		uniform sampler2D zs_data;
 		uniform sampler2D u_cmdata;
+		
+		uniform bool temp_filter;
+		uniform bool z_filter;
+		uniform bool h_filter;
+		uniform bool x_filter;
+		uniform bool y_filter;
 
 		
 		uniform vec3 light_direction[2];
@@ -1659,9 +1860,11 @@
 					if(active_color_control == 1){
 						float firstval = sample1(voxel_position/u_size);
 							if(firstval<u_clim[0]){
-								discard;
+								//discard;
+								val = 0.5/6.0;
 							} else if(firstval>u_clim[1]){
-								discard;
+								//discard;
+								val = 5.5/6.0;
 							} else{
 								val = (firstval - u_clim[0])/(u_clim[1] - u_clim[0]);
 							}
