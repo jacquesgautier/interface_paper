@@ -72,7 +72,12 @@ export function activate_animation() {
 		h_factor_max: { type: "f", value: general_config.h_max_factor },
 		temp_factor_min: { type: "f", value: general_config.temp_min_factor },
 		temp_factor_max: { type: "f", value: general_config.temp_max_factor },
-		active_color_control: {value: general_config.active_color_control}
+		active_color_control: {value: general_config.active_color_control},
+		temp_filter: {value: general_config.temp_filter},
+		z_filter: {value: general_config.z_filter},
+		h_filter: {value: general_config.h_filter},
+		x_filter: {value: general_config.x_filter},
+		y_filter: {value: general_config.y_filter}
     };
 	
     if(general_config.is_animated == false){
@@ -330,7 +335,12 @@ export function create_2D_vertical_plane_series(road_summit_data, grid,id_sbl_ar
 				cst_Y: {value: general_config.cst_Y},
 				cst_Z: {value: general_config.cst_Z},
 				active_color_control: {value: general_config.active_color_control},
-				transparency: {type: "f", value: general_config.vertical_plane_transparency}
+				transparency: {type: "f", value: general_config.vertical_plane_transparency},
+				temp_filter: {value: general_config.temp_filter},
+				z_filter: {value: general_config.z_filter},
+				h_filter: {value: general_config.h_filter},
+				x_filter: {value: general_config.x_filter},
+				y_filter: {value: general_config.y_filter}
 			},
 			vertexShader: document.getElementById( 'vertexshader_3D_plane' ).textContent,
 			fragmentShader: document.getElementById( 'fragmentshader_3D_plane' ).textContent
@@ -445,7 +455,12 @@ export function create_2D_vertical_plane_series(road_summit_data, grid,id_sbl_ar
 				cst_Y: {value: general_config.cst_Y},
 				cst_Z: {value: general_config.cst_Z},
 				active_color_control: {value: general_config.active_color_control},
-				transparency: {type: "f", value: general_config.vertical_plane_transparency}
+				transparency: {type: "f", value: general_config.vertical_plane_transparency},
+				temp_filter: {value: general_config.temp_filter},
+				z_filter: {value: general_config.z_filter},
+				h_filter: {value: general_config.h_filter},
+				x_filter: {value: general_config.x_filter},
+				y_filter: {value: general_config.y_filter}
 			},
 			vertexShader: document.getElementById( 'vertexshader_3D_plane' ).textContent,
 			fragmentShader: document.getElementById( 'fragmentshader_3D_plane' ).textContent
@@ -1453,7 +1468,12 @@ export function create_2D_plane_series(MesoNH_O_array,MesoNH_U_array,MesoNH_V_ar
 							cst_X: {value: general_config.cst_X},
 							cst_Y: {value: general_config.cst_Y},
 							cst_Z: {value: general_config.cst_Z},
-							active_color_control: {value: general_config.active_color_control}
+							active_color_control: {value: general_config.active_color_control},
+							temp_filter: {value: general_config.temp_filter},
+							z_filter: {value: general_config.z_filter},
+							h_filter: {value: general_config.h_filter},
+							x_filter: {value: general_config.x_filter},
+							y_filter: {value: general_config.y_filter}
 						},
 						vertexShader: document.getElementById( 'vertexshader_2D_plane' ).textContent,
 						fragmentShader: document.getElementById( 'fragmentshader_2D_plane' ).textContent
@@ -3558,5 +3578,41 @@ export function add_hide_buildings(){
 		} 
 		
 	}
+}
+
+export function add_remove_filtering(){
+	
+	if($('#temp_filter_ckbx').is(':checked') == true){
+		general_config.temp_filter = true;
+	} else {
+		general_config.temp_filter = false;
+	}
+	
+	if($('#z_filter_ckbx').is(':checked') == true){
+		general_config.z_filter = true;
+	} else {
+		general_config.z_filter = false;
+	}
+	
+	if($('#h_filter_ckbx').is(':checked') == true){
+		general_config.h_filter = true;
+	} else {
+		general_config.h_filter = false;
+	}
+	
+	if($('#x_filter_ckbx').is(':checked') == true){
+		general_config.x_filter = true;
+	} else {
+		general_config.x_filter = false;
+	}
+	
+	if($('#y_filter_ckbx').is(':checked') == true){
+		general_config.y_filter = true;
+	} else {
+		general_config.y_filter = false;
+	}
+	
+	recreate_scene();
+	
 }
 
