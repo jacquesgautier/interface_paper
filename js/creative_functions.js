@@ -3152,32 +3152,35 @@ export function create_temp_histogram(){
 
         // And apply this function to data to get the bins
         var bins = histogram(temp_deg);
-       
+		
+		general_config.bins = bins;
+		       
         // Y axis: scale and draw:
         var y = d3.scaleLinear()
             .range([height, 0]);
-            y.domain([0, d3.max(bins, function(d) { return d.length; })]);   // d3.hist has to be called before the Y axis obviously
+            y.domain([0, 2+d3.max(bins, function(d) { return d.length; })]);   // d3.hist has to be called before the Y axis obviously
         
         let yAxis = d3.axisLeft(y)
             .tickValues([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
         svg.append("g")
             .call(yAxis);
 
-        
-
-        
+        create_legend(general_config.temp_array, general_config.domain_min, general_config.domain_max, width, height);  
+       
         // append the bar rectangles to the svg element
-        svg.selectAll("rect")
-            .data(bins)
-            .enter()
-            .append("rect")
-                .attr("x", 1)
-                .attr("transform", function(d) { return "translate(" + x(d.x0) + "," + y(d.length) + ")"; })
-                .attr("width", function(d) { return x(d.x1) - x(d.x0) -1 ; })
-                .attr("height", function(d) { return height - y(d.length); })
-                .attr("class", "rect_temps")
-                .attr("opacity", 0.7)
-                .style("fill", "#69b3a2")
+        //svg.selectAll("rect")
+        //    .data(bins)
+        //    .enter()
+        //    .append("rect")
+        //        .attr("x", 1)
+        //        .attr("transform", function(d) { return "translate(" + x(d.x0) + "," + y(d.length) + ")"; })
+        //        .attr("width", function(d) { return x(d.x1) - x(d.x0) -1 ; })
+        //        .attr("height", function(d) { return height - y(d.length); })
+        //        .attr("class", "rect_temps")
+        //        .attr("opacity", 0.7)
+        //        .style("fill", "#69b3a2")
+		
+		create_histograme_rect();
 
         //line de temp min
         svg.append("rect")
@@ -3195,7 +3198,6 @@ export function create_temp_histogram(){
             let line = d3.select(this).classed("dragging", true);
             d3.event.on("drag", dragged).on("end", dragended);
 
-
             function dragged() {
                 line.raise()
                     .attr("x",  d3.event.x)
@@ -3211,15 +3213,22 @@ export function create_temp_histogram(){
                 
                 $('#temp_min_input').val(""+temperatureMini.toFixed(2))
                 general_config.temp_array = [parseFloat($("#temp_min_input").val())+273.15,parseFloat($("#temp_max_input").val())+273.15];
+				
+				create_histograme_rect();
+				create_legend(general_config.temp_array, general_config.domain_min, general_config.domain_max, width, height);
                 
             }
             
             function dragended() {
+				
                 line.classed("dragging", false);
 
                 recreate_scene();
             }
+			
+			
         }
+		
             
         //line de temp max
         svg.append("rect")
@@ -3251,6 +3260,9 @@ export function create_temp_histogram(){
                     let temperatureMaxi = (borne_temp_max.x.baseVal.value/width)*(general_config.domain_max-general_config.domain_min)+general_config.domain_min
                     $('#temp_max_input').val(""+temperatureMaxi.toFixed(2))
                     general_config.temp_array = [parseFloat($("#temp_min_input").val())+273.15,parseFloat($("#temp_max_input").val())+273.15];
+					
+					create_histograme_rect();
+					create_legend(general_config.temp_array, general_config.domain_min, general_config.domain_max, width, height);
                     
                 }
                 
@@ -3260,8 +3272,72 @@ export function create_temp_histogram(){
                     recreate_scene();   
                 }
             }
+			
+			function create_legend(temp_array, domain_min, domain_max, diag_width, diag_height){
+				
+				d3.selectAll(".color_scale_rectangle").remove();
+				
+				if(general_config.active_color_control == 1){
+							
+					var color_array = ["#003476","#5780CC","#B8C5EC","#EEB8B9","#C46363","#651819"];
+					
+					var scale_width = ((temp_array[1]-273.15-domain_min) / (domain_max - domain_min) * diag_width) - ((temp_array[0]-273.15-domain_min) / (domain_max - domain_min) * diag_width);
+					
+					for(var m=0; m<color_array.length; m++){
+						svg.append("rect")
+						.attr("x", ((temp_array[0]-273.15-domain_min) / (domain_max - domain_min) * diag_width + m*(scale_width/color_array.length)) )
+						.attr("y", 0)
+						.attr("height", diag_height)
+						.attr("width", scale_width/color_array.length)
+						.attr("fill", color_array[m])
+						.attr("class", "color_scale_rectangle")
+						.attr("z-index", -5)
+					}
+					
+				} else if(general_config.active_color_control == 2){
+					var color_array = ["#003476","#5780CC","#B8C5EC","#EEB8B9","#C46363","#651819"];
+					var temp_values_array = [297.92,298.40,298.98,299.36,299.64,300.02,300.8];
+									
+					for(var m=0; m<color_array.length; m++){
+						var scale_width = ((temp_values_array[m+1]-273.15-domain_min) / (domain_max - domain_min) * diag_width) - ((temp_values_array[m]-273.15-domain_min) / (domain_max - domain_min) * diag_width);
+						svg.append("rect")
+						.attr("x", ((temp_values_array[m]-273.15-domain_min) / (domain_max - domain_min) * diag_width) )
+						.attr("y", 0)
+						.attr("height", diag_height)
+						.attr("width", scale_width)
+						.attr("fill", color_array[m])
+						.attr("class", "color_scale_rectangle")
+						.attr("z-index", -5)
+					}
+					
+				}
+				
+				
+				
+			}
+			
+			 function create_histograme_rect(){
+				 
+				 
+			d3.selectAll(".hist_rect").remove();
+			for(var m=0; m<general_config.bins.length; m++){
+				if(general_config.bins[m].length > 0 && general_config.bins[m] != undefined){
+					var hist_width = ((general_config.bins[m].x1-general_config.domain_min) / (general_config.domain_max - general_config.domain_min))*width - ((general_config.bins[m].x0-general_config.domain_min) / (general_config.domain_max - general_config.domain_min))*width;
+					svg.append("rect")
+					.attr("x", (((general_config.bins[m].x0-general_config.domain_min) / (general_config.domain_max - general_config.domain_min))*width) )
+					.attr("y", 0)
+					.attr("height", function(d) { return height - y(general_config.bins[m].length); })
+					//.attr("height", height)
+					.attr("width", hist_width)
+					.attr("transform", function(d) { return "translate(" + 0 + "," + y(general_config.bins[m].length) + ")"; })
+					.attr("fill", "#ddffc5")
+					.attr("class", "hist_rect")
+					.attr("z-index", -5)
+				}
+			}
+		}
         
-            
+          
         
         let borne_temp_min = document.querySelector('#rect_temp_min')
         let borne_temp_max = document.querySelector('#rect_temp_max')
