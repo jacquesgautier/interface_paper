@@ -1,7 +1,7 @@
 import { handleCreationPoints, handleCreationPlane,handleCreationVerticalPlane} from './showPointsPlanes.js'
 import { loadChosenData, loadChosenDataSet, chargerParams} from './load_data_functions.js';
 import {general_config, camera} from './initialisation.js'
-import {add_hide_buildings} from './creative_functions.js'
+import {add_hide_buildings,add_remove_filtering} from './creative_functions.js'
 
 
 export function initialise() {
@@ -97,6 +97,9 @@ export function initialise() {
 	
 	$("#buildings_presence_input").on('click', add_hide_buildings);
 	$("#buildings_print_presence_input").on('click', add_hide_buildings);
+	
+	
+	$(".filter_ckbx_class").on('click', add_remove_filtering);
 
     //event sur le bouton avec les choix de données
     $('#load_data').on('click', loadChosenData);
