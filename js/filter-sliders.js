@@ -17,8 +17,8 @@ $( function() {
       let tempMinCalc = tempMin + ((tempMax - tempMin)*(ui.values[ 0 ]/100))
       let tempMaxCalc = tempMin + ((tempMax - tempMin)*(ui.values[ 1 ]/100))
       $( "#temperatures-label" ).val( tempMinCalc.toFixed(2) + "°C - " + tempMaxCalc.toFixed(2) + "°C" );    
-      general_config.temp_min_factor = (ui.values[ 0 ]/100)*2*Math.PI;  
-      general_config.temp_max_factor = (ui.values[ 1 ]/100)*2*Math.PI;
+      general_config.temp_min_factor = (ui.values[ 0 ]/100);  
+      general_config.temp_max_factor = (ui.values[ 1 ]/100);
       
     },
     stop: function (e, ui) {
