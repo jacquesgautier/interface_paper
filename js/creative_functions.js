@@ -235,9 +235,13 @@ export function create_2D_vertical_plane_series(road_summit_data, grid,id_sbl_ar
 		var features_points_array = [];
 		var features_normal_array = [];
 
+		//probleme ici
 		
+		console.log(general_config.data_volume_3D)
 		var h_min = general_config.data_volume_3D.z_min_teb;
 		var h_max = general_config.data_volume_3D.z_max_teb;
+		
+		console.log(h_min,h_max);
 		
 						
 		for(var a =0; a< road_summit_data.features.length - 1; a++){
@@ -324,10 +328,10 @@ export function create_2D_vertical_plane_series(road_summit_data, grid,id_sbl_ar
 				u_cmdata: { value: cmtextures.blue_red_2 },
 				u_clim: { value: [general_config.temp_array[0],general_config.temp_array[1]] },
 				u_size: { value: [general_config.data_volume_3D.x_length, general_config.data_volume_3D.y_length, general_config.data_volume_3D.z_length] },
-				x_min:{type: "f", value: 154.3850000000093},
-				x_max:{type: "f", value: 779.4010000000708},
-				y_min:{type: "f", value: 604.3519999999553},
-				y_max:{type: "f", value: 1227.0260000005364},
+				x_min:{type: "f", value: general_config.data_volume_3D.x_min},
+				x_max:{type: "f", value: general_config.data_volume_3D.x_max},
+				y_min:{type: "f", value: general_config.data_volume_3D.y_min},
+				y_max:{type: "f", value: general_config.data_volume_3D.y_max},
 				zs: {type: "f", value: 46.81231},
 				type_model: {type: "f", value: 0.0},
 				sbl_meso_level: {value: sbl_meso_level},
@@ -444,10 +448,10 @@ export function create_2D_vertical_plane_series(road_summit_data, grid,id_sbl_ar
 				u_cmdata: { value: cmtextures.blue_red_2 },
 				u_clim: { value: [general_config.temp_array[0],general_config.temp_array[1]] },
 				u_size: { value: [general_config.data_volume_3D.x_length, general_config.data_volume_3D.y_length, general_config.data_volume_3D.z_length] },
-				x_min:{type: "f", value: 154.3850000000093},
-				x_max:{type: "f", value: 779.4010000000708},
-				y_min:{type: "f", value: 604.3519999999553},
-				y_max:{type: "f", value: 1227.0260000005364},
+				x_min:{type: "f", value: general_config.data_volume_3D.x_min},
+				x_max:{type: "f", value: general_config.data_volume_3D.x_max},
+				y_min:{type: "f", value: general_config.data_volume_3D.y_min},
+				y_max:{type: "f", value: general_config.data_volume_3D.y_max},
 				zs: {type: "f", value: 46.81231},
 				type_model: {type: "f", value: 1.0},
 				sbl_meso_level: {value: sbl_meso_level},
@@ -471,6 +475,7 @@ export function create_2D_vertical_plane_series(road_summit_data, grid,id_sbl_ar
 		grid.add(feature_mesh);
 		scene.add(grid);
 	}	
+	
 }
 
 export function create_random_points_cloud(MesoNH_O_array,MesoNH_U_array,MesoNH_V_array,grid,id_sbl_array,id_meso_array,temperature_scale,THAT,THAT_W,HCanopy,HCanopy_w){
@@ -667,6 +672,7 @@ export function create_random_points_cloud(MesoNH_O_array,MesoNH_U_array,MesoNH_
     });*/
     tab_temp.sort((a,b) => a-b)
 
+	
 	
     for(var m=0; m<id_sbl_array.length; m++){
         for(var j=0; j<nj; j++){
@@ -1011,7 +1017,8 @@ export function create_2D_plane_series(MesoNH_O_array,MesoNH_U_array,MesoNH_V_ar
     
     general_config.h_min = null;
     general_config.h_max = null;
-    
+	
+   
     for(var m=0; m<id_sbl_array.length; m++){
         for(var j=0; j<nj; j++){
             for(var i=0; i<ni; i++){
@@ -1024,7 +1031,8 @@ export function create_2D_plane_series(MesoNH_O_array,MesoNH_U_array,MesoNH_V_ar
 				var index_sup_2 = j*ni + i + id*ni*nj;					
                 var h = general_config.data_volume_3D['limit_teb'][index_sup_1] - MesoNH_O_array[index_1].zs + (general_config.data_volume_3D['limit_teb'][index_sup_2] - general_config.data_volume_3D['limit_teb'][index_sup_1])/2;
                 var h_w = general_config.data_volume_3D['limit_teb'][index_sup_1]  - MesoNH_O_array[index_1].zs;
-                
+				
+               
                 tab_temp.push(temp);
 
                 var x_o = MesoNH_O_array[index_1].x - general_config.Coord_X_paris;
@@ -2555,6 +2563,8 @@ var ground_features_normal_array = [];
 
 var z_offset=0;
 
+var z_offset_array = [];
+
   for(var a =0; a< data.features.length; a++){
         var feature = data.features[a];
 		
@@ -2570,6 +2580,8 @@ var z_offset=0;
 			var zs_teb = general_config.data_volume_3D.data_zs_teb[voxel_position_y*general_config.data_ni + voxel_position_x];
 			z_offset = zs_teb - feature.properties.altitude_s;
 		}
+		
+		z_offset_array.push(z_offset);
 		
 		var feature_altitude_s = feature.properties.altitude_s + z_offset
 		var feature_altitude_t = feature.properties.altitude_t + z_offset
@@ -2717,8 +2729,7 @@ var z_offset=0;
   var buildings_feature_coord_array_32 = new Float32Array(buildings_features_points_array);
     var buildings_feature_colors_32 = new Float32Array(buildings_features_color_array);
     var buildings_feature_normal_32 = new Float32Array(buildings_features_normal_array);
-	
-
+		
  var ground_feature_coord_array_32 = new Float32Array(ground_features_points_array);
     var ground_feature_colors_32 = new Float32Array(ground_features_color_array);
     var ground_feature_normal_32 = new Float32Array(ground_features_normal_array);	
