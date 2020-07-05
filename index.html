@@ -1760,11 +1760,17 @@
 
 		void main() {
 
-		//gl_FragColor = vec4(1.0,0.0,0.0,1.0);
-
 				float voxel_position_x = ((v_position[0]/cst_X) - x_min)/(x_max - x_min)*u_size[0];
 				float voxel_position_y = u_size[1]-(-(v_position[2]/cst_Y) - y_min)/(y_max - y_min)*u_size[1];
 				float voxel_position_z = 0.0;
+				
+				if(voxel_position_x > u_size[0] || voxel_position_x < 0.0){
+					discard;
+				}
+				if(voxel_position_y > u_size[1] || voxel_position_y < 0.0){
+					discard;
+				}
+				
 				vec2 voxel_xy = vec2(voxel_position_x,voxel_position_y);
 				float new_zs = texture2D(zs_data, (voxel_xy/vec2(u_size[0],u_size[1]))).r;
 
