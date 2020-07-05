@@ -3350,14 +3350,47 @@ export function create_temp_histogram(){
 					var scale_width = ((temp_array[1]-273.15-domain_min) / (domain_max - domain_min) * diag_width) - ((temp_array[0]-273.15-domain_min) / (domain_max - domain_min) * diag_width);
 					
 					for(var m=0; m<color_array.length; m++){
-						svg.append("rect")
-						.attr("x", ((temp_array[0]-273.15-domain_min) / (domain_max - domain_min) * diag_width + m*(scale_width/color_array.length)) )
-						.attr("y", 0)
-						.attr("height", diag_height)
-						.attr("width", scale_width/color_array.length)
-						.attr("fill", color_array[m])
-						.attr("class", "color_scale_rectangle")
-						.attr("z-index", -5)
+						
+						if(general_config.temp_filter == true){
+							svg.append("rect")
+							.attr("x", ((temp_array[0]-273.15-domain_min) / (domain_max - domain_min) * diag_width + m*(scale_width/color_array.length)) )
+							.attr("y", 0)
+							.attr("height", diag_height)
+							.attr("width", scale_width/color_array.length)
+							.attr("fill", color_array[m])
+							.attr("class", "color_scale_rectangle")
+							.attr("z-index", -5)
+						} else {
+							if(m==0){
+								svg.append("rect")
+								.attr("x", 0)
+								.attr("y", 0)
+								.attr("height", diag_height)
+								.attr("width", (((temp_array[0]-273.15-domain_min) / (domain_max - domain_min) * diag_width + m*(scale_width/color_array.length)) + scale_width/color_array.length))
+								.attr("fill", color_array[m])
+								.attr("class", "color_scale_rectangle")
+								.attr("z-index", -5)
+							} else if(m==(color_array.length-1)){
+								svg.append("rect")
+								.attr("x", ((temp_array[0]-273.15-domain_min) / (domain_max - domain_min) * diag_width + m*(scale_width/color_array.length)) )
+								.attr("y", 0)
+								.attr("height", diag_height)
+								.attr("width", domain_max*width - ((temp_array[0]-273.15-domain_min) / (domain_max - domain_min) * diag_width + m*(scale_width/color_array.length)))
+								.attr("fill", color_array[m])
+								.attr("class", "color_scale_rectangle")
+								.attr("z-index", -5)
+							} else{
+								svg.append("rect")
+								.attr("x", ((temp_array[0]-273.15-domain_min) / (domain_max - domain_min) * diag_width + m*(scale_width/color_array.length)) )
+								.attr("y", 0)
+								.attr("height", diag_height)
+								.attr("width", scale_width/color_array.length)
+								.attr("fill", color_array[m])
+								.attr("class", "color_scale_rectangle")
+								.attr("z-index", -5)
+							}
+						}
+						
 					}
 					
 				} else if(general_config.active_color_control == 2){
