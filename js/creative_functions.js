@@ -3153,17 +3153,24 @@ export function create_temp_histogram(){
         svg.append("g")
             .attr("transform", "translate(0," + height + ")")
             .call(d3.axisBottom(x));
+			
+		var ticks_number = 50;
+		var x_offset = (general_config.domain_max - general_config.domain_min)/ticks_number;
+		var ticks_values = [];
+		for(var i = 0; i< ticks_number; i++){
+			ticks_values.push(general_config.domain_min + x_offset*i);
+		}
+		ticks_values.push(general_config.domain_max);
 
         // set the parameters for the histogram
         var histogram = d3.histogram()            
             .value(function(d) { return d; })   // I need to give the vector of value (price est lié aux données test)
             // pour nous ca sera les temperatures
             .domain(x.domain())  // then the domain of the graphic
-            .thresholds(x.ticks(general_config.domain_max-general_config.domain_min)); // then the numbers of bins
-
+			.thresholds(ticks_values)
+            //.thresholds(x.ticks(general_config.domain_max-general_config.domain_min)); // then the numbers of bins
         // And apply this function to data to get the bins
         var bins = histogram(temp_deg);
-		
 		general_config.bins = bins;
 		       
         // Y axis: scale and draw:
@@ -3225,8 +3232,9 @@ export function create_temp_histogram(){
                 $('#temp_min_input').val(""+temperatureMini.toFixed(2))
                 general_config.temp_array = [parseFloat($("#temp_min_input").val())+273.15,parseFloat($("#temp_max_input").val())+273.15];
 				
-				create_histograme_rect();
+				
 				create_legend(general_config.temp_array, general_config.domain_min, general_config.domain_max, width, height);
+				create_histograme_rect();
                 
             }
             
@@ -3272,8 +3280,8 @@ export function create_temp_histogram(){
                     $('#temp_max_input').val(""+temperatureMaxi.toFixed(2))
                     general_config.temp_array = [parseFloat($("#temp_min_input").val())+273.15,parseFloat($("#temp_max_input").val())+273.15];
 					
-					create_histograme_rect();
 					create_legend(general_config.temp_array, general_config.domain_min, general_config.domain_max, width, height);
+					create_histograme_rect();
                     
                 }
                 
