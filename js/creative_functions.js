@@ -476,6 +476,8 @@ export function create_2D_vertical_plane_series(road_summit_data, grid,id_sbl_ar
 		scene.add(grid);
 	}	
 	
+	create_temp_histogram();
+	
 }
 
 export function create_random_points_cloud(MesoNH_O_array,MesoNH_U_array,MesoNH_V_array,grid,id_sbl_array,id_meso_array,temperature_scale,THAT,THAT_W,HCanopy,HCanopy_w){
@@ -3167,11 +3169,43 @@ export function getHCLcolor(tableau, temp, percentage, HCLscale){
 }
 
 export function create_temp_histogram(){
-    
-    var temp_deg=[];
-    for(var j = 0; j<general_config.temp_values.length; j++){
-        temp_deg.push(general_config.temp_values[j] - 273.15);
-    }
+	
+    var selected_level = [];
+	var sbl_ckbx = $(".ckbx_sbl");
+	var meso_ckbx = $(".ckbx_meso");
+	for(var s=0;s<sbl_ckbx.length; s++){
+		if(sbl_ckbx[s].checked){
+			if(selected_level.indexOf(sbl_ckbx[s].id)<0){
+				selected_level.push(sbl_ckbx[s].id);
+			}
+		}
+	}
+	for(var m=0;m<meso_ckbx.length; m++){
+		if(meso_ckbx[m].checked){
+			if(selected_level.indexOf(meso_ckbx[m].id)<0){
+				selected_level.push(meso_ckbx[m].id);
+			}
+		}
+	}
+	
+	var temp_deg=[];
+	for(var sl=0; sl<selected_level.length; sl++){
+		var temp_to_add;
+		for(var g=0; g<general_config.data_volume_3D.temp_by_id.length; g++){
+			if(general_config.data_volume_3D.temp_by_id[g].id == selected_level[sl]){
+				temp_to_add = general_config.data_volume_3D.temp_by_id[g].temp;
+				break;
+			}
+		}
+		for(var g=0; g<temp_to_add.length; g++){
+			temp_deg.push(parseFloat(temp_to_add[g]) - 273.15);
+		}
+	}
+	
+    //var temp_deg=[];
+    //for(var j = 0; j<general_config.temp_values.length; j++){
+    //    temp_deg.push(general_config.temp_values[j] - 273.15);
+    //}
     var margin = {top: 10, right: 40, bottom: 30, left: 30},
     width = 400 - margin.left - margin.right, 
     /* ne souhait pas mettre width ds gnl config, si on le change ici, il faut le changer dans la fonction 'chargerParams'
@@ -3522,7 +3556,8 @@ export function create_data_texture(Meso_NH, MesoNH_U, MesoNH_V, x_length, y_len
 		"z_max_teb":null,
 		"z_min_meso":null,
 		"z_max_meso":null,
-		"data_zs_teb":null
+		"data_zs_teb":null,
+		"temp_by_id":null
         };
     
 	var data_array = [],
@@ -3622,19 +3657,18 @@ export function create_data_texture(Meso_NH, MesoNH_U, MesoNH_V, x_length, y_len
 		
 	}
 	
-	//console.log("teb_1",Math.min(...temp_teb_1),Math.max(...temp_teb_1));
-	//console.log("teb_2",Math.min(...temp_teb_2),Math.max(...temp_teb_2));
-	//console.log("teb_3",Math.min(...temp_teb_3),Math.max(...temp_teb_3));
-	//console.log("teb_4",Math.min(...temp_teb_4),Math.max(...temp_teb_4));
-	//console.log("teb_5",Math.min(...temp_teb_5),Math.max(...temp_teb_5));
-	//console.log("teb_6",Math.min(...temp_teb_6),Math.max(...temp_teb_6));
-
+	
+	var temp_by_id = [];
+	
 	for (var id = 1; id <= 6; id++) {
+		var new_temp_by_id = {"id":"SBL_" + id, temp:[]};
 		for (var t=0; t< Meso_NH.length; t++){
 			data_array_temp.push(Meso_NH[t]['teb_'+id]);
-						
+			new_temp_by_id.temp.push(Meso_NH[t]['teb_'+id]);
 		}
+		temp_by_id.push(new_temp_by_id);
 	}
+	
 	
 	for (var t=0; t< Meso_NH.length; t++){
 		date_limit_meso.push(general_config.THAT_W[0]*((general_config.THAT_W[general_config.THAT_W.length-1] - parseFloat(Meso_NH[t].zs))/general_config.THAT_W[general_config.THAT_W.length-1]) + parseFloat(Meso_NH[t].zs));
@@ -3644,12 +3678,18 @@ export function create_data_texture(Meso_NH, MesoNH_U, MesoNH_V, x_length, y_len
 	}
 	
 	for (var id = 2; id <= 32; id++) {
+		var new_temp_by_id = {"id":"Meso_" + id, temp:[]};
 		for (var t=0; t< Meso_NH.length; t++){
 			data_array_temp.push(Meso_NH[t]['tht_'+id]);
 			
+			new_temp_by_id.temp.push(Meso_NH[t]['tht_'+id]);
+			
 			date_limit_meso.push(general_config.THAT_W[id-1]*((general_config.THAT_W[general_config.THAT_W.length-1] - parseFloat(Meso_NH[t].zs))/general_config.THAT_W[general_config.THAT_W.length-1]) + parseFloat(Meso_NH[t].zs));
 		}
+		temp_by_id.push(new_temp_by_id);
 	}
+	
+	
 	for (var t=0; t< Meso_NH.length; t++){
 		date_limit_meso.push(general_config.THAT_W[31]*((general_config.THAT_W[general_config.THAT_W.length-1] - parseFloat(Meso_NH[t].zs))/general_config.THAT_W[general_config.THAT_W.length-1]) + parseFloat(Meso_NH[t].zs) + (general_config.THAT[general_config.THAT.length-1] - general_config.THAT_W[general_config.THAT_W.length-1])*2);
 		if((general_config.THAT_W[31]*((general_config.THAT_W[general_config.THAT_W.length-1] - parseFloat(Meso_NH[t].zs))/general_config.THAT_W[general_config.THAT_W.length-1]) + parseFloat(Meso_NH[t].zs) + (general_config.THAT[general_config.THAT.length-1] - general_config.THAT_W[general_config.THAT_W.length-1])*2) > z_max_meso){
@@ -3718,8 +3758,8 @@ export function create_data_texture(Meso_NH, MesoNH_U, MesoNH_V, x_length, y_len
 	volume.z_max_teb = z_max_teb;
 	volume.z_min_meso = z_min_meso;
 	volume.z_max_meso = z_max_meso;
-	
-			
+	volume.temp_by_id = temp_by_id;
+		
     return volume;
     
 }
