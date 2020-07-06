@@ -119,7 +119,7 @@ export function sblValues() {
         inputContainer2D.className="input_data_container_1"
         let ckbx = document.createElement('input');
         ckbx.type='checkbox'
-        ckbx.className="data_ckbx_real_plane ckbx_sbl_planes";
+        ckbx.className="data_ckbx_real_plane ckbx_sbl_planes ckbx_sbl";
         ckbx.id="SBL_"+i;
 
         ckbx.addEventListener('click', () => handleCreationPlane(ckbx.id))
@@ -129,7 +129,7 @@ export function sblValues() {
         inputContainer3D.className="input_data_container_2"
         let ckbx2 = document.createElement('input');
         ckbx2.type='checkbox'
-        ckbx2.className="nuage_points ckbx_sbl_points";
+        ckbx2.className="nuage_points ckbx_sbl_points ckbx_sbl";
         ckbx2.id="SBL_"+i;
 
 		ckbx2.addEventListener('click', () => handleCreationPoints(ckbx2.id))
@@ -139,7 +139,7 @@ export function sblValues() {
         inputContainer2Dvert.className="input_data_container_2"
         let ckbx3 = document.createElement('input');
         ckbx3.type='checkbox'
-        ckbx3.className="2D_vertical_planes ckbx_sbl_2D_vertical_planes";
+        ckbx3.className="2D_vertical_planes ckbx_sbl_2D_vertical_planes ckbx_sbl";
         ckbx3.id="SBL_"+i;
 
 		ckbx3.addEventListener('click', () => handleCreationVerticalPlane(ckbx3.id));
@@ -173,7 +173,7 @@ export function mesoValues() {
         inputContainer2D.className="input_data_container_1"
         let ckbx = document.createElement('input');
         ckbx.type='checkbox'
-        ckbx.className="data_ckbx_real_plane ckbx_meso_planes";
+        ckbx.className="data_ckbx_real_plane ckbx_meso_planes ckbx_meso";
         ckbx.id="Meso_"+i;
 
         ckbx.addEventListener('click', () => handleCreationPlane(ckbx.id))
@@ -183,7 +183,7 @@ export function mesoValues() {
         inputContainer3D.className="input_data_container_2"
         let ckbx2 = document.createElement('input');
         ckbx2.type='checkbox'
-        ckbx2.className="nuage_points ckbx_meso_points";
+        ckbx2.className="nuage_points ckbx_meso_points ckbx_meso";
         ckbx2.id="Meso_"+i;
         ckbx2.addEventListener('click', () => handleCreationPoints(ckbx2.id))
 
@@ -192,7 +192,7 @@ export function mesoValues() {
         inputContainer2Dvert.className="input_data_container_2"
         let ckbx3 = document.createElement('input');
         ckbx3.type='checkbox'
-        ckbx3.className="2D_vertical_planes ckbx_meso_2D_vertical_planes";
+        ckbx3.className="2D_vertical_planes ckbx_meso_2D_vertical_planes ckbx_meso";
         ckbx3.id="Meso_"+i;
 
 		ckbx3.addEventListener('click', () => handleCreationVerticalPlane(ckbx3.id));
